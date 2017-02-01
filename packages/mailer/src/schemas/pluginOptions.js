@@ -14,4 +14,5 @@ export default {
     debug: Joi.boolean().default(false),
   }),
   saveToDisk: Joi.boolean().default(false),
+  emailsDir: Joi.string().required(),
 };
