@@ -4,7 +4,7 @@ import * as handlers from './handlers';
 const entityNamespace = 'entity.User';
 
 export default ({
-  dispatcher, app,
+  dispatcher,
 }) => {
   const { subscribeMap, subscribe } = dispatcher;
   subscribeMap(entityNamespace, omit(handlers, [
@@ -19,5 +19,4 @@ export default ({
   subscribe('User.socialLogin', handlers.socialLogin);
   subscribe('User.dump', handlers.dump);
   subscribe('User.changePassword', handlers.changePassword);
-  subscribe('User.getProfilePicture', handlers.getProfilePicture(app.uploadDir));
 };

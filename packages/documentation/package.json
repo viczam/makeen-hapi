@@ -1,0 +1,17 @@
+{
+  "name": "makeen-documentation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "blipp": "2.3.0",
+    "hapi-swagger": "7.4.0",
+    "inert": "4.0.2",
+    "vision": "4.1.0"
+  }
+}

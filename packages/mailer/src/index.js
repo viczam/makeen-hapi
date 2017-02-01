@@ -12,7 +12,7 @@ import browseEmailsRoute from './routes/browseEmails';
 export function register(server, options, next) {
   const { isDevelopment } = server.settings.app;
   const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-  const { saveToDisk } = pluginOptions;
+  const { saveToDisk, emailsDir } = pluginOptions;
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
   const transporter = saveToDisk ? fileTransporter : nodemailer.createTransport({
@@ -51,7 +51,7 @@ export function register(server, options, next) {
     });
 
     if (saveToDisk) {
-      server.route(browseEmailsRoute(server.settings.app.emailsDir));
+      server.route(browseEmailsRoute(emailsDir));
     }
 
     return next();

@@ -5,12 +5,12 @@
       "development": {
         "client": "http://localhost:3000",
         "api": "http://localhost:3003",
-        "isDevelopment": true,
+        "isDevelopment": true
       },
       "production": {
         "client": "http://localhost:3000",
         "api": "http://localhost:80",
-        "isDevelopment": false,
+        "isDevelopment": false
       }
     },
     "cache": "../node_modules/catbox-mongodb",
@@ -82,7 +82,9 @@
         }
       }
     }, {
-      "plugin": "./core"
+      "plugin": {
+        "register": "./core"
+      }
     }, {
       "plugin": {
         "register": "./crud"
