@@ -1,0 +1,28 @@
+{
+  "name": "makeen-user",
+  "version": "1.0.0",
+  "description": "User system",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "makeen-core": "*",
+    "makeen-crud": "*",
+    "makeen-storage": "*",
+    "boom": "4.2.0",
+    "date-fns": "1.15.1",
+    "fs-promise": "1.0.0",
+    "hb-user": "0.9.0",
+    "hoek": "4.1.0",
+    "inert": "4.1.0",
+    "joi": "10.0.2",
+    "lodash": "4.17.2",
+    "moment": "2.16.0",
+    "mongodb": "2.2.12",
+    "octobus-mongodb": "0.8.5",
+    "octobus.js": "0.18.2"
+  }
+}
