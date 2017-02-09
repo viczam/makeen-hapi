@@ -1,4 +1,4 @@
-const handler = ({ transporter, renderTemplate, app }) =>
+const handler = ({ transporter, renderTemplate, app, emailsDir }) =>
   async ({ params }) => {
     const { template, context, ...restParams } = params;
 
@@ -12,7 +12,7 @@ const handler = ({ transporter, renderTemplate, app }) =>
       transporter.sendMail({
         ...restParams,
         html,
-        app,
+        emailsDir,
       }, (err, info) => {
         if (err) {
           return reject(err);
