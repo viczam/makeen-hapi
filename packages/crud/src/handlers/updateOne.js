@@ -20,6 +20,11 @@ export default ({
       return reply(Boom.notFound(`Unable to find entity with id ${id}`));
     }
 
+    await dispatch(`entity.${entityName}.validate`, {
+      ...entity,
+      ...payload,
+    });
+
     const result = await dispatch(`entity.${entityName}.updateOne`, {
       query: {
         _id: objectId(id),
@@ -31,6 +36,10 @@ export default ({
 
     return reply(result);
   } catch (err) {
+    if (err.isJoi) {
+      return reply(Boom.badRequest(err.details[0].message));
+    }
+
     return reply(Boom.wrap(err));
   }
 };

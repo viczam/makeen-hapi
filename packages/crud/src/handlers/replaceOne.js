@@ -21,9 +21,10 @@ export default ({
     }
 
     const result = await dispatch(`entity.${entityName}.replaceOne`, {
+      ...entity,
+      ...payload,
       _id: objectId(id),
       createdAt: entity.createdAt,
-      ...payload,
     });
 
     return reply(result);

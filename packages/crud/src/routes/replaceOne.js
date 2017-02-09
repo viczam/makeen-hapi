@@ -16,7 +16,7 @@ export default ({ entityName, entityNs, path, schema, config = {} }) => ({
       },
       payload: schema,
     },
-    description: 'Replace an entity',
+    description: `Replace an entity of type ${entityName}`,
     tags: ['api'],
     pre: [
       {
