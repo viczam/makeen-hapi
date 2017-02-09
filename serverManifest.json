@@ -123,6 +123,13 @@
           }
         }
       }
+    }, {
+      "plugin": {
+        "register": "./todo",
+        "routes": {
+          "prefix": "/todos"
+        }
+      }
     }],
     "$default": [],
     "development": [{
