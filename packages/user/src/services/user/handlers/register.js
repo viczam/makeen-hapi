@@ -29,7 +29,6 @@ const handler = async ({ username, email, params, Account, UserEntity }) => {
 
   const user = await UserEntity.createOne({
     accountId: account._id,
-    roles: ['accountOwner'],
     ...params,
   });
 
