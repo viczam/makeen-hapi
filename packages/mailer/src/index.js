@@ -48,6 +48,7 @@ export function register(server, options, next) {
       },
       transporter,
       app: server.settings.app,
+      emailsDir,
     });
 
     if (saveToDisk) {

@@ -7,7 +7,7 @@ const Hello = ({ user, account, app, transportConfig }) => (
     <p>Your account with username {user.username} was created.</p>
     <p>
       Click {' '}
-      <a href={`${app.client}/account/${account._id.toString()}/confirm`}>here</a>
+      <a href={`${app.api}/account/${account._id.toString()}/confirm`}>here</a>
       {' '} to confirm your account.
     </p>
     <p>ktxbye!</p>
