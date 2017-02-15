@@ -3,10 +3,10 @@ import { ObjectID as objectId } from 'mongodb';
 import { objectIdPattern } from 'makeen-core/src/constants';
 import handler from '../handlers/deleteOneById';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'DELETE',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:deleteOneById`,
     validate: {

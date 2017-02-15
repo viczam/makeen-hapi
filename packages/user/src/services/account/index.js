@@ -2,10 +2,9 @@ import schema from '../../schemas/account';
 import * as handlers from './handlers';
 
 export default ({
-  createEntity,
+  entityManager,
 }) => {
-  createEntity({
-    entityName: 'Account',
+  entityManager.register('Account', {
     schema,
     handlers,
   });

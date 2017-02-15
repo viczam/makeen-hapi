@@ -2,10 +2,10 @@ import Joi from 'joi';
 import { toBSON } from 'makeen-core/src/libs/mongo-helpers';
 import handler from '../handlers/deleteOne';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'DELETE',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:deleteOne`,
     validate: {

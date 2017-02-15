@@ -5,15 +5,15 @@ import routes from './routes';
 export function register(server, options, next) {
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
   const { dispatch, lookup } = dispatcher;
-  const { createEntity } = server.plugins['makeen-core'];
+  const { entityManager } = server.plugins['makeen-storage'];
 
   setupServices({
     dispatcher,
-    createEntity,
+    entityManager,
   });
 
-  const TodoItemEntity = lookup('entity.TodoItem');
-  const TodoListEntity = lookup('entity.TodoList');
+  const TodoItemEntity = entityManager.get('TodoItem');
+  const TodoListEntity = entityManager.get('TodoList');
 
   server.expose('TodoItemEntity', TodoItemEntity);
   server.expose('TodoListEntity', TodoListEntity);

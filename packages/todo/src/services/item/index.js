@@ -2,10 +2,9 @@ import * as handlers from './handlers';
 import schema from '../../schemas/item';
 
 export default ({
-  createEntity,
+  entityManager,
 }) => {
-  createEntity({
-    entityName: 'TodoItem',
+  entityManager.register('TodoItem', {
     schema,
     handlers,
   });

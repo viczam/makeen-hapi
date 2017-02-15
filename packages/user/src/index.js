@@ -11,8 +11,7 @@ export function register(server, options, next) {
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
   const { dispatch, lookup } = dispatcher;
   const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-  const { mongoDb, refManager } = server.plugins['makeen-storage'];
-  const { createEntity } = server.plugins['makeen-core'];
+  const { mongoDb, refManager, entityManager } = server.plugins['makeen-storage'];
 
   if (pluginOptions.socialPlatforms.facebook) {
     server.auth.strategy('facebook', 'bell', {
@@ -49,16 +48,16 @@ export function register(server, options, next) {
     server.auth.default('jwt');
 
     setupServices({
-      createEntity,
+      entityManager,
       dispatcher,
       pluginOptions,
       app: server.settings.app,
     });
 
-    const UserEntity = lookup('entity.User');
-    const AccountEntity = lookup('entity.Account');
+    const UserEntity = entityManager.get('User');
+    const AccountEntity = entityManager.get('Account');
     const User = lookup('User');
-    const UserLogin = lookup('entity.UserLogin');
+    const UserLogin = entityManager.get('UserLogin');
 
     server.expose('UserEntity', UserEntity);
     server.expose('AccountEntity', AccountEntity);

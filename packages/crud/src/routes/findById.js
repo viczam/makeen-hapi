@@ -3,10 +3,10 @@ import Joi from 'joi';
 import { objectIdPattern } from 'makeen-core/src/constants';
 import handler from '../handlers/findById';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'GET',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:findById`,
     validate: {

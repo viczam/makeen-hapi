@@ -2,16 +2,13 @@ import Boom from 'boom';
 
 export default ({
   entityName,
-  entityNs = 'entity',
   extractQuery = (request) => request.pre.query,
 }) => async (request, reply) => {
-  const { dispatch } = request.eventDispatcher;
   const query = extractQuery(request);
+  const Entity = request.server.plugins['makeen-storage'].entityManager.get(entityName);
 
   try {
-    const result = await dispatch(`${entityNs}.${entityName}.deleteOne`, { query });
-
-    reply(result);
+    reply(await Entity.deleteOne({ query }));
   } catch (err) {
     reply(Boom.wrap(err));
   }

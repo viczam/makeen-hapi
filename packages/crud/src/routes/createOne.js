@@ -1,10 +1,10 @@
 import { toBSON } from 'makeen-core/src/libs/mongo-helpers';
 import handler from '../handlers/createOne';
 
-export default ({ entityName, entityNs, path, schema, config = {} }) => ({
+export default ({ entityName, path, schema, config = {} }) => ({
   path,
   method: 'POST',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:createOne`,
     validate: {
