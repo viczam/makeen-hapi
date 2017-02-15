@@ -1,22 +1,33 @@
 import Joi from 'joi';
 import { RefManager } from 'mongo-dnorm';
-import { MongoClient } from 'mongodb';
 import pkg from '../package.json';
 import pluginOptionsSchema from './schemas/pluginOptions';
+import { connect } from './libs/mongo';
+import EntityManager from './libs/EntityManager';
 
-export function register(server, options, next) {
+export async function register(server, options, next) {
   const { mongoDb } = Joi.attempt(options, pluginOptionsSchema);
 
-  MongoClient.connect(`mongodb://${mongoDb.host}:${mongoDb.port}/${mongoDb.db}`)
-    .then((db) => {
-      server.expose('mongoDb', db);
-      server.expose('refManager', new RefManager(db));
-      next();
-    })
-    .catch(next);
+  try {
+    const db = await connect(mongoDb);
+    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
+    const refManager = new RefManager(db);
+
+    server.expose('mongoDb', db);
+    server.expose('refManager', refManager);
+    server.expose('entityManager', new EntityManager({
+      dispatcher,
+      db,
+      refManager,
+    }));
+
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
 
 register.attributes = {
   pkg,
-  dependencies: [],
+  dependencies: ['hapi-octobus'],
 };

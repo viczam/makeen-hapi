@@ -4,10 +4,10 @@ import { toBSON } from 'makeen-core/src/libs/mongo-helpers';
 import { objectIdPattern } from 'makeen-core/src/constants';
 import handler from '../handlers/replaceOne';
 
-export default ({ entityName, entityNs, path, schema, config = {} }) => ({
+export default ({ entityName, path, schema, config = {} }) => ({
   path,
   method: 'PUT',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:replaceOne`,
     validate: {

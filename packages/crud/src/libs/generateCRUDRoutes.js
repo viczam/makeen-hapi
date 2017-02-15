@@ -11,14 +11,12 @@ import countRoute from '../routes/count';
 
 export default ({
   entityName,
-  entityNs = 'entity',
   schema,
   pathPrefix,
   config = {},
 }) => {
   const baseOptions = {
     entityName,
-    entityNs,
     config,
   };
   const basePath = `${trimEnd(pathPrefix, '/')}`;

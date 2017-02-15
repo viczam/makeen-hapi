@@ -4,10 +4,10 @@ import { toBSON } from 'makeen-core/src/libs/mongo-helpers';
 import { objectIdPattern } from 'makeen-core/src/constants';
 import handler from '../handlers/updateOne';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'PATCH',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:updateOne`,
     validate: {

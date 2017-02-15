@@ -3,10 +3,10 @@ import Joi from 'joi';
 import pick from 'lodash/pick';
 import handler from '../handlers/findMany';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'GET',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:findMany`,
     validate: {

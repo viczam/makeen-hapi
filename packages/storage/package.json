@@ -16,6 +16,8 @@
     "joi": "10.0.2",
     "mongo-dnorm": "0.2.4",
     "mongodb": "2.2.12",
-    "mongodb-migrate": "2.0.1"
+    "mongodb-migrate": "2.0.1",
+    "octobus.js": "0.18.2",
+    "octobus-mongodb": "0.8.5"
   }
 }

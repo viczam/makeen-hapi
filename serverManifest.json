@@ -74,16 +74,16 @@
       }
     }, {
       "plugin": {
+        "register": "./core"
+      }
+    }, {
+      "plugin": {
         "register": "./storage",
         "options": {
           "mongoDb" : {
             "db": "makeen"
           }
         }
-      }
-    }, {
-      "plugin": {
-        "register": "./core"
       }
     }, {
       "plugin": {

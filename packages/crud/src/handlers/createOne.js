@@ -2,16 +2,13 @@ import Boom from 'boom';
 
 export default ({
   entityName,
-  entityNs = 'entity',
   extractPayload = (request) => request.pre.payload,
 }) => async (request, reply) => {
-  const { dispatch } = request.eventDispatcher;
   const payload = extractPayload(request);
+  const Entity = request.server.plugins['makeen-storage'].entityManager.get(entityName);
 
   try {
-    const result = await dispatch(`${entityNs}.${entityName}.createOne`, payload);
-
-    reply(result);
+    reply(await Entity.createOne(payload));
   } catch (err) {
     reply(Boom.wrap(err));
   }

@@ -2,10 +2,10 @@ import { toBSON } from 'makeen-core/src/libs/mongo-helpers';
 import Joi from 'joi';
 import handler from '../handlers/findOne';
 
-export default ({ entityName, entityNs, path, config = {} }) => ({
+export default ({ entityName, path, config = {} }) => ({
   path,
   method: 'GET',
-  handler: handler({ entityName, entityNs }),
+  handler: handler({ entityName }),
   config: {
     id: `${entityName}:findOne`,
     validate: {
