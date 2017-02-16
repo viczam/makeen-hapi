@@ -45,6 +45,9 @@ export function register(server, options, next) {
       register: StatusMonitor,
       options: {
         path: '/status-monitor',
+        routeConfig: {
+          auth: false,
+        },
       },
     },
   ], next);
