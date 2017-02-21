@@ -9,47 +9,33 @@ const executeSchema = Joi.object().keys({
   userId: Joi.string().required(),
 });
 
-export default async ({ params, dispatch }) => {
-  const { commands, slackTeamId } = params;
 
-  const { error } = Joi.validate(params, executeSchema);
-  if (error) {
-    throw error;
+const getHelpInstructions = () => [
+  'Hello, this is the /todo app and this is how I can be used: ',
+  '>list all tasks: `/todo list`',
+  '>create task: `/todo create Build hapijs based microservices`',
+  '>toggle check/uncheck task: /todo check TK123456',
+  '>assign task: `/todo assign TK123456 to @danmo`',
+  '>set due date for task: `/todo due TK123456 February 23`',
+  '>remove task: `/todo remove TK123456`',
+  '> multiple actions on task: `/todo create Build hapijs based app assign to @danmo due February 24 check`',
+].join('\n');
+
+const stringifyTaskDetails = (task, index) => {
+  const { assignedTo, dueDate, isCompleted } = task;
+  let taskDetails = `Id: TK${task.friendlyId} | Description: "${task.name}"`;
+
+  if (!isNaN(index)) {
+    taskDetails = `${index + 1}) ${taskDetails}`;
   }
 
-  try {
-    //
-    const commandResults = [];
-    console.log(commands);
-    // execute each command and collect it's result
-    for (let index = 0; index < commands.length; index += 1) {
-      const { command, assets } = commands[index];
-      const { taskId } = assets;
-      const previousCommandTaskId = last(commandResults) ? last(commandResults).result.friendlyId : null;
+  taskDetails = `${taskDetails} ${assignedTo ? `| Assigned To @${assignedTo}` : ''}`;
 
-      // execute command
-      const result = await dispatch(`entity.SlackToDoTask.${command}`, {
-        ...assets,
-        // if command has not taskId try to grab it from previous command if any
-        taskId: taskId || previousCommandTaskId,
-        slackTeamId,
-      });
+  taskDetails = `${taskDetails} ${dueDate ? `| Due at ${moment(dueDate).format('ll')}` : ''}`;
 
-      // collect result
-      commandResults.push({
-        command: { name: command, assets },
-        result,
-      });
-    }
+  taskDetails = `${taskDetails} ${isCompleted ? '| <<Completed>>' : ''}`;
 
-
-    return commandResults
-      .map(stringifyCommandResult)
-      .join('\n') || 'Unknown command, try using "/todo help" first';
-  } catch (e) {
-    console.log(e);
-    return `Something went teribly wrong: ${e.toString()}`;
-  }
+  return taskDetails;
 };
 
 const stringifyCommandResult = ({ command, result }) => {
@@ -71,30 +57,46 @@ const stringifyCommandResult = ({ command, result }) => {
   }
 };
 
-const stringifyTaskDetails = (task, index) => {
-  const { assignedTo, dueDate, isCompleted } = task;
-  let taskDetails = `Id: TK${task.friendlyId} | Description: "${task.name}"`;
+export default async ({ params, dispatch }) => {
+  const { commands, slackTeamId } = params;
 
-  if (!isNaN(index)) {
-    taskDetails = `${index + 1}) ${taskDetails}`;
+  const { error } = Joi.validate(params, executeSchema);
+  if (error) {
+    throw error;
   }
 
-  taskDetails = `${taskDetails} ${assignedTo ? `| Assigned To @${assignedTo}` : ''}`;
+  try {
+    //
+    const commandResults = [];
 
-  taskDetails = `${taskDetails} ${dueDate ? `| Due at ${moment(dueDate).format('ll')}` : ''}`;
+    // execute each command and collect it's result
+    for (let index = 0; index < commands.length; index += 1) {
+      const { command, assets } = commands[index];
+      const { taskId } = assets;
+      const previousCommandTaskId = last(commandResults) ?
+        last(commandResults).result.friendlyId : null;
 
-  taskDetails = `${taskDetails} ${isCompleted ? '| <<Completed>>' : ''}`;
+      // execute command
+      const result = await dispatch(`entity.SlackToDoTask.${command}`, {
+        ...assets,
+        // if command has not taskId try to grab it from previous command if any
+        taskId: taskId || previousCommandTaskId,
+        slackTeamId,
+      });
 
-  return taskDetails;
+      // collect result
+      commandResults.push({
+        command: { name: command, assets },
+        result,
+      });
+    }
+
+
+    return commandResults
+      .map(stringifyCommandResult)
+      .join('\n') || 'Unknown command, try using "/todo help" first';
+  } catch (e) {
+    return `Something went teribly wrong: ${e.toString()}`;
+  }
 };
 
-const getHelpInstructions = () => [
-  'Hello, this is the /todo app and this is how I can be used: ',
-  '>list all tasks: `/todo list`',
-  '>create task: `/todo create Build hapijs based microservices`',
-  '>toggle check/uncheck task: /todo check TK123456',
-  '>assign task: `/todo assign TK123456 to @danmo`',
-  '>set due date for task: `/todo due TK123456 February 23`',
-  '>remove task: `/todo remove TK123456`',
-  '> multiple actions on task: `/todo create Build hapijs based app assign to @danmo due February 24 check`',
-].join('\n');

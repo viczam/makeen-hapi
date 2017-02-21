@@ -48,9 +48,7 @@
     "npm-run-all": "~3.1.1",
     "pretty-format": "~4.3.1",
     "react": "~15.4.0",
-    "request": "2.79.0",
-    "scooter": "~4.0.0",
-    "shortid32": "0.1.1"
+    "scooter": "~4.0.0"
   },
   "devDependencies": {
     "babel-cli": "~6.18.0",

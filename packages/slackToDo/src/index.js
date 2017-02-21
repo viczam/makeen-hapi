@@ -5,10 +5,10 @@ import routes from './routes';
 import optionsSchema from './schemas/optionsSchema';
 
 export function register(server, options, next) {
+  const { token } = Joi.attempt(options, optionsSchema);
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
   const { dispatch, lookup } = dispatcher;
   const { entityManager } = server.plugins['makeen-storage'];
-  const { token } = Joi.attempt(options, optionsSchema);
 
   setupServices({
     dispatcher,
