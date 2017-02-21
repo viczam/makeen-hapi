@@ -12,6 +12,7 @@ export default (store) => {
   const options = {
     relativeTo: path.join(__dirname, '..', 'packages'),
   };
+  console.log(JSON.stringify(manifest, null, 2));
 
   Glue.compose(manifest, options, (err, server) => {
     if (err) {
@@ -19,16 +20,19 @@ export default (store) => {
     }
 
     return server.start((startErr) => {
-      if (err) {
-        console.log(startErr); // eslint-disable-line
+      if (startErr) {
+        return console.log(startErr); // eslint-disable-line
       }
+
+      console.log(`plugins:\n ${Object.keys(server.plugins).join(', ')}`);
 
       if (Array.isArray(server.connections)) {
         server.connections.forEach((connection) => {
           server.log(['server', 'info'], `Server started at: ${connection.info.uri}`);
+          console.log(connection.info);
         });
       } else {
-        server.log(['server', 'info'], `Server started at: ${server.info.uri}`);
+        server.log(['server', 'info'], `Server started at: ${server.info.uri}`, server.info);
       }
     });
   });
