@@ -1,16 +1,14 @@
 import Joi from 'joi';
+import { account as constants } from '../constants';
 
 export default {
   _id: Joi.object(),
 
-  isConfirmed: Joi.boolean().default(false),
-  isActive: Joi.boolean().default(true),
-
   name: Joi.string(),
+  labels: Joi.array().items(Joi.string().valid(constants.labels))
+    .default(constants.defaultLabels),
 
-  isDeleted: Joi.boolean().default(false),
   deletedAt: Joi.date(),
-
   createdAt: Joi.date(),
   updatedAt: Joi.date(),
 };

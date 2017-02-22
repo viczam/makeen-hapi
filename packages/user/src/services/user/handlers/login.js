@@ -20,21 +20,24 @@ const handler = async ({ username, UserEntity, AccountEntity, next, params }) =>
     },
   });
 
-  if (!user) {
+  if (
+    !user ||
+    user.labels.includes('isDeleted')
+  ) {
     throw Boom.badRequest('User not found!');
   }
 
-  if (!user.isActive) {
+  if (!user.labels.includes('isActive')) {
     throw Boom.badRequest('User is not active!');
   }
 
   const account = await AccountEntity.findById(user.accountId);
 
-  if (!account.isConfirmed) {
+  if (!account.labels.includes('isConfirmed')) {
     throw Boom.badRequest('Account is not confirmed!');
   }
 
-  if (!account.isActive) {
+  if (!account.labels.includes('isActive')) {
     throw Boom.badRequest('Account is not active!');
   }
 
