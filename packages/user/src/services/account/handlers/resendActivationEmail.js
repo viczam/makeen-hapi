@@ -26,7 +26,7 @@ export default applyDecorators([
 
   const account = await AccountEntity.findById(user.accountId);
 
-  if (account.isConfirmed) {
+  if (account.labels.includes('isConfirmed')) {
     throw Boom.badRequest('Account is already confirmed!');
   }
 

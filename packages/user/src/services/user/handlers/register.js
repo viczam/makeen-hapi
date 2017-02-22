@@ -35,10 +35,10 @@ const handler = async ({ username, email, params, Account, UserEntity }) => {
   return {
     user: pick(user, [
       'accountId', '_id', 'title', 'firstName', 'lastName', 'email', 'username', 'roles',
-      'isActive', 'createdAt', 'updatedAt',
+      'labels', 'createdAt', 'updatedAt',
     ]),
     account: pick(account, [
-      'isConfirmed', 'isActive', '_id', 'updatedAt', 'createdAt',
+      'labels', '_id', 'updatedAt', 'createdAt',
     ]),
   };
 };

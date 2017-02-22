@@ -15,14 +15,13 @@ const handler = async ({ _id, AccountEntity }) => {
     throw Boom.badRequest('Account not found!');
   }
 
-  if (account.isConfirmed) {
+  if (account.labels.includes('isConfirmed')) {
     throw Boom.badRequest('Account is already confirmed!');
   }
 
-  return AccountEntity.replaceOne({
-    ...account,
-    isConfirmed: true,
-  });
+  account.labels.push('isConfirmed');
+
+  return AccountEntity.replaceOne(account);
 };
 
 export default applyDecorators([
