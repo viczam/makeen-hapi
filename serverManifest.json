@@ -17,7 +17,7 @@
       "engine": "../node_modules/catbox-mongodb",
       "uri": {
         "$filter": "isDockerized",
-        "$default": "mongodb://192.168.99.100:27017",
+        "$default": "mongodb://127.0.0.1:27017",
         "true": "mongodb://mongocontainer:27017"
       }
     },
@@ -93,7 +93,7 @@
             "host": {
               "$filter": "isDockerized",
               "true": "mongocontainer",
-              "$default": "192.168.99.100"
+              "$default": "127.0.0.1"
             }
           }
         }
