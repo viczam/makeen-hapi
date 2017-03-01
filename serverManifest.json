@@ -13,7 +13,14 @@
         "isDevelopment": false
       }
     },
-    "cache": "../node_modules/catbox-mongodb",
+    "cache": {
+      "engine": "../node_modules/catbox-mongodb",
+      "uri": {
+        "$filter": "isDockerized",
+        "$default": "mongodb://192.168.99.100:27017",
+        "true": "mongodb://mongocontainer:27017"
+      }
+    },
     "useDomains": false
   },
   "connections": {
@@ -81,7 +88,13 @@
         "register": "./storage",
         "options": {
           "mongoDb" : {
-            "db": "makeen"
+            "db": "makeen",
+            "port": 27017,
+            "host": {
+              "$filter": "isDockerized",
+              "true": "mongocontainer",
+              "$default": "192.168.99.100"
+            }
           }
         }
       }
