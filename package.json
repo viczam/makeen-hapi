@@ -36,6 +36,7 @@
     "catbox-mongodb": "~3.0.0",
     "confidence": "~3.0.2",
     "dotenv": "~2.0.0",
+    "environment-override": "1.0.2",
     "glue": "~4.0.0",
     "good": "~7.0.2",
     "good-console": "~6.1.3",

@@ -15,11 +15,7 @@
     },
     "cache": {
       "engine": "../node_modules/catbox-mongodb",
-      "uri": {
-        "$filter": "isDockerized",
-        "$default": "mongodb://127.0.0.1:27017",
-        "true": "mongodb://mongocontainer:27017"
-      }
+      "uri": "mongodb://127.0.0.1:27017"
     },
     "useDomains": false
   },
@@ -90,11 +86,7 @@
           "mongoDb" : {
             "db": "makeen",
             "port": 27017,
-            "host": {
-              "$filter": "isDockerized",
-              "true": "mongocontainer",
-              "$default": "127.0.0.1"
-            }
+            "host": "127.0.0.1"
           }
         }
       }

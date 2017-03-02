@@ -1,6 +1,7 @@
 import Glue from 'glue';
 import path from 'path';
 import DotEnv from 'dotenv';
+import override from 'environment-override';
 
 DotEnv.config();
 
@@ -13,6 +14,10 @@ export default (store) => {
   const options = {
     relativeTo: path.join(__dirname, '..', 'packages'),
   };
+
+  const prefix = 'MAKEEN_ENV_';
+
+  override(manifest, prefix);
 
   Glue.compose(manifest, options, (err, server) => {
     if (err) {
