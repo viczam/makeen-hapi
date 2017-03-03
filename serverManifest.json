@@ -13,7 +13,10 @@
         "isDevelopment": false
       }
     },
-    "cache": "../node_modules/catbox-mongodb",
+    "cache": {
+      "engine": "../node_modules/catbox-mongodb",
+      "uri": "mongodb://127.0.0.1:27017"
+    },
     "useDomains": false
   },
   "connections": {
@@ -81,7 +84,9 @@
         "register": "./storage",
         "options": {
           "mongoDb" : {
-            "db": "makeen"
+            "db": "makeen",
+            "port": 27017,
+            "host": "127.0.0.1"
           }
         }
       }
