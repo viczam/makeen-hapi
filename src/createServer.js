@@ -1,6 +1,7 @@
 import Glue from 'glue';
 import path from 'path';
 import DotEnv from 'dotenv';
+import override from 'environment-override';
 
 DotEnv.config();
 
@@ -12,7 +13,10 @@ export default (store) => {
   const options = {
     relativeTo: path.join(__dirname, '..', 'packages'),
   };
-  console.log(JSON.stringify(manifest, null, 2));
+
+  const prefix = 'MAKEEN_ENV_';
+
+  override(manifest, prefix);
 
   Glue.compose(manifest, options, (err, server) => {
     if (err) {
@@ -21,18 +25,16 @@ export default (store) => {
 
     return server.start((startErr) => {
       if (startErr) {
-        return console.log(startErr); // eslint-disable-line
+        console.log(startErr); // eslint-disable-line
+        return;
       }
-
-      console.log(`plugins:\n ${Object.keys(server.plugins).join(', ')}`);
 
       if (Array.isArray(server.connections)) {
         server.connections.forEach((connection) => {
           server.log(['server', 'info'], `Server started at: ${connection.info.uri}`);
-          console.log(connection.info);
         });
       } else {
-        server.log(['server', 'info'], `Server started at: ${server.info.uri}`, server.info);
+        server.log(['server', 'info'], `Server started at: ${server.info.uri}`);
       }
     });
   });
