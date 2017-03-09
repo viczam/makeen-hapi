@@ -51,29 +51,31 @@ const crudRoutes = generateCRUDRoutes({
   schema: omit(itemSchema, ['_id', 'accountId', 'listId', 'createdBy', 'createdAt', 'updatedAt']),
 });
 
-Object.keys(crudRoutes).forEach((route) => {
-  crudRoutes[route].config = {
-    ...baseConfig,
-    ...crudRoutes[route].config,
-    validate: {
-      ...crudRoutes[route].config.validate,
-      params: {
-        ...(crudRoutes[route].config.validate.params || {}),
-        ...baseConfig.validate.params,
+Object
+  .keys(crudRoutes)
+  .forEach((route) => {
+    crudRoutes[route].config = {
+      ...baseConfig,
+      ...crudRoutes[route].config,
+      validate: {
+        ...crudRoutes[route].config.validate,
+        params: {
+          ...(crudRoutes[route].config.validate.params || {}),
+          ...baseConfig.validate.params,
+        },
       },
-    },
-    pre: [
-      ...baseConfig.pre,
-      ...crudRoutes[route].config.pre,
-      {
-        method: applyContextToCRUDRoute(route, (request) => ({
-          accountId: objectId(request.auth.credentials.accountId),
-          listId: request.pre.list._id,
-        })),
-      },
-    ],
-  };
-});
+      pre: [
+        ...baseConfig.pre,
+        ...crudRoutes[route].config.pre,
+        {
+          method: applyContextToCRUDRoute(route, (request) => ({
+            accountId: objectId(request.auth.credentials.accountId),
+            listId: request.pre.list._id,
+          })),
+        },
+      ],
+    };
+  });
 
 crudRoutes.createOne.config.pre.push({
   async method(request, reply) {

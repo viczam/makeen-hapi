@@ -1,0 +1,29 @@
+{
+  "name": "slack-todo",
+  "version": "1.0.0",
+  "description": "Slack commandline application with todo functionality",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Dan Ochiana <dan@makeen.io>",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "4.2.0",
+    "chrono-node": "^1.2.5",
+    "joi": "10.0.2",
+    "lodash": "4.17.2",
+    "makeen-core": "*",
+    "makeen-crud": "*",
+    "makeen-storage": "*",
+    "moment": "^2.17.1",
+    "mongodb": "2.2.12",
+    "octobus-mongodb": "0.8.5",
+    "octobus.js": "0.18.2",
+    "request": "2.79.0",
+    "shortid32": "0.1.1"
+  },
+  "devDependencies": {
+    "jest": "^18.1.0"
+  }
+}

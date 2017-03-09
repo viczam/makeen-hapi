@@ -9,11 +9,11 @@
   "author": "Victor Zamfir <zamfir.victor@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "makeen-core": "*",
-    "makeen-storage": "*",
     "boom": "4.2.0",
     "joi": "10.0.1",
     "lodash": "4.17.2",
+    "makeen-core": "*",
+    "makeen-storage": "*",
     "mongodb": "2.2.11"
   }
 }

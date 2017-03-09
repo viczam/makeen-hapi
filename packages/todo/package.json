@@ -9,12 +9,12 @@
   "author": "Victor Zamfir <zamfir.victor@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "makeen-core": "*",
-    "makeen-crud": "*",
-    "makeen-storage": "*",
     "boom": "4.2.0",
     "joi": "10.0.2",
     "lodash": "4.17.2",
+    "makeen-core": "*",
+    "makeen-crud": "*",
+    "makeen-storage": "*",
     "mongodb": "2.2.12",
     "octobus-mongodb": "0.8.5",
     "octobus.js": "0.18.2"
