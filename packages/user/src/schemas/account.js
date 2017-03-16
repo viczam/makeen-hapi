@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { account as constants } from '../constants';
+import * as constants from '../constants/account';
 
 export default {
   _id: Joi.object(),

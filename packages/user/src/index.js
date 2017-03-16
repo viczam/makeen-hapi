@@ -1,84 +1,101 @@
 import Joi from 'joi';
-import * as hbUser from 'hb-user';
+import Bell from 'bell';
 import Inert from 'inert';
+import HapiAuthJwt2 from 'hapi-auth-jwt2';
 import pkg from '../package.json';
 import pluginOptionsSchema from './schemas/pluginOptions';
-import userSchema from './schemas/user';
-import setupServices from './services/index';
-import routes from './routes';
+import UserService from './services/User';
+import AccountService from './services/Account';
+import UserLoginService from './services/UserLogin';
+import AccountRouter from './routers/Account';
+import UsersRouter from './routers/Users';
 
-export function register(server, options, next) {
-  const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-  const { dispatch, lookup } = dispatcher;
-  const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-  const { mongoDb, refManager, entityManager } = server.plugins['makeen-storage'];
+export async function register(server, options, next) {
+  try {
+    const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
+    const { mongoDb, refManager } = server.plugins['makeen-db'];
+    const { messageBus } = server.plugins['hapi-octobus'];
+    const serviceBus = server.methods.createServiceBus('user');
+    serviceBus.connect(messageBus);
 
-  if (pluginOptions.socialPlatforms.facebook) {
-    server.auth.strategy('facebook', 'bell', {
-      provider: 'facebook',
-      isSecure: false,
-      ...pluginOptions.socialPlatforms.facebook,
-    });
-  }
-
-  if (pluginOptions.socialPlatforms.google) {
-    server.auth.strategy('google', 'bell', {
-      provider: 'google',
-      isSecure: false,
-      ...pluginOptions.socialPlatforms.google,
-    });
-  }
-
-  server.register([{
-    register: hbUser,
-    options: {
-      jwt: pluginOptions.jwt,
-      serviceOptions: {
-        ...pluginOptions.user,
-        references: [],
-        schema: userSchema,
-        db: mongoDb,
+    const User = serviceBus.register(
+      new UserService({
+        mongoDb,
         refManager,
-      },
-      registerRoutes: false,
-    },
-  }, {
-    register: Inert,
-  }]).then(() => {
-    server.auth.default('jwt');
+        jwtConfig: pluginOptions.jwt,
+      }),
+    );
 
-    setupServices({
-      entityManager,
-      dispatcher,
-      pluginOptions,
-      app: server.settings.app,
-    });
+    const Account = serviceBus.register(
+      new AccountService({
+        mongoDb,
+        refManager,
+      }),
+    );
 
-    const UserEntity = entityManager.get('User');
-    const AccountEntity = entityManager.get('Account');
-    const User = lookup('User');
-    const UserLogin = entityManager.get('UserLogin');
+    const UserLogin = serviceBus.register(
+      new UserLoginService({
+        mongoDb,
+        refManager,
+      }),
+    );
 
-    server.expose('UserEntity', UserEntity);
-    server.expose('AccountEntity', AccountEntity);
-    server.expose('User', User);
+    server.register([
+      Bell,
+      Inert,
+      HapiAuthJwt2,
+    ]).then(() => {
+      server.auth.strategy('jwt', 'jwt', {
+        key: pluginOptions.jwt.key,
+        validateFunc: User.validateJWT,
+        verifyOptions: {
+          algorithms: ['HS256'],
+        },
+      });
 
-    server.bind({
-      dispatch,
-      lookup,
-      UserEntity,
-      AccountEntity,
-      User,
-      UserLogin,
-    });
+      server.auth.default('jwt');
 
-    server.route(routes);
+      server.bind({
+        User,
+        UserLogin,
+        Account,
+      });
 
-    return next();
-  }, next);
+      server.expose('UserService', User);
+      server.expose('UserLoginService', UserLogin);
+      server.expose('AccountService', Account);
+
+      server.route([
+        ...(new AccountRouter()).toArray(),
+        ...(new UsersRouter()).toArray(),
+      ]);
+
+      return next();
+    }, next);
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+
+  // if (pluginOptions.socialPlatforms.facebook) {
+  //   server.auth.strategy('facebook', 'bell', {
+  //     provider: 'facebook',
+  //     isSecure: false,
+  //     ...pluginOptions.socialPlatforms.facebook,
+  //   });
+  // }
+  //
+  // if (pluginOptions.socialPlatforms.google) {
+  //   server.auth.strategy('google', 'bell', {
+  //     provider: 'google',
+  //     isSecure: false,
+  //     ...pluginOptions.socialPlatforms.google,
+  //   });
+  // }
 }
 
 register.attributes = {
   pkg,
-  dependencies: ['makeen-storage', 'bell', 'makeen-crud', 'makeen-core'],
+  dependencies: ['makeen-db', 'makeen-core'],
 };

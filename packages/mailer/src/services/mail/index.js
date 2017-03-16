@@ -5,8 +5,6 @@ export default ({
 }) => {
   const { subscribe, onAfter } = dispatcher;
 
-  subscribe('Mail.send', handlers.send({ renderTemplate, transporter, app, emailsDir }));
-
   onAfter('User.register', handlers.onAfterRegistration);
 
   subscribe('Mail.sendActivationEmail', handlers.sendActivationEmail);

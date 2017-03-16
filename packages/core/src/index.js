@@ -1,9 +1,11 @@
+import HapiBoomDecorators from 'hapi-boom-decorators';
+import Scooter from 'scooter';
 import * as HapiOctobus from 'hapi-octobus';
-import Octobus, { OctobusWithLogger } from 'octobus.js';
+import MessageBus from './octobus/MessageBus';
+import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
-import setupServices from './services';
 
-export async function register(server, options, next) {
+const register = async (server, options, next) => {
   process.on('unhandledRejection', (reason, p) => {
     console.log(reason); // eslint-disable-line no-console
     server.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`);
@@ -11,31 +13,30 @@ export async function register(server, options, next) {
   });
 
   try {
-    const eventDispatcher = process.env.NODE_ENV === 'production' ?
-      new Octobus() :
-      new OctobusWithLogger({
-        log(msg) { console.log(msg); }, // eslint-disable-line no-console
-        logParams: false,
-        logSubscriptions: false,
-      });
+    const messageBus = new MessageBus();
 
-    await server.register([{
-      register: HapiOctobus,
-      options: {
-        eventDispatcher,
+    await server.register([
+      HapiBoomDecorators,
+      Scooter,
+      {
+        register: HapiOctobus,
+        options: {
+          messageBus,
+        },
       },
-    }]);
+    ]);
 
-    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-    setupServices(dispatcher);
+    server.method('createServiceBus', (...args) => new ServiceBus(...args));
 
     next();
   } catch (err) {
     next(err);
   }
-}
+};
 
 register.attributes = {
   pkg,
   dependencies: ['hapi-octobus'],
 };
+
+export { register };

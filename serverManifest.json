@@ -66,19 +66,7 @@
       }
     }, {
       "plugin": {
-        "register": "hapi-boom-decorators"
-      }
-    }, {
-      "plugin": {
-        "register": "scooter"
-      }
-    }, {
-      "plugin": {
-        "register": "./core"
-      }
-    }, {
-      "plugin": {
-        "register": "./storage",
+        "register": "./db",
         "options": {
           "mongoDb" : {
             "db": "makeen"
@@ -87,7 +75,7 @@
       }
     }, {
       "plugin": {
-        "register": "./crud"
+        "register": "./core"
       }
     }, {
       "plugin": {
@@ -110,10 +98,6 @@
       }
     }, {
       "plugin": {
-        "register": "bell"
-      }
-    }, {
-      "plugin": {
         "register": "./user",
         "options": {
           "jwt": {
@@ -121,13 +105,6 @@
           },
           "socialPlatforms": {
           }
-        }
-      }
-    }, {
-      "plugin": {
-        "register": "./todo",
-        "routes": {
-          "prefix": "/todos"
         }
       }
     }],
