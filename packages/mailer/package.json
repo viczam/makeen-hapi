@@ -9,12 +9,14 @@
   "author": "Victor Zamfir <zamfir.victor@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "fs-promise": "2.0.0",
     "hapi-react-views": "9.2.1",
     "inert": "4.1.0",
     "joi": "10.0.1",
     "lodash": "4.17.2",
+    "makeen-core": "*",
     "nodemailer": "2.6.4",
-    "octobus.js": "0.18.2",
+    "octobus.js": "0.26.0",
     "react": "15.4.0",
     "react-dom": "15.4.0",
     "vision": "4.1.0"

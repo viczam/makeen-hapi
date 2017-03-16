@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
-  "license": "ISC",
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
   "dependencies": {
     "blipp": "2.3.0",
     "hapi-swagger": "7.4.0",

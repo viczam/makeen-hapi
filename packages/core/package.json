@@ -1,23 +1,35 @@
 {
   "name": "makeen-core",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Makeen core plugin",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makeen-project/makeen-core.git"
   },
-  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
-  "license": "ISC",
+  "keywords": [
+    "makeen",
+    "octobus"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/makeen-project/makeen-core/issues"
+  },
+  "homepage": "https://github.com/makeen-project/makeen-core#readme",
   "dependencies": {
     "boom": "4.2.0",
-    "hapi-octobus": "0.4.4",
-    "joi": "10.1.0",
-    "lodash": "4.17.2",
-    "mongodb": "2.2.11",
-    "mongodb-extended-json": "1.8.0",
-    "octobus-mongodb": "0.8.5",
-    "octobus.js": "0.18.2",
-    "pretty-format": "4.3.1"
-  },
-  "devDependencies": {}
+    "hapi-boom-decorators": "2.2.2",
+    "hapi-octobus": "0.8.0",
+    "joi": "10.2.2",
+    "lodash": "^4.11.1",
+    "mongodb": "2.2.24",
+    "mongodb-extended-json": "1.9.0",
+    "octobus.js": "0.26.0",
+    "scooter": "4.0.0"
+  }
 }

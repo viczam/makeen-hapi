@@ -1,0 +1,49 @@
+import nodemailer from 'nodemailer';
+import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
+import { annotations } from 'octobus.js';
+import fs from 'fs-promise';
+
+const { service } = annotations;
+
+class Mail extends ServiceContainer {
+  constructor(options) {
+    super();
+    this.options = options;
+    this.transporter = nodemailer.createTransport(this.options.transport);
+  }
+
+  @service()
+  async send(options) {
+    const { template, context, ...restOptions } = options;
+
+    const html = await this.options.renderTemplate(template, {
+      ...context,
+      transportConfig: restOptions,
+    });
+
+    Object.assign(options, { html });
+
+    return new Promise((resolve, reject) => {
+      this.transporter.sendMail(options, (err, info) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(info);
+      });
+    }).then(this.saveToDisk);
+  }
+
+  async saveToDisk(info) {
+    if (this.options.saveToDisk) {
+      const { subject, html } = info.message;
+      const emailPath = `${this.options.emailsDir}/${new Date().getTime()} - ${subject}.html`;
+
+      await fs.writeFile(emailPath, html);
+    }
+
+    return info;
+  }
+}
+
+export default Mail;

@@ -1,6 +1,0 @@
-{
-  "mongoAppDb": {
-    "host": "localhost",
-    "db": "nuntapenet"
-  }
-}

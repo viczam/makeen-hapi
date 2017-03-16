@@ -1,0 +1,21 @@
+{
+  "name": "makeen-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:create": "babel-node ./node_modules/.bin/mongo-migrate -runmm create",
+    "migrate": "babel-node ./node_modules/.bin/mongo-migrate -runmm"
+  },
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "2.1.4",
+    "babel-cli": "6.18.0",
+    "joi": "10.0.2",
+    "mongo-dnorm": "0.2.4",
+    "mongodb": "2.2.12",
+    "mongodb-migrate": "2.0.1"
+  }
+}
