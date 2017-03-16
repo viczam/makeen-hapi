@@ -11,6 +11,18 @@ import { service, withSchema } from 'makeen-core/src/octobus/annotations';
 import userSchema from '../schemas/user';
 
 class User extends CRUDServiceContainer {
+  static hashPassword({ password, salt }) {
+    return new Promise((resolve, reject) => {
+      bcrypt.hash(password, salt, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(result);
+      });
+    });
+  }
+
   constructor(options) {
     super(
       new Store({
@@ -100,18 +112,6 @@ class User extends CRUDServiceContainer {
       'accountId', 'username', 'firstName', 'lastName', 'email', '_id', 'updatedAt',
       'createdAt', 'token', 'labels', 'lastLogin', 'roles',
     ]);
-  }
-
-  static hashPassword({ password, salt }) { // eslint-disable-line class-methods-use-this
-    return new Promise((resolve, reject) => {
-      bcrypt.hash(password, salt, (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(result);
-      });
-    });
   }
 
   @service()
