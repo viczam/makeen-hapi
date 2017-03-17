@@ -81,16 +81,7 @@
       "plugin": {
         "register": "./mailer",
         "options": {
-          "transport": {
-            "host": "mailtrap.io",
-            "port": 2525,
-            "auth": {
-              "user": "bb83f0fe6f2c49",
-              "pass": "12d89be1c17e4c"
-            }
-          },
-          "saveToDisk": true,
-          "emailsDir": "./emails"
+          "saveToDisk": true
         },
         "routes": {
           "prefix": "/emails"

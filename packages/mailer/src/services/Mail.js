@@ -31,12 +31,12 @@ class Mail extends ServiceContainer {
 
         return resolve(info);
       });
-    }).then(this.saveToDisk);
+    }).then(this.saveToDisk.bind(this));
   }
 
   async saveToDisk(info) {
-    if (this.options.saveToDisk) {
-      const { subject, html } = info.message;
+    if (this.options.saveToDisk && this.options.transport.jsonTransport) {
+      const { subject, html } = JSON.parse(info.message);
       const emailPath = `${this.options.emailsDir}/${new Date().getTime()} - ${subject}.html`;
 
       await fs.writeFile(emailPath, html);
