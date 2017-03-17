@@ -1,7 +1,7 @@
 {
-  "name": "makeen-user",
+  "name": "makeen-todo",
   "version": "1.0.0",
-  "description": "User system",
+  "description": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,22 +9,12 @@
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "bell": "^8.5.0",
-    "boom": "4.2.0",
-    "date-fns": "1.15.1",
-    "fs-promise": "1.0.0",
-    "hapi-auth-jwt2": "^7.2.4",
-    "hb-user": "0.9.0",
-    "hoek": "4.1.0",
-    "inert": "4.1.0",
-    "joi": "10.0.2",
-    "jsonwebtoken": "^7.3.0",
-    "lodash": "4.17.2",
     "makeen-core": "*",
-    "moment": "2.16.0",
-    "mongodb": "2.2.12",
     "octobus-crud": "^0.4.2",
+    "boom": "4.2.0",
+    "joi": "10.0.2",
+    "lodash": "4.17.2",
+    "mongodb": "2.2.12",
     "octobus-mongodb-store": "^0.4.0",
     "octobus.js": "0.26.1"
   }

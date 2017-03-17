@@ -4,20 +4,38 @@ import pick from 'lodash/pick';
 import omit from 'lodash/omit';
 import trimEnd from 'lodash/trimEnd';
 import trimStart from 'lodash/trimStart';
+import get from 'lodash/get';
 
 class Router {
-  static defaultConfig = {
-    baseRouteConfig: {},
-    basePath: '',
-  };
+  static mergeRouteConfig(...configs) {
+    return configs.reduce((acc, config) => ({
+      ...acc,
+      ...config,
+      validate: ['query', 'params', 'payload'].reduce((validateAcc, type) => {
+        const validator = {
+          ...get(acc, `validate.${type}`, {}),
+          ...get(config, `validate.${type}`, {}),
+        };
+
+        if (Object.keys(validator).length) {
+          Object.assign(validateAcc, {
+            [type]: validator,
+          });
+        }
+
+        return validateAcc;
+      }, {}),
+      pre: [
+        ...get(acc, 'pre', []),
+        ...get(config, 'pre', []),
+      ],
+    }), {});
+  }
 
   constructor(config = {}) {
-    this.config = Joi.attempt({
-      ...Router.defaultConfig,
-      ...config,
-    }, Joi.object().keys({
+    this.config = Joi.attempt(config, Joi.object().keys({
       namespace: Joi.string().required(),
-      basePath: Joi.string().required(),
+      basePath: Joi.string().default(''),
       baseRouteConfig: Joi.object().default({}),
     }).unknown());
 
@@ -33,7 +51,7 @@ class Router {
       throw new Error(`Route with id ${id} already added!`);
     }
 
-    const route = Joi.attempt(routeConfig, {
+    const route = Joi.attempt(routeConfig, Joi.object().keys({
       method: Joi.string().default('GET'),
       path: Joi.string().required(),
       handler: Joi.alternatives().try([
@@ -41,28 +59,27 @@ class Router {
         Joi.object().required(),
       ]),
       config: Joi.object().default({}),
-    });
+    }).unknown());
 
     this.routes[id] = {
       ...route,
       path: this.buildPath(route.path),
       handler: Router.wrapHandler(route.handler),
-      config: {
-        ...this.config.baseRouteConfig,
-        id: `${this.config.namespace}:${id}`,
-        tags: ['api'],
-        ...route.config,
-      },
+      config: this.constructor.mergeRouteConfig(
+        this.config.baseRouteConfig,
+        {
+          id: `${this.config.namespace}:${id}`,
+          tags: ['api'],
+        },
+        route.config,
+      ),
     };
 
     return this;
   }
 
   buildPath(suffix) {
-    return trimEnd(
-      `${trimEnd(this.config.basePath, '/')}/${trimStart(suffix, '/')}`,
-      '/',
-    );
+    return trimEnd(`${trimEnd(this.config.basePath, '/')}/${trimStart(suffix, '/')}`, '/');
   }
 
   addRoutes(routes) {

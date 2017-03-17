@@ -1,1 +1,0 @@
-add hapi plugins here

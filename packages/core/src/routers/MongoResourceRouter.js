@@ -5,6 +5,34 @@ import Router from './Router';
 import { toBSON, idValidator, idToQuery } from '../libs/mongo-helpers';
 
 class MongoResourceRouter extends Router {
+  static applyContextToRoute = (route, generateContext) => (request, reply) => {
+    const context = generateContext(request);
+
+    switch (route) {
+      case 'count':
+      case 'deleteOne':
+      case 'deleteOneById':
+      case 'findById':
+      case 'findOne':
+        Object.assign(request.pre.query, context);
+        break;
+      case 'createOne':
+        Object.assign(request.pre.payload, context);
+        break;
+      case 'findMany':
+        Object.assign(request.pre.queryParams.query, context);
+        break;
+      case 'replaceOne':
+      case 'updateOne':
+        Object.assign(request.pre.query, context);
+        Object.assign(request.pre.payload, context);
+        break;
+      default:
+    }
+
+    reply();
+  };
+
   constructor(config) {
     super(
       Joi.attempt(config, Joi.object().keys({
@@ -210,10 +238,6 @@ class MongoResourceRouter extends Router {
     });
   }
 
-  buildId(suffix) {
-    return `${this.config.repositoryName}:${suffix}`;
-  }
-
   static countHandler(request) {
     const { query, Repository } = request.pre;
     return Repository.count({ query });
@@ -296,6 +320,18 @@ class MongoResourceRouter extends Router {
       update: {
         $set: payload,
       },
+    });
+  }
+
+  buildId(suffix) {
+    return `${this.config.repositoryName}:${suffix}`;
+  }
+
+  applyContext({ routes, generateContext }) {
+    (routes || Object.keys(this.routes)).forEach((routeId) => {
+      this.routes[routeId].config.pre.push({
+        method: this.constructor.applyContextToRoute(routeId, generateContext),
+      });
     });
   }
 }
