@@ -209,7 +209,6 @@ class MongoResourceRouter extends Router {
             params: {
               id: idValidator,
             },
-            payload: Joi.object().required(),
           },
           description: 'Update an entity',
           pre: [{

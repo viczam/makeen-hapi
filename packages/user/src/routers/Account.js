@@ -42,9 +42,9 @@ class AccountRouter extends Router {
         config: {
           auth: false,
           validate: {
-            payload: Joi.object().keys({
+            payload: {
               email: Joi.string().required().email(),
-            }),
+            },
           },
           description: 'Resend activation email',
         },

@@ -12,9 +12,6 @@ class UsersRouter extends MongoResourceRouter {
       basePath: '/users',
       getRepository: (request) => request.server.plugins['makeen-user'].UserService,
       entitySchema: userSchema,
-      baseRouteConfig: {
-
-      },
       ...config,
     });
 
