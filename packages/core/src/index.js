@@ -15,6 +15,10 @@ const register = async (server, options, next) => {
   try {
     const messageBus = new MessageBus();
 
+    messageBus.onMessage((msg) => {
+      console.log(msg);
+    });
+
     await server.register([
       HapiBoomDecorators,
       Scooter,

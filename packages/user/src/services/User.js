@@ -45,7 +45,7 @@ class User extends CRUDServiceContainer {
     options: Joi.object().default({}),
   })
   createToken({ options, user }) { // eslint-disable-line class-methods-use-this
-    return jwt.sign(user, this.jwtConfig.key, { ...this.jwtConfig, ...options });
+    return jwt.sign(user, this.jwtConfig.key, { ...this.jwtConfig.options, ...options });
   }
 
   @service()
@@ -98,7 +98,12 @@ class User extends CRUDServiceContainer {
     });
 
     const serializedUser = await this.serialize(updatedUser);
-    const token = await this.createToken(serializedUser);
+    const token = await this.createToken({
+      user: {
+        id: serializedUser.id,
+        username: serializedUser.username,
+      },
+    });
 
     return {
       ...updatedUser,
@@ -209,7 +214,7 @@ class User extends CRUDServiceContainer {
 
   @service()
   async register({ username, email }, { message }) {
-    const Account = this.extract('user.Acccount');
+    const Account = this.extract('Account');
     const existingUser = await this.findOne({
       query: {
         $or: [{
@@ -359,7 +364,7 @@ class User extends CRUDServiceContainer {
     if (!decodedToken || !decodedToken.id) {
       cb(null, false);
     } else {
-      this.serviceBus.send('user.User.findById', objectId(decodedToken.id))
+      this.serviceBus.send('User.findById', objectId(decodedToken.id))
         .then((result) => cb(null, !!result), cb);
     }
   }
