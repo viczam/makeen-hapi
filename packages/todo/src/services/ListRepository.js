@@ -3,7 +3,7 @@ import { Store } from 'octobus-mongodb-store';
 import { service } from 'makeen-core/src/octobus/decorators';
 import listSchema from '../schemas/list';
 
-class List extends CRUDServiceContainer {
+class ListRepository extends CRUDServiceContainer {
   constructor(options) {
     super(
       new Store({
@@ -17,13 +17,13 @@ class List extends CRUDServiceContainer {
 
   @service()
   async deleteOne(params, { next }) {
-    const Item = this.extract('Item');
+    const ItemRepository = this.extract('ItemRepository');
     const { query } = params;
     const list = await this.findOne({ query });
     const result = await next(params);
 
     await Promise.all([
-      Item.deleteMany({
+      ItemRepository.deleteMany({
         query: {
           listId: list._id,
         },
@@ -35,7 +35,7 @@ class List extends CRUDServiceContainer {
 
   @service()
   async findManyWithStats(params) {
-    const Item = this.extract('Item');
+    const ItemRepository = this.extract('ItemRepository');
     const lists = await this.findMany(params).then((c) => c.toArray());
     const listIds = lists.map(({ _id }) => _id);
 
@@ -43,7 +43,7 @@ class List extends CRUDServiceContainer {
       items,
       checkedItemsPerList,
     ] = await Promise.all([
-      Item.findMany({
+      ItemRepository.findMany({
         query: {
           listId: {
             $in: listIds,
@@ -51,7 +51,7 @@ class List extends CRUDServiceContainer {
           isChecked: false,
         },
       }).then((c) => c.toArray()),
-      Item.aggregate({
+      ItemRepository.aggregate({
         pipeline: [{
           $match: {
             listId: {
@@ -78,4 +78,4 @@ class List extends CRUDServiceContainer {
   }
 }
 
-export default List;
+export default ListRepository;

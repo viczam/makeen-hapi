@@ -2,7 +2,7 @@ import { CRUDServiceContainer } from 'octobus-crud';
 import { Store } from 'octobus-mongodb-store';
 import itemSchema from '../schemas/item';
 
-class Item extends CRUDServiceContainer {
+class ItemRepository extends CRUDServiceContainer {
   constructor(options) {
     super(
       new Store({
@@ -15,4 +15,4 @@ class Item extends CRUDServiceContainer {
   }
 }
 
-export default Item;
+export default ItemRepository;

@@ -1,6 +1,6 @@
 import pkg from '../package.json';
-import ItemService from './services/Item';
-import ListService from './services/List';
+import ItemRepositoryService from './services/ItemRepository';
+import ListRepositoryService from './services/ListRepository';
 import ItemsRouter from './routers/Items';
 import ListsRouter from './routers/Lists';
 
@@ -11,31 +11,29 @@ export async function register(server, options, next) {
     const serviceBus = server.methods.createServiceBus('todo');
     serviceBus.connect(messageBus);
 
-    const Item = serviceBus.register(
-      new ItemService({
+    const ItemRepository = serviceBus.register(
+      new ItemRepositoryService({
         mongoDb,
         refManager,
       }),
     );
 
-    const List = serviceBus.register(
-      new ListService({
+    const ListRepository = serviceBus.register(
+      new ListRepositoryService({
         mongoDb,
         refManager,
       }),
     );
 
     server.bind({
-      Item, List,
+      ItemRepository, ListRepository,
     });
 
-    server.expose('ItemService', Item);
-    server.expose('ListService', List);
+    server.expose('ItemRepository', ItemRepository);
+    server.expose('ListRepository', ListRepository);
 
-    server.route([
-      ...(new ItemsRouter()).toArray(),
-      ...(new ListsRouter()).toArray(),
-    ]);
+    (new ItemsRouter()).mount(server);
+    (new ListsRouter()).mount(server);
 
     next();
   } catch (err) {
