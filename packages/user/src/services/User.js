@@ -11,18 +11,6 @@ import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
 const { service, withSchema } = decorators;
 
 class User extends ServiceContainer {
-  static hashPassword({ password, salt }) {
-    return new Promise((resolve, reject) => {
-      bcrypt.hash(password, salt, (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(result);
-      });
-    });
-  }
-
   constructor(options) {
     super(options);
     this.jwtConfig = options.jwtConfig;
@@ -32,13 +20,16 @@ class User extends ServiceContainer {
     super.setServiceBus(serviceBus);
     this.UserRepository = serviceBus.extract('UserRepository');
     this.AccountRepository = serviceBus.extract('AccountRepository');
+    this.Mail = serviceBus.extract('mailer.Mail');
   }
 
   @service()
   @withSchema({
     user: Joi.object().keys({
-      id: Joi.required(),
+      id: Joi.string().required(),
+      accountId: Joi.object(),
       username: Joi.string().required(),
+      scope: Joi.array().default([]),
     }),
     options: Joi.object().default({}),
   })
@@ -83,7 +74,7 @@ class User extends ServiceContainer {
       throw Boom.badRequest('Account is not active!');
     }
 
-    const hashedPassword = await User.hashPassword({ password, salt: user.salt });
+    const hashedPassword = await this.hashPassword({ password, salt: user.salt });
 
     if (user.password !== hashedPassword) {
       throw Boom.badRequest('Incorrect password!');
@@ -94,12 +85,8 @@ class User extends ServiceContainer {
       lastLogin: new Date(),
     });
 
-    const serializedUser = await this.serialize(updatedUser);
     const token = await this.createToken({
-      user: {
-        id: serializedUser.id,
-        username: serializedUser.username,
-      },
+      user: await this.serialize(updatedUser),
     });
 
     return {
@@ -119,7 +106,7 @@ class User extends ServiceContainer {
   @service()
   serialize(data) { // eslint-disable-line class-methods-use-this
     return {
-      id: data._id,
+      id: data._id.toString(),
       username: data.username,
       accountId: data.accountId,
       scope: data.roles,
@@ -139,7 +126,7 @@ class User extends ServiceContainer {
       throw Boom.badRequest('User not found!');
     }
 
-    const oldHashedPassword = await User.hashPassword({
+    const oldHashedPassword = await this.hashPassword({
       password: oldPassword,
       salt: user.salt,
     });
@@ -148,7 +135,7 @@ class User extends ServiceContainer {
       throw Boom.badRequest('Invalid password!');
     }
 
-    const hashedPassword = await User.hashPassword({
+    const hashedPassword = await this.hashPassword({
       password,
       salt: user.salt,
     });
@@ -236,6 +223,16 @@ class User extends ServiceContainer {
     const user = await this.UserRepository.createOne({
       accountId: account._id,
       ...message.data,
+    });
+
+    this.Mail.send({
+      to: user.email,
+      subject: 'welcome',
+      template: 'UserRegistration',
+      context: {
+        user,
+        account,
+      },
     });
 
     return {
@@ -330,6 +327,19 @@ class User extends ServiceContainer {
       ...updatedUser,
       token: authToken,
     };
+  }
+
+  @service()
+  hashPassword({ password, salt }) { // eslint-disable-line
+    return new Promise((resolve, reject) => {
+      bcrypt.hash(password, salt, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(result);
+      });
+    });
   }
 
   validateJWT = (decodedToken, request, cb) => {
