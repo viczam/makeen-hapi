@@ -17,7 +17,9 @@ export async function register(server, options, next) {
     const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
     const { mongoDb, refManager } = server.plugins['makeen-db'];
     const { messageBus } = server.plugins['hapi-octobus'];
-    const serviceBus = server.methods.createServiceBus('user');
+    const serviceBus = server.methods.createServiceBus('user', [{
+      pattern: /^mailer/,
+    }]);
     serviceBus.connect(messageBus);
 
     const User = serviceBus.register(
