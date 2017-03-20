@@ -1,13 +1,13 @@
 import React, { PropTypes } from 'react';
 import Layout from './Layout';
 
-const Hello = ({ user, account, app, transportConfig }) => (
-  <Layout transportConfig={transportConfig}>
+const Hello = ({ user, account }) => (
+  <Layout>
     <h1>Hello!</h1>
     <p>Your account with username {user.username} was created.</p>
     <p>
       Click {' '}
-      <a href={`${app.api}/account/${account._id.toString()}/confirm`}>here</a>
+      <a href={`http://localhost:3003/account/${account._id.toString()}/confirm`}>here</a>
       {' '} to confirm your account.
     </p>
     <p>ktxbye!</p>
@@ -15,10 +15,8 @@ const Hello = ({ user, account, app, transportConfig }) => (
 );
 
 Hello.propTypes = {
-  user: PropTypes.object,
-  account: PropTypes.object,
-  transportConfig: PropTypes.object,
-  app: PropTypes.object,
+  user: PropTypes.object.isRequired,
+  account: PropTypes.object.isRequired,
 };
 
 export default Hello;

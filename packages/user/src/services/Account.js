@@ -8,7 +8,7 @@ const { service, withSchema } = decorators;
 class Account extends ServiceContainer {
   setServiceBus(...args) {
     super.setServiceBus(...args);
-    this.AccountRepository = this.extract('Account');
+    this.AccountRepository = this.extract('AccountRepository');
   }
 
   @service()
