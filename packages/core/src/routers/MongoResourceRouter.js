@@ -223,17 +223,19 @@ class MongoResourceRouter extends Router {
     });
   }
 
-  addRoute(id, routeConfig = {}) {
+  addRoute(id, route = {}) {
     return super.addRoute(id, {
-      id: this.buildId(id),
-      pre: [
-        {
-          method: this.config.getRepository,
-          assign: 'Repository',
-        },
-        ...(routeConfig.pre || []),
-      ],
-      ...routeConfig,
+      ...route,
+      config: {
+        ...route.config,
+        pre: [
+          {
+            method: this.config.getRepository,
+            assign: 'Repository',
+          },
+          ...(route.config.pre || []),
+        ],
+      },
     });
   }
 
@@ -320,10 +322,6 @@ class MongoResourceRouter extends Router {
         $set: payload,
       },
     });
-  }
-
-  buildId(suffix) {
-    return `${this.config.repositoryName}:${suffix}`;
   }
 
   applyContext({ routes, generateContext }) {
