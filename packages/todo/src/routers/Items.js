@@ -3,14 +3,15 @@ import MongoResourceRouter from 'makeen-core/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
 import { idValidator } from 'makeen-core/src/libs/mongo-helpers';
+import { route } from 'makeen-core/src/octobus/decorators';
 import itemSchema from '../schemas/item';
 
 class ItemsRouter extends MongoResourceRouter {
   constructor(config = {}) {
     super({
       namespace: 'TodoItems',
-      basePath: '/items',
-      getRepository: (request) => request.server.plugins['makeen-todo'].ItemService,
+      basePath: '/lists/{listId}/items',
+      getRepository: (request, reply) => reply(request.server.plugins['makeen-todo'].ItemRepository),
       entitySchema: omit(itemSchema, [
         '_id', 'accountId', 'listId', 'createdBy', 'createdAt', 'updatedAt',
       ]),
@@ -18,7 +19,7 @@ class ItemsRouter extends MongoResourceRouter {
         pre: [{
           method: MongoResourceRouter.wrapHandler(
             function method(request) {
-              return this.List.findOne({
+              return this.ListRepository.findOne({
                 query: {
                   _id: objectId(request.params.listId),
                   accountId: objectId(request.auth.credentials.accountId),
@@ -53,24 +54,21 @@ class ItemsRouter extends MongoResourceRouter {
         reply();
       },
     });
-
-    this.addRoute('toggle', {
-      path: '/{id}/toggle',
-      method: 'POST',
-      handler: this.constructor.toggleHandler,
-      config: {
-        validate: {
-          params: {
-            id: idValidator,
-          },
-        },
-        description: 'Toggle an item status (checked / unchecked)',
-      },
-    });
   }
 
-  static async toggleHandler(request) {
-    const item = this.Item.findOne({
+  @route.post({
+    path: '/{id}/toggle',
+    config: {
+      validate: {
+        params: {
+          id: idValidator,
+        },
+      },
+      description: 'Toggle an item status (checked / unchecked)',
+    },
+  })
+  async toggle(request) {
+    const item = this.ItemRepository.findOne({
       query: {
         accountId: objectId(request.auth.credentials.accountId),
         listId: request.pre.list._id,
@@ -84,7 +82,7 @@ class ItemsRouter extends MongoResourceRouter {
 
     const isChecked = !item.isChecked;
 
-    await this.Item.updateOne({
+    await this.ItemRepository.updateOne({
       query: {
         _id: item._id,
       },

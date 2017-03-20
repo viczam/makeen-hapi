@@ -1,15 +1,16 @@
 import MongoResourceRouter from 'makeen-core/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
-import itemSchema from '../schemas/item';
+import { route } from 'makeen-core/src/octobus/decorators';
+import listSchema from '../schemas/list';
 
 class ListsRouter extends MongoResourceRouter {
   constructor(config = {}) {
     super({
       namespace: 'TodoLists',
       basePath: '/lists',
-      getRepository: (request) => request.server.plugins['makeen-todo'].ListService,
-      entitySchema: omit(itemSchema, [
+      getRepository: (request, reply) => reply(request.server.plugins['makeen-todo'].ListRepository),
+      entitySchema: omit(listSchema, [
         '_id', 'createdBy', 'createdAt', 'updatedAt', 'accountId',
       ]),
       ...config,
@@ -30,21 +31,19 @@ class ListsRouter extends MongoResourceRouter {
         reply();
       },
     });
-
-    this.addRoute('findWithStats', {
-      path: 'find-with-stats',
-      method: 'GET',
-      handler: this.constructor.findWithStatsHandler,
-      config: {
-        description: 'Find lists with stats and items',
-      },
-    });
   }
 
-  static findWithStatsHandler(request) {
+  @route.get({
+    path: 'find-with-stats',
+    method: 'GET',
+    config: {
+      description: 'Find lists with stats and items',
+    },
+  })
+  findWithStats(request) {
     const accountId = objectId(request.auth.credentials.accountId);
 
-    return this.List.findManyWithStats({
+    return this.ListRepository.findManyWithStats({
       query: { accountId },
     });
   }
