@@ -11,7 +11,7 @@ class UsersRouter extends MongoResourceRouter {
     super({
       namespace: 'Users',
       basePath: '/users',
-      getRepository: (request) => request.server.plugins['makeen-user'].UserService,
+      getRepository: (request) => request.server.plugins['makeen-user'].UserRepository,
       entitySchema: userSchema,
       ...config,
     });
@@ -26,9 +26,8 @@ class UsersRouter extends MongoResourceRouter {
     });
   }
 
-  @route({
+  @route.post({
     path: '/login',
-    method: 'POST',
     config: {
       auth: false,
       validate: {
@@ -50,9 +49,8 @@ class UsersRouter extends MongoResourceRouter {
     return user;
   }
 
-  @route({
+  @route.post({
     path: '/register',
-    method: 'POST',
     config: {
       auth: false,
       validate: {
@@ -69,9 +67,8 @@ class UsersRouter extends MongoResourceRouter {
     return this.User.register(request.payload);
   }
 
-  @route({
+  @route.post({
     path: '/reset-password',
-    method: 'POST',
     config: {
       auth: false,
       validate: {
@@ -91,9 +88,8 @@ class UsersRouter extends MongoResourceRouter {
     };
   }
 
-  @route({
+  @route.post({
     path: '/recover-password/{token}',
-    method: 'POST',
     config: {
       auth: false,
       validate: {
@@ -118,9 +114,8 @@ class UsersRouter extends MongoResourceRouter {
     };
   }
 
-  @route({
+  @route.post({
     path: '/change-password',
-    method: 'POST',
     config: {
       validate: {
         payload: {
@@ -140,9 +135,8 @@ class UsersRouter extends MongoResourceRouter {
     });
   }
 
-  @route({
+  @route.get({
     path: '/me',
-    method: 'GET',
     config: {
       description: 'User profile',
     },
@@ -156,9 +150,8 @@ class UsersRouter extends MongoResourceRouter {
     };
   }
 
-  @route({
+  @route.post({
     path: '/me',
-    method: 'POST',
     config: {
       description: 'Update user profile',
       validate: {

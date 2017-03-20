@@ -14,9 +14,8 @@ class AccountRouter extends Router {
     });
   }
 
-  @route({
+  @route.get({
     path: '/{id}/confirm',
-    method: 'GET',
     config: {
       auth: false,
       validate: {
@@ -33,9 +32,8 @@ class AccountRouter extends Router {
     });
   }
 
-  @route({
+  @route.get({
     path: '/users',
-    method: 'GET',
     config: {
       description: 'Retrieve all account users',
     },
@@ -49,9 +47,8 @@ class AccountRouter extends Router {
     }).then((c) => c.toArray());
   }
 
-  @route({
+  @route.post({
     path: '/resend-activation-email',
-    method: 'POST',
     config: {
       auth: false,
       validate: {
