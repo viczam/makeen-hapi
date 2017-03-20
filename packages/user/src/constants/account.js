@@ -1,2 +1,2 @@
 export const labels = ['isActive', 'isDeleted', 'isConfirmed'];
-export const defaultLabels = [];
+export const defaultLabels = ['isActive'];
