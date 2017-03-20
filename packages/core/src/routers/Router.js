@@ -62,7 +62,7 @@ class Router {
     }).unknown());
   }
 
-  addRoute = (id, routeConfig) => {
+  addRoute(id, routeConfig) {
     const routes = this.getRoutes();
 
     if (!id) {
@@ -73,15 +73,10 @@ class Router {
       throw new Error(`Route with id ${id} already added!`);
     }
 
-    const route = Joi.attempt(routeConfig, Joi.object().keys({
-      method: Joi.string().default('GET'),
-      path: Joi.string().required(),
-      handler: Joi.alternatives().try([
-        Joi.func().required(),
-        Joi.object().required(),
-      ]),
-      config: Joi.object().default({}),
-    }).unknown());
+    const route = {
+      method: 'GET',
+      ...routeConfig,
+    };
 
     this.routes[id] = {
       ...route,
