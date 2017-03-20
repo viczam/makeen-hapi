@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { decorators, applyDecorators } from 'octobus.js';
+import { hoc, applyDecorators } from 'octobus.js';
 
-const { withSchema, withHandler } = decorators;
+const { withSchema, withHandler } = hoc;
 
 const schema = Joi.object().keys({
   user: Joi.object().required(),

@@ -1,16 +1,16 @@
 import Joi from 'joi';
 import Boom from 'boom';
-import { CRUDServiceContainer } from 'octobus-crud';
 import { ObjectID as objectId } from 'mongodb';
-import { Store } from 'octobus-mongodb-store';
 import jwt from 'jsonwebtoken';
 import pick from 'lodash/pick';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
-import { service, withSchema } from 'makeen-core/src/octobus/annotations';
-import userSchema from '../schemas/user';
+import { decorators } from 'octobus.js';
+import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
 
-class User extends CRUDServiceContainer {
+const { service, withSchema } = decorators;
+
+class User extends ServiceContainer {
   static hashPassword({ password, salt }) {
     return new Promise((resolve, reject) => {
       bcrypt.hash(password, salt, (err, result) => {
@@ -24,16 +24,14 @@ class User extends CRUDServiceContainer {
   }
 
   constructor(options) {
-    super(
-      new Store({
-        db: options.mongoDb,
-        refManager: options.refManager,
-        collectionName: 'User',
-      }),
-      userSchema,
-    );
-
+    super(options);
     this.jwtConfig = options.jwtConfig;
+  }
+
+  setServiceBus(serviceBus) {
+    super.setServiceBus(serviceBus);
+    this.UserRepository = serviceBus.extract('UserRepository');
+    this.AccountRepository = serviceBus.extract('AccountRepository');
   }
 
   @service()
@@ -54,8 +52,7 @@ class User extends CRUDServiceContainer {
     password: Joi.string().required(),
   })
   async login({ username, password }) {
-    const Account = this.extract('Account');
-    const user = await this.findOne({
+    const user = await this.UserRepository.findOne({
       query: {
         $or: [{
           username,
@@ -76,7 +73,7 @@ class User extends CRUDServiceContainer {
       throw Boom.badRequest('User is not active!');
     }
 
-    const account = await Account.findById(user.accountId);
+    const account = await this.AccountRepository.findById(user.accountId);
 
     if (!account.labels.includes('isConfirmed')) {
       throw Boom.badRequest('Account is not confirmed!');
@@ -92,7 +89,7 @@ class User extends CRUDServiceContainer {
       throw Boom.badRequest('Incorrect password!');
     }
 
-    const updatedUser = await this.replaceOne({
+    const updatedUser = await this.UserRepository.replaceOne({
       ...user,
       lastLogin: new Date(),
     });
@@ -136,7 +133,7 @@ class User extends CRUDServiceContainer {
     password: Joi.string().required(),
   })
   async changePassword({ userId, oldPassword, password }) {
-    const user = await this.findById(userId);
+    const user = await this.UserRepository.findById(userId);
 
     if (!user) {
       throw Boom.badRequest('User not found!');
@@ -160,7 +157,7 @@ class User extends CRUDServiceContainer {
       throw Boom.badRequest('You can\'t use the same password!');
     }
 
-    return this.updateOne({
+    return this.UserRepository.updateOne({
       query: { _id: user._id },
       update: {
         $set: {
@@ -177,7 +174,7 @@ class User extends CRUDServiceContainer {
     token: Joi.string().required(),
   })
   async recoverPassword({ password, token }) {
-    const user = await this.findOne({
+    const user = await this.UserRepository.findOne({
       query: {
         'resetPassword.token': token,
       },
@@ -196,7 +193,7 @@ class User extends CRUDServiceContainer {
       throw Boom.badRequest('You can\'t use the same password!');
     }
 
-    const updateResult = await this.updateOne({
+    const updateResult = await this.UserRepository.updateOne({
       query: { _id: user._id },
       update: {
         $set: {
@@ -214,8 +211,7 @@ class User extends CRUDServiceContainer {
 
   @service()
   async register({ username, email }, { message }) {
-    const Account = this.extract('Account');
-    const existingUser = await this.findOne({
+    const existingUser = await this.UserRepository.findOne({
       query: {
         $or: [{
           username,
@@ -235,9 +231,9 @@ class User extends CRUDServiceContainer {
       }
     }
 
-    const account = await Account.createOne({});
+    const account = await this.AccountRepository.createOne({});
 
-    const user = await this.createOne({
+    const user = await this.UserRepository.createOne({
       accountId: account._id,
       ...message.data,
     });
@@ -255,7 +251,7 @@ class User extends CRUDServiceContainer {
 
   @service()
   async resetPassword(usernameOrEmail) {
-    const user = await this.findOne({
+    const user = await this.UserRepository.findOne({
       query: {
         $or: [{
           username: usernameOrEmail,
@@ -274,7 +270,7 @@ class User extends CRUDServiceContainer {
       resetAt: new Date(),
     };
 
-    const updateResult = await this.updateOne({
+    const updateResult = await this.UserRepository.updateOne({
       query: { _id: user._id },
       update: {
         $set: { resetPassword },
@@ -298,7 +294,7 @@ class User extends CRUDServiceContainer {
       profile.id = profile.raw.sub;
     }
 
-    const user = await this.findOne({
+    const user = await this.UserRepository.findOne({
       query: {
         $or: [{
           [`socialLogin.${provider}.id`]: profile.id,
@@ -320,7 +316,7 @@ class User extends CRUDServiceContainer {
       expiresAt: moment().add(expiresIn, 'seconds').toDate(),
     };
 
-    const updatedUser = await this.replaceOne({
+    const updatedUser = await this.UserRepository.replaceOne({
       ...user,
       lastLogin: new Date(),
     });
@@ -336,35 +332,11 @@ class User extends CRUDServiceContainer {
     };
   }
 
-  save(data) {
-    const { hashPassword, ...restData } = data;
-
-    if (!restData.salt) {
-      restData.salt = bcrypt.genSaltSync(10);
-    }
-
-    const shouldHashPassword = (!restData._id || hashPassword) && !!restData.password;
-
-    if (!shouldHashPassword) {
-      return super.save(restData);
-    }
-
-    return User.hashPassword({
-      password: restData.password,
-      salt: restData.salt,
-    }).then((password) => (
-      super.save({
-        ...restData,
-        password,
-      })
-    ));
-  }
-
   validateJWT = (decodedToken, request, cb) => {
     if (!decodedToken || !decodedToken.id) {
       cb(null, false);
     } else {
-      this.serviceBus.send('User.findById', objectId(decodedToken.id))
+      this.serviceBus.send('UserRepository.findById', objectId(decodedToken.id))
         .then((result) => cb(null, !!result), cb);
     }
   }

@@ -10,12 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "makeen-core": "*",
-    "octobus-crud": "^0.4.2",
+    "octobus-crud": "0.4.5",
     "boom": "4.2.0",
     "joi": "10.0.2",
     "lodash": "4.17.2",
     "mongodb": "2.2.12",
-    "octobus-mongodb-store": "^0.4.0",
-    "octobus.js": "0.26.1"
+    "octobus-mongodb-store": "^0.4.1",
+    "octobus.js": "0.27.0"
   }
 }

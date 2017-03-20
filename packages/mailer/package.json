@@ -16,7 +16,7 @@
     "lodash": "4.17.2",
     "makeen-core": "*",
     "nodemailer": "3.1.7",
-    "octobus.js": "0.26.1",
+    "octobus.js": "0.27.0",
     "react": "15.4.0",
     "react-dom": "15.4.0",
     "vision": "4.1.0"

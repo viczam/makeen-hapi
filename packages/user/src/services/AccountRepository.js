@@ -1,18 +1,18 @@
 import { CRUDServiceContainer } from 'octobus-crud';
 import { Store } from 'octobus-mongodb-store';
-import userLoginSchema from '../schemas/userLogin';
+import accountSchema from '../schemas/account';
 
-class UserLogin extends CRUDServiceContainer {
+class AccountRepository extends CRUDServiceContainer {
   constructor(options) {
     super(
       new Store({
         db: options.mongoDb,
         refManager: options.refManager,
-        collectionName: 'UserLogin',
+        collectionName: 'Account',
       }),
-      userLoginSchema,
+      accountSchema,
     );
   }
 }
 
-export default UserLogin;
+export default AccountRepository;

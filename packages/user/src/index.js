@@ -5,8 +5,10 @@ import HapiAuthJwt2 from 'hapi-auth-jwt2';
 import pkg from '../package.json';
 import pluginOptionsSchema from './schemas/pluginOptions';
 import UserService from './services/User';
+import UserRepositoryService from './services/UserRepository';
 import AccountService from './services/Account';
-import UserLoginService from './services/UserLogin';
+import AccountRepositoryService from './services/AccountRepository';
+import UserLoginRepositoryService from './services/UserLoginRepository';
 import AccountRouter from './routers/Account';
 import UsersRouter from './routers/Users';
 
@@ -20,21 +22,30 @@ export async function register(server, options, next) {
 
     const User = serviceBus.register(
       new UserService({
-        mongoDb,
-        refManager,
         jwtConfig: pluginOptions.jwt,
       }),
     );
 
-    const Account = serviceBus.register(
-      new AccountService({
+    const UserRepository = serviceBus.register(
+      new UserRepositoryService({
         mongoDb,
         refManager,
       }),
     );
 
-    const UserLogin = serviceBus.register(
-      new UserLoginService({
+    const Account = serviceBus.register(
+      new AccountService(),
+    );
+
+    const AccountRepository = serviceBus.register(
+      new AccountRepositoryService({
+        mongoDb,
+        refManager,
+      }),
+    );
+
+    const UserLoginRepository = serviceBus.register(
+      new UserLoginRepositoryService({
         mongoDb,
         refManager,
       }),
@@ -56,19 +67,21 @@ export async function register(server, options, next) {
       server.auth.default('jwt');
 
       server.bind({
+        UserRepository,
         User,
-        UserLogin,
+        UserLoginRepository,
         Account,
+        AccountRepository,
       });
 
-      server.expose('UserService', User);
-      server.expose('UserLoginService', UserLogin);
-      server.expose('AccountService', Account);
+      server.expose('User', User);
+      server.expose('UserRepository', UserRepository);
+      server.expose('UserLoginRepository', UserLoginRepository);
+      server.expose('Account', Account);
+      server.expose('AccountRepository', AccountRepository);
 
-      server.route([
-        ...(new AccountRouter()).toArray(),
-        ...(new UsersRouter()).toArray(),
-      ]);
+      (new UsersRouter()).mount(server);
+      (new AccountRouter()).mount(server);
 
       return next();
     }, next);
@@ -97,5 +110,5 @@ export async function register(server, options, next) {
 
 register.attributes = {
   pkg,
-  dependencies: ['makeen-db', 'makeen-core'],
+  dependencies: ['makeen-db', 'makeen-core', 'makeen-mailer'],
 };
