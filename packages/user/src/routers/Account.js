@@ -27,9 +27,7 @@ class AccountRouter extends Router {
     },
   })
   confirm(request) {
-    return this.Account.confirm({
-      _id: objectId(request.params.id),
-    });
+    return this.Account.confirm(objectId(request.params.id));
   }
 
   @route.get({
