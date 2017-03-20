@@ -6,12 +6,15 @@ import { ObjectID as objectId } from 'mongodb';
 import { getAccountId } from '../lib/helpers';
 
 class AccountRouter extends Router {
-  constructor(config = {}) {
+  constructor(serviceBus, config = {}) {
     super({
       namespace: 'Account',
       basePath: '/account',
       ...config,
     });
+
+    this.User = serviceBus.extract('User');
+    this.Account = serviceBus.extract('Account');
   }
 
   @route.get({

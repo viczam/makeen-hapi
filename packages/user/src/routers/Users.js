@@ -7,7 +7,7 @@ import { extractProfileInfo } from '../lib/helpers';
 import userSchema from '../schemas/user';
 
 class UsersRouter extends MongoResourceRouter {
-  constructor(config = {}) {
+  constructor(serviceBus, config = {}) {
     super({
       namespace: 'Users',
       basePath: '/users',
@@ -15,6 +15,9 @@ class UsersRouter extends MongoResourceRouter {
       entitySchema: userSchema,
       ...config,
     });
+
+    this.User = serviceBus.extract('User');
+    this.UserLoginRepository = serviceBus.extract('UserLoginRepository');
 
     [
       'count', 'deleteOne', 'findById', 'findMany', 'findOne', 'replaceOne', 'updateOne',

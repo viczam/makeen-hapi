@@ -32,8 +32,8 @@ export async function register(server, options, next) {
     server.expose('ItemRepository', ItemRepository);
     server.expose('ListRepository', ListRepository);
 
-    (new ItemsRouter()).mount(server);
-    (new ListsRouter()).mount(server);
+    (new ItemsRouter(serviceBus)).mount(server);
+    (new ListsRouter(serviceBus)).mount(server);
 
     next();
   } catch (err) {

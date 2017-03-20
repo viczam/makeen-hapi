@@ -48,7 +48,7 @@ class Router {
         const routeId = definition.id || propr;
         this.addRoute(routeId, {
           ...definition,
-          handler: this[propr],
+          handler: this[propr].bind(this),
         });
       }
     }
