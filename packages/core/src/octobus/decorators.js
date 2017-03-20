@@ -15,6 +15,13 @@ const route = (definition) => (target, propr, descriptor) => {
   return descriptor;
 };
 
+['get', 'post', 'put', 'patch', 'delete', 'head'].forEach((method) => {
+  route[method] = (definition) => route({
+    ...definition,
+    method,
+  });
+});
+
 export {
   service,
   withSchema,

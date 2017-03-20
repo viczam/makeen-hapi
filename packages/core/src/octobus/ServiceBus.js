@@ -22,8 +22,4 @@ export default class extends ServiceBus {
 
     throw new Error(`Unable to handle ${subscriber}!`);
   }
-
-  extractRepository(path) {
-    return this.extract(`repository.${path}`);
-  }
 }
