@@ -32,22 +32,44 @@ class Router {
     }), {});
   }
 
-  constructor(config = {}) {
+  constructor(config) {
+    this.setConfig(config);
+    this.routes = {};
+    this.loadRoutes();
+  }
+
+  loadRoutes() {
+    for (const propr in this) { // eslint-disable-line
+      if (
+        (typeof this[propr] === 'function') &&
+        this[propr].isRoute
+      ) {
+        const { definition } = this[propr];
+        const routeId = definition.id || propr;
+        this.addRoute(routeId, {
+          ...definition,
+          handler: this[propr],
+        });
+      }
+    }
+  }
+
+  setConfig(config = {}) {
     this.config = Joi.attempt(config, Joi.object().keys({
       namespace: Joi.string().required(),
       basePath: Joi.string().default(''),
       baseRouteConfig: Joi.object().default({}),
     }).unknown());
-
-    this.routes = {};
   }
 
   addRoute = (id, routeConfig) => {
+    const routes = this.getRoutes();
+
     if (!id) {
       throw new Error('Route id is required!');
     }
 
-    if (this.routes[id]) {
+    if (routes[id]) {
       throw new Error(`Route with id ${id} already added!`);
     }
 
@@ -95,13 +117,14 @@ class Router {
   }
 
   toArray(args) {
+    const routes = this.getRoutes();
     const { only, without } = {
       ...(args || {}),
       only: [],
       without: [],
     };
 
-    let ids = Object.keys(this.routes);
+    let ids = Object.keys(routes);
 
     if (only.length) {
       ids = pick(ids, only);
@@ -111,7 +134,7 @@ class Router {
       ids = omit(ids, without);
     }
 
-    return ids.reduce((acc, id) => [...acc, this.routes[id]], []);
+    return ids.reduce((acc, id) => [...acc, routes[id]], []);
   }
 
   nestRouter(router) {
@@ -135,6 +158,10 @@ class Router {
         reply(Boom.wrap(err));
       }
     };
+  }
+
+  mount(server) {
+    server.route(this.toArray());
   }
 }
 
