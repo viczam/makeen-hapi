@@ -1,9 +1,9 @@
 import nodemailer from 'nodemailer';
 import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
-import { annotations } from 'octobus.js';
+import { decorators } from 'octobus.js';
 import fs from 'fs-promise';
 
-const { service } = annotations;
+const { service } = decorators;
 
 class Mail extends ServiceContainer {
   constructor(options) {

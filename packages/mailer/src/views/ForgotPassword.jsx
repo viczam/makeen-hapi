@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import Layout from './Layout';
 
-const Hello = ({ user, app, transportConfig }) => (
-  <Layout transportConfig={transportConfig}>
+const Hello = ({ user, app }) => (
+  <Layout>
     <h1>Hello!</h1>
     <p>Your forgot you password.</p>
     <p>
@@ -19,11 +19,10 @@ Hello.propTypes = {
     resetPassword: PropTypes.shape({
       token: PropTypes.string.isRequired,
     }),
-  }),
+  }).isRequired,
   app: PropTypes.shape({
     client: PropTypes.string.isRequired,
-  }),
-  transportConfig: PropTypes.object,
+  }).isRequired,
 };
 
 export default Hello;

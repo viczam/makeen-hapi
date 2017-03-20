@@ -1,6 +1,6 @@
 import { CRUDServiceContainer } from 'octobus-crud';
 import { Store } from 'octobus-mongodb-store';
-import { service } from 'makeen-core/src/octobus/annotations';
+import { service } from 'makeen-core/src/octobus/decorators';
 import listSchema from '../schemas/list';
 
 class List extends CRUDServiceContainer {
