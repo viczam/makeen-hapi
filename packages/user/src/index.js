@@ -82,8 +82,8 @@ export async function register(server, options, next) {
       server.expose('Account', Account);
       server.expose('AccountRepository', AccountRepository);
 
-      (new UsersRouter()).mount(server);
-      (new AccountRouter()).mount(server);
+      (new UsersRouter(serviceBus)).mount(server);
+      (new AccountRouter(serviceBus)).mount(server);
 
       return next();
     }, next);
