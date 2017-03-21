@@ -198,7 +198,7 @@ class User extends ServiceContainer {
   }
 
   @service()
-  async register({ username, email }, { message }) {
+  async signup({ username, email }, { message }) {
     const existingUser = await this.UserRepository.findOne({
       query: {
         $or: [{
@@ -229,7 +229,7 @@ class User extends ServiceContainer {
     this.Mail.send({
       to: user.email,
       subject: 'welcome',
-      template: 'UserRegistration',
+      template: 'UserSignup',
       context: {
         user,
         account,

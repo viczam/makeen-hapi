@@ -56,7 +56,7 @@ class UsersRouter extends MongoResourceRouter {
   }
 
   @route.post({
-    path: '/register',
+    path: '/signup',
     config: {
       auth: false,
       validate: {
@@ -69,8 +69,8 @@ class UsersRouter extends MongoResourceRouter {
       description: 'Register a new user',
     },
   })
-  register(request) {
-    return this.User.register(request.payload);
+  signup(request) {
+    return this.User.signup(request.payload);
   }
 
   @route.post({
