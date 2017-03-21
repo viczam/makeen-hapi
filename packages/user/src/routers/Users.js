@@ -56,6 +56,21 @@ class UsersRouter extends MongoResourceRouter {
   }
 
   @route.post({
+    path: '/refresh-token',
+    config: {
+      description: 'Refresh authentication token',
+    },
+  })
+  async refreshToken(request) {
+    const userId = objectId(request.auth.credentials.id);
+    const user = await this.UserRepository.findById(userId);
+    const token = await this.User.createToken({
+      user: await this.User.serialize(user),
+    });
+    return { token };
+  }
+
+  @route.post({
     path: '/signup',
     config: {
       auth: false,
