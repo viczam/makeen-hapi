@@ -16,7 +16,7 @@ const register = async (server, options, next) => {
     const messageBus = new MessageBus();
 
     messageBus.onMessage((msg) => {
-      console.log(msg);
+      console.log(JSON.stringify(msg, null, 2)); // eslint-disable-line
     });
 
     await server.register([
