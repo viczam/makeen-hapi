@@ -148,7 +148,10 @@ class Router {
   static wrapHandler(handler) {
     return async function (request, reply) { // eslint-disable-line func-names
       try {
-        reply(await Promise.resolve(handler.call(this, request, reply)));
+        const response = await Promise.resolve(handler.call(this, request, reply));
+        if (typeof response !== 'undefined') {
+          reply(response);
+        }
       } catch (err) {
         reply(Boom.wrap(err));
       }
