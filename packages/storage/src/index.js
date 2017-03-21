@@ -55,5 +55,5 @@ export async function register(server, options, next) {
 
 register.attributes = {
   pkg,
-  dependencies: ['makeen-crud'],
+  dependencies: ['makeen-core'],
 };

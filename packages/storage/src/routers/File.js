@@ -52,9 +52,9 @@ class FileRouter extends Router {
         },
       },
       validate: {
-        payload: Joi.object().keys({
+        payload: {
           file: Joi.any().required().meta({ swaggerType: 'file' }).description('file'),
-        }).required(),
+        },
       },
       description: 'Upload a file',
     },
