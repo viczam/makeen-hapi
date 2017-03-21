@@ -6,6 +6,7 @@ import pick from 'lodash/pick';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
 import { decorators } from 'octobus.js';
+import crypto from 'crypto';
 import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
 
 const { service, withSchema } = decorators;
@@ -171,7 +172,7 @@ class User extends ServiceContainer {
       throw Boom.badRequest('Token not found!');
     }
 
-    const hashedPassword = await User.hashPassword({
+    const hashedPassword = await this.hashPassword({
       password,
       salt: user.salt,
     });
@@ -271,6 +272,16 @@ class User extends ServiceContainer {
       query: { _id: user._id },
       update: {
         $set: { resetPassword },
+      },
+    });
+
+    this.Mail.send({
+      to: user.email,
+      subject: 'forgot password',
+      template: 'ForgotPassword',
+      context: {
+        user,
+        resetPassword,
       },
     });
 
