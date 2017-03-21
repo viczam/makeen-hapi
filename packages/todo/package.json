@@ -15,7 +15,6 @@
     "joi": "10.0.2",
     "lodash": "4.17.2",
     "mongodb": "2.2.12",
-    "octobus-mongodb-store": "^0.4.1",
     "octobus.js": "0.27.0"
   }
 }

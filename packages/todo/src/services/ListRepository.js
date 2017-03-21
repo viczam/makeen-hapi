@@ -1,18 +1,10 @@
 import { CRUDServiceContainer } from 'octobus-crud';
-import { Store } from 'octobus-mongodb-store';
 import { service } from 'makeen-core/src/octobus/decorators';
 import listSchema from '../schemas/list';
 
 class ListRepository extends CRUDServiceContainer {
-  constructor(options) {
-    super(
-      new Store({
-        db: options.mongoDb,
-        refManager: options.refManager,
-        collectionName: 'TodoList',
-      }),
-      listSchema,
-    );
+  constructor({ store }) {
+    super(store, listSchema);
   }
 
   @service()
