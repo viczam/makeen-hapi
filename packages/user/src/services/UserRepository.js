@@ -1,5 +1,4 @@
 import { CRUDServiceContainer } from 'octobus-crud';
-import { Store } from 'octobus-mongodb-store';
 import bcrypt from 'bcryptjs';
 import userSchema from '../schemas/user';
 
@@ -16,15 +15,8 @@ class UserRepository extends CRUDServiceContainer {
     });
   }
 
-  constructor(options) {
-    super(
-      new Store({
-        db: options.mongoDb,
-        refManager: options.refManager,
-        collectionName: 'User',
-      }),
-      userSchema,
-    );
+  constructor({ store }) {
+    super(store, userSchema);
   }
 
   setServiceBus(serviceBus) {

@@ -26,7 +26,6 @@
     "makeen-mailer": "*",
     "mongodb": "2.2.12",
     "octobus-crud": "0.4.5",
-    "octobus-mongodb-store": "^0.4.1",
     "octobus.js": "0.27.0"
   }
 }

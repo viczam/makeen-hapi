@@ -15,12 +15,9 @@ import UsersRouter from './routers/Users';
 export async function register(server, options, next) {
   try {
     const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-    const { mongoDb, refManager } = server.plugins['makeen-db'];
-    const { messageBus } = server.plugins['hapi-octobus'];
     const serviceBus = server.methods.createServiceBus('user', [{
       pattern: /^mailer/,
     }]);
-    serviceBus.connect(messageBus);
 
     const User = serviceBus.register(
       new UserService({
@@ -30,8 +27,7 @@ export async function register(server, options, next) {
 
     const UserRepository = serviceBus.register(
       new UserRepositoryService({
-        mongoDb,
-        refManager,
+        store: server.methods.createStore({ collectionName: 'User' }),
       }),
     );
 
@@ -41,15 +37,13 @@ export async function register(server, options, next) {
 
     const AccountRepository = serviceBus.register(
       new AccountRepositoryService({
-        mongoDb,
-        refManager,
+        store: server.methods.createStore({ collectionName: 'Account' }),
       }),
     );
 
     const UserLoginRepository = serviceBus.register(
       new UserLoginRepositoryService({
-        mongoDb,
-        refManager,
+        store: server.methods.createStore({ collectionName: 'UserLogin' }),
       }),
     );
 
@@ -116,5 +110,5 @@ export async function register(server, options, next) {
 
 register.attributes = {
   pkg,
-  dependencies: ['makeen-db', 'makeen-core', 'makeen-mailer'],
+  dependencies: ['makeen-core', 'makeen-mailer'],
 };

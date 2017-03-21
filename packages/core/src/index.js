@@ -1,6 +1,7 @@
 import HapiBoomDecorators from 'hapi-boom-decorators';
 import Scooter from 'scooter';
 import * as HapiOctobus from 'hapi-octobus';
+import { Store } from 'octobus-mongodb-store';
 import MessageBus from './octobus/MessageBus';
 import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
@@ -13,6 +14,7 @@ const register = async (server, options, next) => {
   });
 
   try {
+    const { mongoDb, refManager } = server.plugins['makeen-db'];
     const messageBus = new MessageBus();
 
     messageBus.onMessage((msg) => {
@@ -30,7 +32,19 @@ const register = async (server, options, next) => {
       },
     ]);
 
-    server.method('createServiceBus', (...args) => new ServiceBus(...args));
+    server.method('createServiceBus', (...args) => {
+      const serviceBus = new ServiceBus(...args);
+      serviceBus.connect(messageBus);
+      return serviceBus;
+    });
+
+    server.method('createStore', (config = {}) => (
+      new Store({
+        db: mongoDb,
+        refManager,
+        ...config,
+      })
+    ));
 
     next();
   } catch (err) {
@@ -40,7 +54,7 @@ const register = async (server, options, next) => {
 
 register.attributes = {
   pkg,
-  dependencies: ['hapi-octobus'],
+  dependencies: ['hapi-octobus', 'makeen-db'],
 };
 
 export { register };
