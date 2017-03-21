@@ -7,11 +7,10 @@ import { route } from 'makeen-core/src/octobus/decorators';
 import itemSchema from '../schemas/item';
 
 class ItemsRouter extends MongoResourceRouter {
-  constructor(serviceBus, config = {}) {
-    super({
+  constructor(ItemRepository, config = {}) {
+    super(ItemRepository, {
       namespace: 'TodoItems',
       basePath: '/lists/{listId}/items',
-      getRepository: (request, reply) => reply(request.server.plugins['makeen-todo'].ItemRepository),
       entitySchema: omit(itemSchema, [
         '_id', 'accountId', 'listId', 'createdBy', 'createdAt', 'updatedAt',
       ]),
@@ -38,7 +37,7 @@ class ItemsRouter extends MongoResourceRouter {
       ...config,
     });
 
-    this.ItemRepository = serviceBus.extract('ItemRepository');
+    this.ItemRepository = ItemRepository;
 
     this.applyContext({
       generateContext: (request) => ({
