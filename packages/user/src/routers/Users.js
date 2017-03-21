@@ -7,8 +7,10 @@ import { extractProfileInfo } from '../lib/helpers';
 import userSchema from '../schemas/user';
 
 class UsersRouter extends MongoResourceRouter {
-  constructor(serviceBus, config = {}) {
-    super({
+  constructor({
+    User, UserLoginRepository, UserRepository,
+  }, config = {}) {
+    super(UserRepository, {
       namespace: 'Users',
       basePath: '/users',
       getRepository: (request, reply) => reply(request.server.plugins['makeen-user'].UserRepository),
@@ -16,8 +18,9 @@ class UsersRouter extends MongoResourceRouter {
       ...config,
     });
 
-    this.User = serviceBus.extract('User');
-    this.UserLoginRepository = serviceBus.extract('UserLoginRepository');
+    this.User = User;
+    this.UserLoginRepository = UserLoginRepository;
+    this.UserRepository = UserRepository;
 
     [
       'count', 'deleteOne', 'findById', 'findMany', 'findOne', 'replaceOne', 'updateOne',
@@ -146,7 +149,7 @@ class UsersRouter extends MongoResourceRouter {
   })
   async getProfile(request) {
     const userId = objectId(request.auth.credentials.id);
-    const user = await this.User.findById(userId);
+    const user = await this.UserRepository.findById(userId);
     return {
       ...extractProfileInfo(user),
       profilePicture: request.server.settings.app.uploadDir,
@@ -158,15 +161,18 @@ class UsersRouter extends MongoResourceRouter {
     config: {
       description: 'Update user profile',
       validate: {
-        payload: pick(userSchema, ['username', 'name', 'email']),
+        payload: {
+          username: Joi.string(),
+          name: Joi.string(),
+        },
       },
     },
   })
   async updateProfile(request) {
     const userId = objectId(request.auth.credentials.id);
     const data = request.payload;
-    const user = await this.User.findById(userId);
-    await this.User.updateOne({
+    const user = await this.UserRepository.findById(userId);
+    await this.UserRepository.updateOne({
       query: {
         _id: userId,
       },

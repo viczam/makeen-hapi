@@ -5,8 +5,8 @@ import { route } from 'makeen-core/src/octobus/decorators';
 import listSchema from '../schemas/list';
 
 class ListsRouter extends MongoResourceRouter {
-  constructor(serviceBus, config = {}) {
-    super({
+  constructor(ListRepository, config = {}) {
+    super(ListRepository, {
       namespace: 'TodoLists',
       basePath: '/lists',
       getRepository: (request, reply) => reply(request.server.plugins['makeen-todo'].ListRepository),
@@ -22,7 +22,7 @@ class ListsRouter extends MongoResourceRouter {
       }),
     });
 
-    this.ListRepository = serviceBus.extract('ListRepository');
+    this.ListRepository = ListRepository;
 
     this.routes.createOne.config.pre.push({
       async method(request, reply) {
