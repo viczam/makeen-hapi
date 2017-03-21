@@ -24,7 +24,7 @@ class FileRepository extends CRUDServiceContainer {
       fields: ['workspaceId', 'extension'],
     }).then((c) => c.toArray());
 
-    const result = await super.deleteMany(params);
+    const result = await CRUDServiceContainer.prototype.deleteMany.call(this, params);
 
     if (Array.isArray(files) && files.length) {
       await Promise.all(
@@ -47,7 +47,7 @@ class FileRepository extends CRUDServiceContainer {
       file = await this.findOne({ query: params.query });
     }
 
-    const result = await super.deleteOne(params);
+    const result = await CRUDServiceContainer.prototype.deleteOne.call(this, params);
 
     if (file) {
       await fs.unlink(await this.File.getPath(file));
