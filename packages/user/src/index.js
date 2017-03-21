@@ -47,44 +47,38 @@ export async function register(server, options, next) {
       }),
     );
 
-    server.register([
-      Bell,
-      Inert,
-      HapiAuthJwt2,
-    ]).then(() => {
-      server.auth.strategy('jwt', 'jwt', {
-        key: pluginOptions.jwt.key,
-        validateFunc: User.validateJWT,
-        verifyOptions: {
-          algorithms: ['HS256'],
-        },
-      });
+    await server.register([Bell, Inert, HapiAuthJwt2]);
 
-      server.auth.default('jwt');
+    server.auth.strategy('jwt', 'jwt', {
+      key: pluginOptions.jwt.key,
+      validateFunc: User.validateJWT,
+      verifyOptions: {
+        algorithms: ['HS256'],
+      },
+    });
 
-      server.bind({
-        UserRepository,
-        User,
-        UserLoginRepository,
-        Account,
-        AccountRepository,
-      });
+    server.auth.default('jwt');
 
-      server.expose('User', User);
-      server.expose('UserRepository', UserRepository);
-      server.expose('UserLoginRepository', UserLoginRepository);
-      server.expose('Account', Account);
-      server.expose('AccountRepository', AccountRepository);
+    server.bind({
+      UserRepository,
+      User,
+      UserLoginRepository,
+      Account,
+      AccountRepository,
+    });
 
-      (new UsersRouter({
-        User, UserLoginRepository, UserRepository,
-      })).mount(server);
-      (new AccountRouter({
-        User, Account,
-      })).mount(server);
+    server.expose('User', User);
+    server.expose('UserRepository', UserRepository);
+    server.expose('UserLoginRepository', UserLoginRepository);
+    server.expose('Account', Account);
+    server.expose('AccountRepository', AccountRepository);
 
-      return next();
-    }, next);
+    (new UsersRouter({
+      User, UserLoginRepository, UserRepository,
+    })).mount(server);
+    (new AccountRouter({
+      User, Account,
+    })).mount(server);
 
     next();
   } catch (err) {
