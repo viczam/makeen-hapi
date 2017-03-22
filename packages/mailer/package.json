@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Victor Zamfir <zamfir.victor@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "fs-promise": "2.0.0",
     "hapi-react-views": "9.2.1",
