@@ -24,7 +24,7 @@
     "url": "git+https://github.com/viczam/makeen-core.git"
   },
   "author": "Victor Zamfir <victor@makeen.io>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/viczam/makeen-core/issues"
   },

@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Victor Zamfir <victor@makeen.io>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "makeen-core": "*",
     "octobus-crud": "0.4.5",
