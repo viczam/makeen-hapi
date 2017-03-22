@@ -7,9 +7,14 @@ import { extractProfileInfo } from '../lib/helpers';
 import userSchema from '../schemas/user';
 
 class UsersRouter extends MongoResourceRouter {
-  constructor({
-    User, UserLoginRepository, UserRepository,
-  }, config = {}) {
+  constructor(
+    {
+      User,
+      UserLoginRepository,
+      UserRepository,
+    },
+    config = {},
+  ) {
     super(UserRepository, {
       namespace: 'Users',
       basePath: '/users',
@@ -22,8 +27,14 @@ class UsersRouter extends MongoResourceRouter {
     this.UserRepository = UserRepository;
 
     [
-      'count', 'deleteOne', 'findById', 'findMany', 'findOne', 'replaceOne', 'updateOne',
-    ].forEach((routeId) => {
+      'count',
+      'deleteOne',
+      'findById',
+      'findMany',
+      'findOne',
+      'replaceOne',
+      'updateOne',
+    ].forEach(routeId => {
       this.routes[routeId].config.auth = {
         strategy: 'jwt',
         scope: 'admin',
@@ -75,9 +86,7 @@ class UsersRouter extends MongoResourceRouter {
       auth: false,
       validate: {
         payload: {
-          ...pick(userSchema, [
-            'name', 'username', 'email', 'password',
-          ]),
+          ...pick(userSchema, ['name', 'username', 'email', 'password']),
         },
       },
       description: 'Register a new user',
