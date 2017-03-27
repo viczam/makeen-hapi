@@ -70,7 +70,7 @@ class Router {
     }
 
     if (routes[id]) {
-      throw new Error(`Route with id ${id} already added!`);
+      throw new Error(`Route with id "${id}" already added!`);
     }
 
     const route = {
