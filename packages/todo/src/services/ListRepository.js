@@ -8,11 +8,11 @@ class ListRepository extends CRUDServiceContainer {
   }
 
   @service()
-  async deleteOne(params, { next }) {
+  async deleteOne(params) {
     const ItemRepository = this.extract('ItemRepository');
     const { query } = params;
     const list = await this.findOne({ query });
-    const result = await next(params);
+    const result = await CRUDServiceContainer.prototype.deleteOne.call(this, params);
 
     await Promise.all([
       ItemRepository.deleteMany({
