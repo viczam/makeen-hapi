@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/makeen-project/makeen/packages/router.git"
+    "url": "https://github.com/makeen-project/makeen/tree/master/packages/router"
   },
   "keywords": [
     "makeen",
