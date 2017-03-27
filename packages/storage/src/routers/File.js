@@ -1,8 +1,8 @@
 import Boom from 'boom';
-import Router from 'makeen-core/src/routers/Router';
+import Router from 'makeen-router/src/routers/Router';
 import Joi from 'joi';
-import { idValidator } from 'makeen-core/src/libs/mongo-helpers';
-import { route } from 'makeen-core/src/octobus/decorators';
+import { idValidator } from 'makeen-router/src/libs/mongo-helpers';
+import { route } from 'makeen-router/src/octobus/decorators';
 import { ObjectID as objectId } from 'mongodb';
 import Hawk from 'hawk';
 

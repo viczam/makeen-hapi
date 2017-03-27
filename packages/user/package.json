@@ -24,6 +24,7 @@
     "moment": "2.16.0",
     "makeen-core": "*",
     "makeen-mailer": "*",
+    "makeen-router": "*",
     "mongodb": "2.2.12",
     "octobus-crud": "0.4.5",
     "octobus.js": "0.27.0"

@@ -1,9 +1,9 @@
 import Boom from 'boom';
-import MongoResourceRouter from 'makeen-core/src/routers/MongoResourceRouter';
+import MongoResourceRouter from 'makeen-router/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
-import { idValidator } from 'makeen-core/src/libs/mongo-helpers';
-import { route } from 'makeen-core/src/octobus/decorators';
+import { idValidator } from 'makeen-router/src/libs/mongo-helpers';
+import { route } from 'makeen-router/src/octobus/decorators';
 import itemSchema from '../schemas/item';
 
 class ItemsRouter extends MongoResourceRouter {

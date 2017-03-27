@@ -1,6 +1,8 @@
 import { CRUDServiceContainer } from 'octobus-crud';
-import { service } from 'makeen-core/src/octobus/decorators';
+import { decorators } from 'octobus.js';
 import listSchema from '../schemas/list';
+
+const { service } = decorators;
 
 class ListRepository extends CRUDServiceContainer {
   constructor({ store }) {
