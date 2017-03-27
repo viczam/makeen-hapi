@@ -1,7 +1,3 @@
-import { decorators } from 'octobus.js';
-
-const { service, withSchema } = decorators;
-
 const route = (definition) => (target, propr, descriptor) => {
   Object.assign(descriptor, {
     enumerable: true,
@@ -23,7 +19,5 @@ const route = (definition) => (target, propr, descriptor) => {
 });
 
 export {
-  service,
-  withSchema,
   route,
 };

@@ -132,19 +132,6 @@ class Router {
     return ids.reduce((acc, id) => [...acc, routes[id]], []);
   }
 
-  nestRouter(router) {
-    const routes = router.getRoutes();
-    Object.keys(routes).forEach((routeId) => {
-      this.addRoute(`${router.config.namespace}:${routeId}`, {
-        ...routes[routeId],
-        config: {
-          ...routes[routeId].config,
-          id: `${this.config.namespace}:${router.config.namespace}:${routeId}`,
-        },
-      });
-    });
-  }
-
   static wrapHandler(handler) {
     return async function (request, reply) { // eslint-disable-line func-names
       try {

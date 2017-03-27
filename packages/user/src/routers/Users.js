@@ -1,5 +1,5 @@
-import MongoResourceRouter from 'makeen-core/src/routers/MongoResourceRouter';
-import { route } from 'makeen-core/src/octobus/decorators';
+import MongoResourceRouter from 'makeen-router/src/routers/MongoResourceRouter';
+import { route } from 'makeen-router/src/octobus/decorators';
 import Joi from 'joi';
 import { ObjectID as objectId } from 'mongodb';
 import pick from 'lodash/pick';
