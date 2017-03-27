@@ -3,7 +3,7 @@ import MongoResourceRouter from 'makeen-router/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
 import { idValidator } from 'makeen-router/src/libs/mongo-helpers';
-import { route } from 'makeen-router/src/octobus/decorators';
+import { route } from 'makeen-router';
 import itemSchema from '../schemas/item';
 
 class ItemsRouter extends MongoResourceRouter {
