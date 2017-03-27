@@ -1,7 +1,7 @@
 import Router from 'makeen-router/src/routers/Router';
 import Joi from 'joi';
 import { idValidator } from 'makeen-router/src/libs/mongo-helpers';
-import { route } from 'makeen-router/src/octobus/decorators';
+import { route } from 'makeen-router';
 import { ObjectID as objectId } from 'mongodb';
 import { getAccountId } from '../lib/helpers';
 

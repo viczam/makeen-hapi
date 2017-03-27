@@ -3,7 +3,7 @@ import Boom from 'boom';
 import pick from 'lodash/pick';
 import Router from './Router';
 import { toBSON, idValidator, idToQuery } from '../libs/mongo-helpers';
-import { route } from '../octobus/decorators';
+import { route } from '../libs/decorators';
 
 class MongoResourceRouter extends Router {
   static applyContextToRoute = (routeId, generateContext) => (request, reply) => {
