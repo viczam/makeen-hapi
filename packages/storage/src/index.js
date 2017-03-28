@@ -1,33 +1,59 @@
 import Joi from 'joi';
-import { RefManager } from 'mongo-dnorm';
+import Inert from 'inert';
+import HapiHawk from 'hapi-auth-hawk';
 import pkg from '../package.json';
 import pluginOptionsSchema from './schemas/pluginOptions';
-import { connect } from './libs/mongo';
-import EntityManager from './libs/EntityManager';
+import FileService from './services/File';
+import FileRepositoryService from './services/FileRepository';
+import FileRouter from './routers/File';
 
 export async function register(server, options, next) {
-  const { mongoDb } = Joi.attempt(options, pluginOptionsSchema);
-
   try {
-    const db = await connect(mongoDb);
-    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-    const refManager = new RefManager(db);
+    const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
+    const { uploadDir, bewitCredentials } = pluginOptions;
+    const serviceBus = server.methods.createServiceBus('storage');
 
-    server.expose('mongoDb', db);
-    server.expose('refManager', refManager);
-    server.expose('entityManager', new EntityManager({
-      dispatcher,
-      db,
-      refManager,
-    }));
+    await server.register([Inert, HapiHawk]);
+
+    server.auth.strategy('bewit', 'bewit', {
+      getCredentialsFunc: (id, cb) => {
+        cb(null, {
+          ...bewitCredentials,
+          id,
+        });
+      },
+    });
+
+    const File = serviceBus.register(
+      new FileService({
+        uploadDir,
+      }),
+    );
+
+    const FileRepository = serviceBus.register(
+      new FileRepositoryService({
+        store: server.methods.createStore({ collectionName: 'File' }),
+      }),
+    );
+
+    server.expose('File', File);
+
+    server.bind({
+      File,
+      FileRepository,
+    });
+
+    (new FileRouter({
+      bewitCredentials, File, FileRepository,
+    })).mount(server);
 
     next();
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 }
 
 register.attributes = {
   pkg,
-  dependencies: ['hapi-octobus'],
+  dependencies: ['makeen-core'],
 };

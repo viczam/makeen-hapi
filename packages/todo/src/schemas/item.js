@@ -7,7 +7,7 @@ export default {
   assignedTo: Joi.object().allow(null),
 
   title: Joi.string().trim().required(),
-  description: Joi.string(),
+  description: Joi.string().allow(null),
   isChecked: Joi.boolean().default(false),
 
   createdBy: Joi.object(),

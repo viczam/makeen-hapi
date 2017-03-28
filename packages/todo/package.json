@@ -6,17 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
-  "license": "ISC",
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
   "dependencies": {
     "makeen-core": "*",
-    "makeen-crud": "*",
-    "makeen-storage": "*",
+    "octobus-crud": "0.4.5",
     "boom": "4.2.0",
     "joi": "10.0.2",
     "lodash": "4.17.2",
+    "makeen-router": "*",
     "mongodb": "2.2.12",
-    "octobus-mongodb": "0.8.5",
-    "octobus.js": "0.18.2"
+    "octobus.js": "0.27.0"
   }
 }

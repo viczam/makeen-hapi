@@ -1,9 +1,12 @@
+import HapiBoomDecorators from 'hapi-boom-decorators';
+import Scooter from 'scooter';
 import * as HapiOctobus from 'hapi-octobus';
-import Octobus, { OctobusWithLogger } from 'octobus.js';
+import { Store } from 'octobus-mongodb-store';
+import MessageBus from './octobus/MessageBus';
+import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
-import setupServices from './services';
 
-export async function register(server, options, next) {
+const register = async (server, options, next) => {
   process.on('unhandledRejection', (reason, p) => {
     console.log(reason); // eslint-disable-line no-console
     server.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`);
@@ -11,31 +14,47 @@ export async function register(server, options, next) {
   });
 
   try {
-    const eventDispatcher = process.env.NODE_ENV === 'production' ?
-      new Octobus() :
-      new OctobusWithLogger({
-        log(msg) { console.log(msg); }, // eslint-disable-line no-console
-        logParams: false,
-        logSubscriptions: false,
-      });
+    const { mongoDb, refManager } = server.plugins['makeen-db'];
+    const messageBus = new MessageBus();
 
-    await server.register([{
-      register: HapiOctobus,
-      options: {
-        eventDispatcher,
+    messageBus.onMessage((msg) => {
+      console.log(JSON.stringify(msg, null, 2)); // eslint-disable-line
+    });
+
+    await server.register([
+      HapiBoomDecorators,
+      Scooter,
+      {
+        register: HapiOctobus,
+        options: {
+          messageBus,
+        },
       },
-    }]);
+    ]);
 
-    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-    setupServices(dispatcher);
+    server.method('createServiceBus', (...args) => {
+      const serviceBus = new ServiceBus(...args);
+      serviceBus.connect(messageBus);
+      return serviceBus;
+    });
+
+    server.method('createStore', (config = {}) => (
+      new Store({
+        db: mongoDb,
+        refManager,
+        ...config,
+      })
+    ));
 
     next();
   } catch (err) {
     next(err);
   }
-}
+};
 
 register.attributes = {
   pkg,
-  dependencies: ['hapi-octobus'],
+  dependencies: ['hapi-octobus', 'makeen-db'],
 };
+
+export { register };

@@ -69,11 +69,12 @@
       }
     }, {
       "plugin": {
-        "register": "hapi-boom-decorators"
-      }
-    }, {
-      "plugin": {
-        "register": "scooter"
+        "register": "./db",
+        "options": {
+          "mongoDb" : {
+            "db": "makeen"
+          }
+        }
       }
     }, {
       "plugin": {
@@ -87,35 +88,22 @@
             "db": "makeen",
             "port": 27017,
             "host": "127.0.0.1"
+          },
+          "uploadDir": "./packages/storage/uploads",
+          "bewitCredentials": {
+            "key": "werxhqb98rpaxn39848xrunpaw3489ruxnpa98w4rxn"
           }
         }
       }
     }, {
       "plugin": {
-        "register": "./crud"
-      }
-    }, {
-      "plugin": {
         "register": "./mailer",
         "options": {
-          "transport": {
-            "host": "mailtrap.io",
-            "port": 2525,
-            "auth": {
-              "user": "bb83f0fe6f2c49",
-              "pass": "12d89be1c17e4c"
-            }
-          },
-          "saveToDisk": true,
-          "emailsDir": "./emails"
+          "saveToDisk": true
         },
         "routes": {
           "prefix": "/emails"
         }
-      }
-    }, {
-      "plugin": {
-        "register": "bell"
       }
     }, {
       "plugin": {
@@ -132,7 +120,7 @@
       "plugin": {
         "register": "./todo",
         "routes": {
-          "prefix": "/todos"
+          "prefix": "/todo"
         }
       }
     }],

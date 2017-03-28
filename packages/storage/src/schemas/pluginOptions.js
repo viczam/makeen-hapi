@@ -1,9 +1,9 @@
 import Joi from 'joi';
 
 export default {
-  mongoDb: Joi.object().keys({
-    host: Joi.string().default('localhost'),
-    port: Joi.number().default(27017),
-    db: Joi.string().required(),
+  uploadDir: Joi.string().required(),
+  bewitCredentials: Joi.object().keys({
+    key: Joi.string().required(),
+    algorithm: Joi.string().valid(['sha256']).default('sha256'),
   }),
 };

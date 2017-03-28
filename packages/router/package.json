@@ -1,0 +1,31 @@
+{
+  "name": "makeen-router",
+  "version": "0.2.0",
+  "description": "Makeen router",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makeen-project/makeen/tree/master/packages/router"
+  },
+  "keywords": [
+    "makeen",
+    "routing"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/makeen-project/makeen/issues"
+  },
+  "homepage": "https://github.com/makeen-project/makeen/packages/router#readme",
+  "dependencies": {
+    "boom": "4.2.0",
+    "joi": "10.2.2",
+    "lodash": "^4.11.1",
+    "mongodb": "2.2.24",
+    "mongodb-extended-json": "1.9.0"
+  }
+}

@@ -1,18 +1,10 @@
 import Joi from 'joi';
+import path from 'path';
 
 export default {
-  transport: Joi.object().keys({
-    pool: Joi.boolean(),
-    host: Joi.string().required(),
-    port: Joi.number().required(),
-    secure: Joi.boolean(),
-    auth: Joi.object().keys({
-      user: Joi.string().required(),
-      pass: Joi.string().required(),
-    }).required(),
-    logger: Joi.boolean().default(false),
-    debug: Joi.boolean().default(false),
+  transport: Joi.object().default({
+    jsonTransport: true,
   }),
   saveToDisk: Joi.boolean().default(false),
-  emailsDir: Joi.string().required(),
+  emailsDir: Joi.string().default(path.join(__dirname, '..', '..', 'emails')),
 };
