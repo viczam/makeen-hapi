@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { roles } from '../constants';
+import * as constants from '../constants/user';
 
 export default {
   _id: Joi.object(),
@@ -11,14 +11,15 @@ export default {
   password: Joi.string().required(),
   salt: Joi.string(),
 
-  status: Joi.string(),
+  labels: Joi.array().items(Joi.string().valid(constants.labels))
+    .default(constants.defaultLabels),
+  roles: Joi.array().items(Joi.string().valid(constants.roles))
+    .default(constants.defaultRoles),
   resetPassword: Joi.object().keys({
     token: Joi.string(),
     resetAt: Joi.date(),
   }).default({}),
   lastLogin: Joi.date(),
-  roles: Joi.array().items(Joi.string().valid(roles)).default([]),
-  isActive: Joi.boolean().default(true),
   socialLogin: Joi.object().keys({
     facebook: Joi.object().keys({
       id: Joi.string().required(),
@@ -37,9 +38,7 @@ export default {
   }).default({
   }),
 
-  isDeleted: Joi.boolean().default(false),
   deletedAt: Joi.date(),
-
   createdAt: Joi.date(),
   updatedAt: Joi.date(),
 };

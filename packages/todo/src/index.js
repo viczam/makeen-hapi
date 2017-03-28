@@ -1,36 +1,42 @@
 import pkg from '../package.json';
-import setupServices from './services/index';
-import routes from './routes';
+import ItemRepositoryService from './services/ItemRepository';
+import ListRepositoryService from './services/ListRepository';
+import ItemsRouter from './routers/Items';
+import ListsRouter from './routers/Lists';
 
-export function register(server, options, next) {
-  const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-  const { dispatch, lookup } = dispatcher;
-  const { entityManager } = server.plugins['makeen-storage'];
+export async function register(server, options, next) {
+  try {
+    const serviceBus = server.methods.createServiceBus('todo');
 
-  setupServices({
-    dispatcher,
-    entityManager,
-  });
+    const ItemRepository = serviceBus.register(
+      new ItemRepositoryService({
+        store: server.methods.createStore({ collectionName: 'TodoItem' }),
+      }),
+    );
 
-  const TodoItemEntity = entityManager.get('TodoItem');
-  const TodoListEntity = entityManager.get('TodoList');
+    const ListRepository = serviceBus.register(
+      new ListRepositoryService({
+        store: server.methods.createStore({ collectionName: 'TodoList' }),
+      }),
+    );
 
-  server.expose('TodoItemEntity', TodoItemEntity);
-  server.expose('TodoListEntity', TodoListEntity);
+    server.bind({
+      ItemRepository, ListRepository,
+    });
 
-  server.bind({
-    dispatch,
-    lookup,
-    TodoItemEntity,
-    TodoListEntity,
-  });
+    server.expose('ItemRepository', ItemRepository);
+    server.expose('ListRepository', ListRepository);
 
-  server.route(routes);
+    (new ItemsRouter(ItemRepository)).mount(server);
+    (new ListsRouter(ListRepository)).mount(server);
 
-  return next();
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
 
 register.attributes = {
   pkg,
-  dependencies: ['makeen-storage', 'makeen-crud', 'makeen-core'],
+  dependencies: ['makeen-core'],
 };

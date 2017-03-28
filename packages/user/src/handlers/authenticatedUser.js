@@ -1,9 +1,9 @@
 import { ObjectID as objectId } from 'mongodb';
 
 export default async function (request, reply) {
-  const UserEntity = request.eventDispatcher.lookup('entity.User');
+  const { UserRepository } = request.server.plugins['makeen-user'];
   const userId = objectId(request.auth.credentials.id);
-  const user = await UserEntity.findById(userId);
+  const user = await UserRepository.findById(userId);
 
   reply(user);
 };

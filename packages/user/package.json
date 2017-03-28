@@ -6,23 +6,27 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Victor Zamfir <zamfir.victor@gmail.com>",
-  "license": "ISC",
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
   "dependencies": {
-    "makeen-core": "*",
-    "makeen-crud": "*",
-    "makeen-storage": "*",
+    "bcryptjs": "^2.4.3",
+    "bell": "^8.5.0",
     "boom": "4.2.0",
     "date-fns": "1.15.1",
     "fs-promise": "1.0.0",
+    "hapi-auth-jwt2": "^7.2.4",
     "hb-user": "0.9.0",
     "hoek": "4.1.0",
     "inert": "4.1.0",
     "joi": "10.0.2",
+    "jsonwebtoken": "^7.3.0",
     "lodash": "4.17.2",
     "moment": "2.16.0",
+    "makeen-core": "*",
+    "makeen-mailer": "*",
+    "makeen-router": "*",
     "mongodb": "2.2.12",
-    "octobus-mongodb": "0.8.5",
-    "octobus.js": "0.18.2"
+    "octobus-crud": "0.4.5",
+    "octobus.js": "0.27.0"
   }
 }
