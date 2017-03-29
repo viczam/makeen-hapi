@@ -72,7 +72,9 @@
         "register": "./db",
         "options": {
           "mongoDb" : {
-            "db": "makeen"
+            "db": "makeen",
+            "port": 27017,
+            "host": "127.0.0.1"
           }
         }
       }
@@ -84,11 +86,6 @@
       "plugin": {
         "register": "./storage",
         "options": {
-          "mongoDb" : {
-            "db": "makeen",
-            "port": 27017,
-            "host": "127.0.0.1"
-          },
           "uploadDir": "./packages/storage/uploads",
           "bewitCredentials": {
             "key": "werxhqb98rpaxn39848xrunpaw3489ruxnpa98w4rxn"
