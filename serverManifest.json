@@ -100,9 +100,6 @@
         "register": "./mailer",
         "options": {
           "saveToDisk": true
-        },
-        "routes": {
-          "prefix": "/emails"
         }
       }
     }, {
