@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Layout from './Layout';
+import Layout from 'makeen-mailer/src/views/Layout';
 
 const Hello = ({ user, account }) => (
   <Layout>
