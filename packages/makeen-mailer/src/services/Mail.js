@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
-import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
-import { decorators } from 'octobus.js';
+import { ServiceContainer, decorators } from 'octobus.js';
 import fs from 'fs-promise';
 
 const { service } = decorators;

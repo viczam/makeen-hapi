@@ -1,5 +1,5 @@
 {
-  "name": "makeen-demo-mailer",
+  "name": "makeen-mailer",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -9,8 +9,15 @@
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
   "dependencies": {
-    "makeen-mailer": "*",
+    "fs-promise": "2.0.0",
+    "hapi-react-views": "9.2.1",
+    "inert": "4.1.0",
+    "joi": "10.0.1",
+    "lodash": "4.17.2",
+    "nodemailer": "3.1.7",
+    "octobus.js": "0.27.0",
     "react": "15.4.0",
-    "react-dom": "15.4.0"
+    "react-dom": "15.4.0",
+    "vision": "4.1.0"
   }
 }
