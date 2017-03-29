@@ -1,0 +1,14 @@
+version: '3'
+
+services: 
+   makeen:
+      build: . 
+      environment:
+         - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://mongo:27017
+         - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST=mongodb://mongo:27017
+      depends_on:
+         - mongo
+      links:
+         - mongo
+   mongo:
+      image: mongo:3.4
