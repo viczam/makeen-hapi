@@ -5,10 +5,12 @@ services:
       build: . 
       environment:
          - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://mongo:27017
-         - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST=mongodb://mongo:27017
+         - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST=mongo
       depends_on:
          - mongo
       links:
          - mongo
+      ports:
+         - "3000:3003"
    mongo:
       image: mongo:3.4
