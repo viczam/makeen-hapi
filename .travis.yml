@@ -32,7 +32,7 @@ install:
 # before_script -- not needed yet
 
 script:
-   - ./tests/curltests.sh
+   - bash ./tests/curltests.sh
       
 #after_success
 
