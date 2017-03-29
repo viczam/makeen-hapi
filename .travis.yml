@@ -27,7 +27,7 @@ before_install:
 
 install:
    - docker-compose -f docker-compose.yml -p makeen build
-   - docker-compose -f docker-compose.yml -p makeen up
+   - docker-compose -f docker-compose.yml -p makeen up -d 
 
 # before_script -- not needed yet
 
