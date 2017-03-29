@@ -32,7 +32,7 @@ install:
 # before_script -- not needed yet
 
 script:
-   - bash ./tests/curltests.sh
+   - curl -s http://localhost:3000/documentation | grep window.swaggerUi
       
 #after_success
 
