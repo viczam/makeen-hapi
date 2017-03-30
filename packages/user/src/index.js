@@ -15,6 +15,25 @@ import UsersRouter from './routers/Users';
 export async function register(server, options, next) {
   try {
     const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
+
+    await server.register([Bell, Inert, HapiAuthJwt2]);
+
+    if (pluginOptions.socialPlatforms.facebook) {
+      server.auth.strategy('facebook', 'bell', {
+        provider: 'facebook',
+        isSecure: false,
+        ...pluginOptions.socialPlatforms.facebook,
+      });
+    }
+
+    if (pluginOptions.socialPlatforms.google) {
+      server.auth.strategy('google', 'bell', {
+        provider: 'google',
+        isSecure: false,
+        ...pluginOptions.socialPlatforms.google,
+      });
+    }
+
     const serviceBus = server.methods.createServiceBus('user', [{
       pattern: /^mailer/,
     }]);
@@ -46,8 +65,6 @@ export async function register(server, options, next) {
         store: server.methods.createStore({ collectionName: 'UserLogin' }),
       }),
     );
-
-    await server.register([Bell, Inert, HapiAuthJwt2]);
 
     server.auth.strategy('jwt', 'jwt', {
       key: pluginOptions.jwt.key,
@@ -84,22 +101,6 @@ export async function register(server, options, next) {
   } catch (err) {
     next(err);
   }
-
-  // if (pluginOptions.socialPlatforms.facebook) {
-  //   server.auth.strategy('facebook', 'bell', {
-  //     provider: 'facebook',
-  //     isSecure: false,
-  //     ...pluginOptions.socialPlatforms.facebook,
-  //   });
-  // }
-  //
-  // if (pluginOptions.socialPlatforms.google) {
-  //   server.auth.strategy('google', 'bell', {
-  //     provider: 'google',
-  //     isSecure: false,
-  //     ...pluginOptions.socialPlatforms.google,
-  //   });
-  // }
 }
 
 register.attributes = {

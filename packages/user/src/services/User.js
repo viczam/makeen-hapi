@@ -295,11 +295,11 @@ class User extends ServiceContainer {
   }
 
   @service()
-  async socialLogin(params) {
-    const { provider, token, expiresIn, profile } = params;
-
+  async socialLogin({ provider, token, expiresIn, profile }) {
     if (provider === 'google') {
-      profile.id = profile.raw.sub;
+      Object.assign(profile, {
+        id: profile.raw.sub,
+      });
     }
 
     const user = await this.UserRepository.findOne({
@@ -330,8 +330,8 @@ class User extends ServiceContainer {
     });
 
     const authToken = await this.createToken({
-      id: updatedUser._id,
-      username: updatedUser.username,
+      id: user._id,
+      username: user.username,
     });
 
     return {
