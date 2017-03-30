@@ -32,7 +32,7 @@ before_install:
    - sudo mv docker-compose /usr/local/bin
    - export VERSION=$(cat MAKEEN_VERSION)
    #- if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD: ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO; fi 
-   - echo "${TRAVIS_BRANCH}-${VERSION} BUILD: ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO
+   - echo "${TRAVIS_BRANCH}-${VERSION} BUILD ${TRAVIS_BUILD_NUMBER}"
 
 install:
    - docker-compose -f docker-compose.yml -p makeen build
