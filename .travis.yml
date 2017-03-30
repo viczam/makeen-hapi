@@ -53,10 +53,10 @@ before_deploy:
    
    
 deploy:
-   - provider: script
-      script: docker push ${DOCKERHUB_REPO}/${DOCKER_TAG}
-      on:
-         all_branches: true
+   provider: script
+   script: docker push ${DOCKERHUB_REPO}/${DOCKER_TAG}
+   on:
+      all_branches: true
          
 
 #after_deploy:
