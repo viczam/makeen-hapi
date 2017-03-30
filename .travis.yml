@@ -31,7 +31,7 @@ before_install:
    - chmod +x docker-compose
    - sudo mv docker-compose /usr/local/bin
    - export VERSION=$(cat MAKEEN_VERSION)
-   - if  [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD: ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO
+   - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD: ${TRAVIS_BUILD_NUMBER}"; fi > MAKEEN_BUILD_INFO
 
 install:
    - docker-compose -f docker-compose.yml -p makeen build
