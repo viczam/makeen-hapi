@@ -33,7 +33,8 @@ install:
 
 script:
    - docker ps 
-   - curl -v http://localhost:3000/documentation
+   - echo "Docker Host: ${DOCKER_HOST}"
+   #- curl -v http://${DOCKER_HOST}:3000/documentation
 
 #after_success
 
