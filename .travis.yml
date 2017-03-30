@@ -38,7 +38,9 @@ script:
 
 #after_failure
 
-#before_deploy
+before_deploy:
+   - sudo npm install --global azure-cli@0.10.11
+   - azure config mode arm
 
 #deploy 
 
