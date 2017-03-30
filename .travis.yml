@@ -5,7 +5,12 @@ node_js:
    - "7.5.0"
 
 env:
-   DOCKER_COMPOSE_VERSION: 1.11.2
+   - DOCKER_COMPOSE_VERSION: 1.11.2
+   - DOCKERHUB_REPO: makeenllc/makeen-core
+   #DOCKERHUB_USER
+   - secure: "PxamT1RFGbtJCVN00QakNIGq77BCboi/F/vjSV15YViUyTfrIC6QC5FFXfy79t6lnsk2BFhRGW2icvj54OrBAiczZ9ulUJodgHn11lrZ57PPmuUVPRNiJUjWR+I48cA97KeflHBBR8m4s1QGjcygM0ZLFy0fUv7SwklEeEJa6Hkv0oyLvLdfhAV0DEQdlH3X9qif85HpY9ZYI2DdtcelJtNAzQecJvGiEF8Px6n9h625dgF2xT9Ey3UiHKf9pIHbHHnp2KuYKx3U3nrFqYye7vm+ByJYyMkKqMYTEZX1JP4ujGM8HQ84bv+q4kwi2CrT9Pm2NpZjmCPGA5jERL4t9ypGNzqPkafOvCb/MmcNslPyMQz5aIAyR5Y86HL4YU3UBv1Ux/Z4FuBskImZy/dCZwb0xdlpnV9pmpv8hOj3RuJd4lmqGGRhRTiNXa56/a+S14bvxXY3WSMOlO6kXI7vNCby/2Msgi6wFkDIxd96BZ/PG2ov3JUGOl8BcwZVv1daopGr38UAPrEmVSfV5sXW8OaYStKxxOGyaqBuLPrGAYo+pf8sKiMKqoiLABgRkMcpX9I5oGrsX3mN0DrK53RHMOxsUwN2xV7D6r9xl1bPvI97Hq+PhmOd93fEVZE9KA30zcLRYGADx6FoKD6E5UA0ReTFlmocZO5ig83Q51Z2gZA="
+   #DOCKERHUB_PASS
+   - secure: "l2pS6DhmzKSbmY76NSvI5D5bwYuhLu3WKl4bXfFwSVfDucNqwiKl8lUL3eiXcGoURG9UJI0z6y9aACGbrYc/d5pmbpaJspWmQF9ariJxpWKO4VpzXSGsCY6fyQWPhRZgtFgv7sYg4kXzk8ypDUl5P/XHwFkKGBHjtXBb6BTWC2HcaFxFDkHXxSTn6/FgRyFLeG0iJ+GtLfbwFEr2d6fp+3PheKJYHfR4Gt5UwmcL8PWZA48ndWzdAxG0fylEBu6xCJOInC0tjFwwLvEMFlOM0HfVzz48Y2DcWAjoRaArCYkMSI8Fgy4j/rmsEc0mzh0sIGLyAOn9STZhirseYmupTQNqYLUiZ0VL3xnAyuwTqbvVFxp593jem00VXjVDIPBD77Rt/GeiP7gtZLYZW3AtI7yfL7Sc9oiURI9z6rzlDnbbQzMx9erHdmPkxbgsAuZ2/Og4w0ye1UYv3SWQStAQgfdOsXSUP3QwcKRbW2c5jE6fAQEdZuSB6OwuKCDkLVrDbeaddrnxjL0bOdwvgd4krfVrLjg/oKk0rx+9GgfF/HAq7MaqkGEgGJHq6UQ7U802fHTeL2yHnIkIborIUrUe8EQEI9M15o27u4O/0CMHcHjKi1o3BxK5oWcCy6alsZGFQCgIV2t/9qrsiybfXDyKALqDzvI/f5o7oAkl7Uoyx6Y="
 
 services:
    - docker
@@ -24,6 +29,8 @@ before_install:
    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
    - chmod +x docker-compose
    - sudo mv docker-compose /usr/local/bin
+   - export VERSION=$(cat VERSION)
+   - if  [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD: ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO
 
 install:
    - docker-compose -f docker-compose.yml -p makeen build
@@ -39,11 +46,17 @@ script:
 #after_failure
 
 before_deploy:
-   - sudo npm install --global azure-cli@0.10.11
-   - azure config mode arm
+   - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
+   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=makeen_stable; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=makeen_develop; else export DOCKER_TAG=experimental; fi
+   
+deploy:
+   - provider: script
+     script: docker push ${DOCKERHUB_REPO}/${DOCKER_TAG}
+         
 
-#deploy 
+#after_deploy:
+#   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+#   - curl -L https://aka.ms/InstallAzureCli | bash
 
-#after_deploy
 
 #after_script
