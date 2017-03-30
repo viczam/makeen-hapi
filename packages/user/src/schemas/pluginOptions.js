@@ -9,13 +9,11 @@ export default {
   }),
   socialPlatforms: Joi.object().keys({
     facebook: Joi.object().keys({
-      password: Joi.string().required(),
       clientId: Joi.string().required(),
       clientSecret: Joi.string().required(),
     }),
 
     google: Joi.object().keys({
-      password: Joi.string().required(),
       clientId: Joi.string().required(),
       clientSecret: Joi.string().required(),
     }),
