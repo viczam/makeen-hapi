@@ -32,9 +32,7 @@ install:
 # before_script -- not needed yet
 
 script:
-   - docker ps 
-   - echo "Docker Host: ${DOCKER_HOST}"
-   #- curl -v http://${DOCKER_HOST}:3000/documentation
+   - bash tests/curltests.sh
 
 #after_success
 

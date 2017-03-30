@@ -1,6 +1,9 @@
 #!/bin/bash
 set -ea
 
-curl -s http://localhost:3000/documentation | grep window.swaggerUi
+docker ps 
+echo "Docker Host: ${DOCKER_HOST}"
+#curl -v http://${DOCKER_HOST}:3000/documentation
+#curl -s http://localhost:3000/documentation | grep window.swaggerUi
 
 exit 0
