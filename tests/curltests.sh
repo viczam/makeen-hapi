@@ -4,7 +4,9 @@ set -ea
 docker ps 
 echo "Docker Host: ${DOCKER_HOST}"
 sudo lsof -i 
-#curl -v http://${DOCKER_HOST}:3000/documentation
-#curl -s http://localhost:3000/documentation | grep window.swaggerUi
+
+docker logs makeen_makeen
+
+curl -v http://localhost:3000/documentation
 
 exit 0
