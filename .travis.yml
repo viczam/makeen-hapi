@@ -44,13 +44,13 @@ script:
 
 before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
-   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=makeen_stable; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=makeen_develop; else export DOCKER_TAG=experimental; fi
-   - docker tag makeen ${DOCKERHUB_REPO}:${DOCKER_TAG}-${VERSION}
+   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
+   - docker tag makeen ${DOCKERHUB_REPO}:${DOCKER_TAG}
    
    
 deploy:
    provider: script
-   script: docker push ${DOCKERHUB_REPO}/${DOCKER_TAG}
+   script: docker push ${DOCKERHUB_REPO}:${DOCKER_TAG}
    on:
       all_branches: true
          
