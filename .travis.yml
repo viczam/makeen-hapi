@@ -66,11 +66,7 @@ after_deploy:
    - sudo apt-get update && sudo apt-get install azure-cli
    - az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
    - az account set --subscription ${AZURE_SUBSCRIPTION}
-   - az acs kubernetes install-cli
-       
-   
- 
- 
-
+   - whereis kubectl 
+   #- az acs kubernetes install-cli
 
 #after_script
