@@ -58,7 +58,8 @@ deploy:
 after_deploy:
    - mkdir ~/.ssh/
    - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ~/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
-   - ls -al
+   - ls -al 
+   - ls -al ~/secrets/
    - ls -al ~/.ssh/
    - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
    - echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
