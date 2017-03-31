@@ -1,0 +1,63 @@
+sudo: required
+
+language: node_js
+node_js:
+   - "7.5.0"
+
+env:
+   global:
+      - DOCKER_COMPOSE_VERSION: 1.11.2
+      - DOCKERHUB_REPO: makeenllc/makeen-core
+
+services:
+   - docker
+
+branches:
+   only:
+   - master
+   - stable
+   - develop
+   - /^build-.*$/
+      
+before_install:
+   - sudo apt-get update
+   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
+   - sudo rm /usr/local/bin/docker-compose
+   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+   - chmod +x docker-compose
+   - sudo mv docker-compose /usr/local/bin
+   - export VERSION=$(cat MAKEEN_VERSION)
+   - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO; fi 
+
+install:
+   - docker-compose -f docker-compose.yml -p makeen build
+   - docker-compose -f docker-compose.yml -p makeen up -d 
+
+# before_script -- not needed yet
+
+script:
+   - bash tests/curltests.sh
+
+#after_success
+
+#after_failure
+
+before_deploy:
+   - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
+   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
+   - docker tag makeen ${DOCKERHUB_REPO}:${DOCKER_TAG}
+   
+   
+deploy:
+   provider: script
+   script: docker push ${DOCKERHUB_REPO}:${DOCKER_TAG}
+   on:
+      all_branches: true
+         
+
+#after_deploy:
+#   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+#   - curl -L https://aka.ms/InstallAzureCli | bash
+
+
+#after_script
