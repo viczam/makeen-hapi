@@ -67,5 +67,6 @@ after_deploy:
    - az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
    - az account set --subscription ${AZURE_SUBSCRIPTION}
    - sudo az acs kubernetes install-cli
+   - az acs kubernetes get-credentials --resource-group=makeen --name=makeen-demo
 
 #after_script
