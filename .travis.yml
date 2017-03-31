@@ -28,6 +28,7 @@ before_install:
    - sudo mv docker-compose /usr/local/bin
    - export VERSION=$(cat MAKEEN_VERSION)
    - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO; fi 
+   - whereis az
 
 install:
    - docker-compose -f docker-compose.yml -p makeen build
@@ -55,9 +56,14 @@ deploy:
       all_branches: true
          
 
-#after_deploy:
-#   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
-#   - curl -L https://aka.ms/InstallAzureCli | bash
+after_deploy:
+   #- sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+   #- echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+   #- sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+   #- sudo apt-get install apt-transport-https
+   #- sudo apt-get update && sudo apt-get install azure-cli
+ 
+ 
 
 
 #after_script
