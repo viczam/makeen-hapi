@@ -57,7 +57,7 @@ deploy:
 
 after_deploy:
    - mkdir ~/.ssh/
-   - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ~/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
+   - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ${TRAVIS_BUILD_DIR}/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
    - ls -al 
    - ls -al ~/secrets/
    - ls -al ~/.ssh/
