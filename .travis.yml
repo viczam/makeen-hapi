@@ -31,8 +31,8 @@ before_install:
 
 
 install:
-   - docker-compose -f docker-compose.yml -p makeen build
-   - docker-compose -f docker-compose.yml -p makeen up -d 
+   - docker-compose -f docker-build.yml -p makeen build
+   - docker-compose -f docker-build.yml -p makeen up -d 
 
 # before_script -- not needed yet
 
@@ -45,12 +45,13 @@ script:
 
 before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
-   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
-   - docker tag makeen ${DOCKERHUB_REPO}:${DOCKER_TAG}
+   - source ci-scripts/helper-functions.sh
+   #- if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
+   - docker tag makeen ${DOCKERHUB_REPO}:$(get_fulldockertag)
     
 deploy:
    provider: script
-   script: docker push ${DOCKERHUB_REPO}:${DOCKER_TAG}
+   script: docker push ${DOCKERHUB_REPO}:$(get_fulldockertag)
    on:
       all_branches: true
          
@@ -69,6 +70,7 @@ after_deploy:
    - az account set --subscription ${AZURE_SUBSCRIPTION}
    - sudo az acs kubernetes install-cli
    - az acs kubernetes get-credentials --resource-group=makeen --name=makeen-demo
-   - ./kompose --file docker-compose.yml up
+   - export MAKEEN_DOCKER_TAG=$(get_fulldockertag)
+   - ./kompose --file docker-deploy.yml up
 
 #after_script
