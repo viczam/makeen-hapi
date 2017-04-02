@@ -1,5 +1,5 @@
 {
-  "name": "makeen-core",
+  "name": "makeen",
   "version": "0.1.0",
   "engines": {
     "node": "6.x.x"
@@ -21,14 +21,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viczam/makeen-core.git"
+    "url": "git+https://github.com/makeen-project/makeen.git"
   },
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viczam/makeen-core/issues"
+    "url": "https://github.com/makeen-project/makeen/issues"
   },
-  "homepage": "https://github.com/viczam/makeen-core#readme",
+  "homepage": "https://github.com/makeen-project/makeen#readme",
   "dependencies": {
     "catbox": "~7.1.2",
     "catbox-memory": "~2.0.4",
