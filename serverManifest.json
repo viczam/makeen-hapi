@@ -28,6 +28,20 @@
         "cors": true
       }
     }],
+    "development": [{
+      "port": 3001,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }],
+    "testing": [{
+      "port": 3002,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }],
     "production": [{
       "port": 80,
       "labels": ["api"],
