@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/makeen-project/makeen-core.git"
+    "url": "https://github.com/makeen-project/makeen/tree/develop/packages/core"
   },
   "keywords": [
     "makeen",
@@ -18,20 +18,22 @@
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/makeen-project/makeen-core/issues"
+    "url": "https://github.com/makeen-project/makeen/issues"
   },
-  "homepage": "https://github.com/makeen-project/makeen-core#readme",
+  "homepage": "https://github.com/makeen-project/makeen/blob/develop/packages/core/readme.md",
   "dependencies": {
+    "axios": "0.15.3",
     "boom": "4.2.0",
     "hapi-boom-decorators": "2.2.2",
-    "hapi-octobus": "0.8.2",
+    "hapi-octobus": "0.9.0",
     "joi": "10.2.2",
     "lodash": "^4.11.1",
     "makeen-db": "*",
+    "makeen-router": "*",
     "mongodb": "2.2.24",
     "mongodb-extended-json": "1.9.0",
     "octobus-mongodb-store": "0.4.1",
-    "octobus.js": "0.27.0",
+    "octobus.js": "0.29.0",
     "scooter": "4.0.0"
   }
 }
