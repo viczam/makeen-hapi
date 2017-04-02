@@ -1,8 +1,9 @@
-import Router from 'makeen-router/src/routers/Router';
 import Joi from 'joi';
-import { route, mongoHelpers } from 'makeen-router';
 import { Message } from 'octobus.js';
 import stream from 'stream';
+import Router from './Router';
+import { route } from '../libs/decorators';
+import { toBSON } from '../libs/mongo-helpers';
 
 class OctobusRouter extends Router {
   constructor() {
@@ -29,7 +30,7 @@ class OctobusRouter extends Router {
   })
   async rpc(request) { // eslint-disable-line
     const topic = request.params.topic.replace(/\//g, '.');
-    const data = mongoHelpers.toBSON(request.payload);
+    const data = toBSON(request.payload);
     const message = new Message({ topic, data });
 
     let result = await request.messageBus.send(message);
