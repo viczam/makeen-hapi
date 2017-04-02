@@ -10,12 +10,12 @@
   "license": "MIT",
   "dependencies": {
     "makeen-core": "*",
-    "octobus-crud": "0.4.5",
+    "octobus-crud": "0.5.0",
     "boom": "4.2.0",
     "joi": "10.0.2",
     "lodash": "4.17.2",
     "makeen-router": "*",
     "mongodb": "2.2.12",
-    "octobus.js": "0.27.0"
+    "octobus.js": "0.29.0"
   }
 }
