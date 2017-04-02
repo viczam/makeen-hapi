@@ -5,7 +5,6 @@ import { Store, decorators } from 'octobus-mongodb-store';
 import MessageBus from './octobus/MessageBus';
 import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
-import OctobusRouter from './routers/Octobus';
 
 const MongoDbStore = decorators.withTimestamps(Store);
 
@@ -48,8 +47,6 @@ const register = async (server, options, next) => {
         ...config,
       })
     ));
-
-    (new OctobusRouter()).mount(server);
 
     next();
   } catch (err) {

@@ -61,6 +61,12 @@ class User extends ServiceContainer {
       throw Boom.badRequest('User not found!');
     }
 
+    await this.canLogin(user);
+
+    return this.doLogin({ password, user });
+  }
+
+  async canLogin(user) {
     if (!user.labels.includes('isActive')) {
       throw Boom.badRequest('User is not active!');
     }
@@ -74,7 +80,9 @@ class User extends ServiceContainer {
     if (!account.labels.includes('isActive')) {
       throw Boom.badRequest('Account is not active!');
     }
+  }
 
+  async doLogin({ password, user }) {
     const hashedPassword = await this.hashPassword({ password, salt: user.salt });
 
     if (user.password !== hashedPassword) {
