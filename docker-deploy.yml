@@ -12,5 +12,7 @@ services:
          - mongo
       ports:
          - "3000:3003"
+      labels:
+         kompose.service.type: LoadBalancer
    mongo:
       image: mongo:3.4
