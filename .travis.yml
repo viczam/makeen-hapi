@@ -47,7 +47,7 @@ before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
    - source ci-scripts/helper-functions.sh
    #- if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
-   - docker tag makeen ${DOCKERHUB_REPO}:$(get_fulldockertag)
+   #- docker tag makeen ${DOCKERHUB_REPO}:$(get_fulldockertag)
     
 deploy:
    provider: script
