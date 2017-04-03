@@ -75,6 +75,6 @@ after_deploy:
    - ./kompose --file docker-deploy.yml up
    - kubectl get pods,svc,deployments
    - az acs show --resource-group=makeen --name=$(get_azureenvironment)
-   - kubectl describe services makeen
+   - kubectl describe services $(get_azureenvironment)
 
 #after_script
