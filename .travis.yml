@@ -29,9 +29,10 @@ before_install:
    - export VERSION=$(cat MAKEEN_VERSION)
    - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then echo "${TRAVIS_BRANCH}-${VERSION} BUILD ${TRAVIS_BUILD_NUMBER}" > MAKEEN_BUILD_INFO; fi 
 
+
 install:
-   - docker-compose -f docker-compose.yml -p makeen build
-   - docker-compose -f docker-compose.yml -p makeen up -d 
+   - docker-compose -f docker-build.yml -p makeen build
+   - docker-compose -f docker-build.yml -p makeen up -d 
 
 # before_script -- not needed yet
 
@@ -44,20 +45,36 @@ script:
 
 before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
-   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
-   - docker tag makeen ${DOCKERHUB_REPO}:${DOCKER_TAG}
-   
-   
+   - source ci-scripts/helper-functions.sh
+   #- if [[ "$TRAVIS_BRANCH" == "master" ]]; then export DOCKER_TAG=latest; elif [[ "$TRAVIS_BRANCH" == "stable" ]]; then export DOCKER_TAG=stable-${VERSION}; elif [[ "$TRAVIS_BRANCH" == "develop" ]]; then export DOCKER_TAG=develop-${VERSION}; else export DOCKER_TAG=experimental-${TRAVIS_BRANCH}; fi
+   #- docker tag makeen ${DOCKERHUB_REPO}:$(get_fulldockertag)
+    
 deploy:
    provider: script
-   script: docker push ${DOCKERHUB_REPO}:${DOCKER_TAG}
+   script: bash ci-scripts/deploy.sh
    on:
       all_branches: true
          
 
-#after_deploy:
-#   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
-#   - curl -L https://aka.ms/InstallAzureCli | bash
-
+after_deploy:
+   - mkdir ~/.ssh/
+   - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ${TRAVIS_BUILD_DIR}/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
+   - curl -L https://github.com/kubernetes-incubator/kompose/releases/download/v0.4.0/kompose-linux-amd64 -o kompose
+   - chmod +x kompose
+   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+   - echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+   - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+   - sudo apt-get install apt-transport-https
+   - sudo apt-get update && sudo apt-get install azure-cli
+   - az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
+   - az account set --subscription ${AZURE_SUBSCRIPTION}
+   - sudo az acs kubernetes install-cli
+   - az acs kubernetes get-credentials --resource-group=makeen --name=$(get_azureenvironment)
+   - export MAKEEN_DOCKER_TAG=$(get_fulldockertag)
+   - ./kompose --file docker-deploy.yml down || true
+   - ./kompose --file docker-deploy.yml up
+   - kubectl get pods,svc,deployments
+   - az acs show --resource-group=makeen --name=$(get_azureenvironment)
+   - kubectl describe services makeen
 
 #after_script
