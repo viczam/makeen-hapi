@@ -74,6 +74,6 @@ after_deploy:
    - ./kompose --file docker-deploy.yml down || true
    - ./kompose --file docker-deploy.yml up
    - kubectl get pods,svc,deployments
-   - az acs show
+   - az acs show --resource-group=makeen --name=makeen-demo
 
 #after_script
