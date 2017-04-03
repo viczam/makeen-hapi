@@ -72,6 +72,8 @@ after_deploy:
    - az acs kubernetes get-credentials --resource-group=makeen --name=makeen-demo
    - export MAKEEN_DOCKER_TAG=$(get_fulldockertag)
    - ./kompose --file docker-deploy.yml down || true
-   - ./kompose --file docker-deploy.yml up      
+   - ./kompose --file docker-deploy.yml up
+   - kubectl get pods,svc,deployments
+   - az acs show
 
 #after_script
