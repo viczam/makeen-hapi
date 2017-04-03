@@ -51,7 +51,7 @@ before_deploy:
     
 deploy:
    provider: script
-   script: docker push ${DOCKERHUB_REPO}:$(get_fulldockertag)
+   script: bash ci-scripts/deploy.sh
    on:
       all_branches: true
          
