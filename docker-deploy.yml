@@ -2,7 +2,7 @@ version: '2'
 
 services: 
    makeen:
-      image: makeenllc:${MAKEEN_DOCKER_TAG}
+      image: makeenllc/makeen-core:${MAKEEN_DOCKER_TAG}
       environment:
          - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://mongo:27017
          - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST=mongo
