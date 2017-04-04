@@ -29,7 +29,7 @@ class DemoRouter extends Router {
 }
 ```
 
-4. Make you dependencies explicit by sending them them in the constructor of the class or through setter methods.
+4. Make you dependencies explicit by sending them in the constructor of the class or through setter methods.
 ```js
 class UsersRouter extends Router {
   constructor({
