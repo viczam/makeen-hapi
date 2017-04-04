@@ -1,10 +1,10 @@
 import Boom from 'boom';
-import MongoResourceRouter from 'makeen-router/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
-import { idValidator } from 'makeen-router/src/libs/mongo-helpers';
-import { route } from 'makeen-router';
+import { route, MongoResourceRouter, mongoHelpers } from 'makeen-router';
 import itemSchema from '../schemas/item';
+
+const { idValidator } = mongoHelpers;
 
 class ItemsRouter extends MongoResourceRouter {
   constructor(ItemRepository, config = {}) {

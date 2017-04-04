@@ -2,9 +2,7 @@ import { transformFileSync } from 'babel-core';
 import path from 'path';
 import fsp from 'fs-promise';
 import { getPackageDirs, getPackageFiles, getBabelConfig } from '../src/utils';
-
-const SRC_DIR = 'src';
-const BUILD_DIR = 'build';
+import { SRC_DIR, BUILD_DIR } from '../src/constants';
 
 const build = async () => {
   const babelConfig = await getBabelConfig();

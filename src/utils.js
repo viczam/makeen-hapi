@@ -17,7 +17,7 @@ export const getPackageDirs = async () => (
 
 export const getPackageFiles = (pkg) => {
   const srcDir = path.resolve(pkg, SRC_DIR);
-  const pattern = path.resolve(srcDir, '**/*.js');
+  const pattern = path.resolve(srcDir, '**/*.js?(x)');
   return glob.sync(pattern, { nodir: true });
 };
 
