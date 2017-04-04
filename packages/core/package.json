@@ -2,7 +2,7 @@
   "name": "makeen-core",
   "version": "0.2.0",
   "description": "Makeen core plugin",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/makeen-project/makeen/tree/develop/packages/core"
