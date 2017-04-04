@@ -21,14 +21,17 @@ export const getPackageFiles = (pkg) => {
   return glob.sync(pattern, { nodir: true });
 };
 
-export const buildFile = async (file) => {
+export const getDestinationPath = (file) => {
   const pkgName = path.relative(PACKAGES_DIR, file).split(path.sep)[0];
   const pkg = path.resolve(PACKAGES_DIR, pkgName);
   const srcDir = path.resolve(pkg, SRC_DIR);
   const buildDir = path.resolve(pkg, BUILD_DIR);
   const relativeToSrcPath = path.relative(srcDir, file);
-  const destPath = path.resolve(buildDir, relativeToSrcPath);
+  return path.resolve(buildDir, relativeToSrcPath);
+};
+
+export const compileFile = async (file) => {
   const babelConfig = await getBabelConfig();
   const transformed = transformFileSync(file, babelConfig).code;
-  return fsp.outputFile(destPath, transformed);
+  return fsp.outputFile(getDestinationPath(file), transformed);
 };
