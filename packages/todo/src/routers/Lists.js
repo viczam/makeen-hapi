@@ -1,7 +1,6 @@
-import MongoResourceRouter from 'makeen-router/src/routers/MongoResourceRouter';
 import { ObjectID as objectId } from 'mongodb';
 import omit from 'lodash/omit';
-import { route } from 'makeen-router';
+import { route, MongoResourceRouter } from 'makeen-router';
 import listSchema from '../schemas/list';
 
 class ListsRouter extends MongoResourceRouter {
