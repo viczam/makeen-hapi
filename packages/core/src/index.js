@@ -1,10 +1,12 @@
 import HapiBoomDecorators from 'hapi-boom-decorators';
 import Scooter from 'scooter';
 import * as HapiOctobus from 'hapi-octobus';
-import { Store } from 'octobus-mongodb-store';
+import { Store, decorators } from 'octobus-mongodb-store';
 import MessageBus from './octobus/MessageBus';
 import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
+
+const MongoDbStore = decorators.withTimestamps(Store);
 
 const register = async (server, options, next) => {
   process.on('unhandledRejection', (reason, p) => {
@@ -39,7 +41,7 @@ const register = async (server, options, next) => {
     });
 
     server.method('createStore', (config = {}) => (
-      new Store({
+      new MongoDbStore({
         db: mongoDb,
         refManager,
         ...config,
