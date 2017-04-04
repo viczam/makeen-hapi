@@ -1,5 +1,5 @@
 {
-  "name": "makeen-core",
+  "name": "makeen",
   "version": "0.1.0",
   "engines": {
     "node": "6.x.x"
@@ -9,33 +9,39 @@
   "scripts": {
     "postinstall": "npm run bootstrap",
     "bootstrap": "lerna bootstrap",
-    "dev": "babel-watch server.js",
-    "babel-node": "babel-node",
+    "watch:files": "babel-node ./scripts/watch.js",
+    "watch:server": "babel-watch server.js --exclude packages/*/src/**",
+    "watch": "npm run build && run-p watch:*",
     "debug": "babel-node --inspect server.js",
+    "babel-node": "babel-node",
     "nodemon": "nodemon --exec npm run babel-node -- server.js",
     "start": "babel-node server.js",
     "clean": "rm -rf node_modules/ && rm -rf packages/*/node_modules",
     "clean-setup": "npm run clean && yarn",
+    "build": "babel-node ./scripts/build.js",
     "lint": "eslint .",
     "open-monitor": "open http://localhost:3003/status-monitor"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viczam/makeen-core.git"
+    "url": "git+https://github.com/makeen-project/makeen.git"
   },
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viczam/makeen-core/issues"
+    "url": "https://github.com/makeen-project/makeen/issues"
   },
-  "homepage": "https://github.com/viczam/makeen-core#readme",
+  "homepage": "https://github.com/makeen-project/makeen#readme",
   "dependencies": {
     "catbox": "~7.1.2",
     "catbox-memory": "~2.0.4",
     "catbox-mongodb": "~3.0.0",
+    "chokidar": "1.6.1",
     "confidence": "~3.0.2",
-    "environment-override": "1.0.2",
     "dotenv": "~4.0.0",
+    "environment-override": "1.0.2",
+    "fs-promise": "2.0.2",
+    "glob": "7.1.1",
     "glue": "~4.1.0",
     "good": "~7.1.0",
     "good-console": "~6.4.0",
@@ -44,7 +50,7 @@
     "hapi": "~16.1.0",
     "hoek": "~4.1.0",
     "moment": "~2.17.1",
-    "npm-run-all": "~4.0.2",
+    "npm-run-all": "4.0.2",
     "pretty-format": "~19.0.0",
     "react": "~15.4.0"
   },
@@ -71,25 +77,5 @@
     "eslint-plugin-react": "~6.10.0",
     "lerna": "2.0.0-beta.38",
     "nodemon": "~1.11.0"
-  },
-  "babel": {
-    "presets": [
-      "modern-node",
-      "stage-0",
-      "react"
-    ],
-    "plugins": [
-      "transform-es2015-destructuring",
-      "transform-object-rest-spread",
-      "transform-async-to-generator",
-      "transform-decorators-legacy"
-    ],
-    "env": {
-      "development": {
-        "presets": [
-          "react-hmre"
-        ]
-      }
-    }
   }
 }

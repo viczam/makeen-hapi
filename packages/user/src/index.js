@@ -35,7 +35,7 @@ export async function register(server, options, next) {
     }
 
     const serviceBus = server.methods.createServiceBus('user', [{
-      pattern: /^mailer/,
+      matcher: /^mailer/,
     }]);
 
     const User = serviceBus.register(
