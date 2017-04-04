@@ -2,7 +2,7 @@
   "name": "makeen-user",
   "version": "0.2.0",
   "description": "User system",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
