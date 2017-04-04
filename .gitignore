@@ -5,3 +5,4 @@ npm-debug.log
 lerna-debug.log
 MAKEEN_BUILD_INFO
 packages/*/build
+secrets/makeen.key
