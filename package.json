@@ -81,11 +81,5 @@
     "lint-staged": "^3.4.0",
     "nodemon": "~1.11.0",
     "prettier": "0.22.0"
-  },
-  "lint-staged": {
-    "*.js": [
-      "prettier --write",
-      "git add"
-    ]
   }
 }
