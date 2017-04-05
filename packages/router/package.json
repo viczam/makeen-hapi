@@ -1,6 +1,6 @@
 {
   "name": "makeen-router",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Makeen router",
   "main": "build/index.js",
   "repository": {
@@ -10,10 +10,6 @@
   "keywords": [
     "makeen",
     "routing"
-  ],
-  "files": [
-    "dist",
-    "README.md"
   ],
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",

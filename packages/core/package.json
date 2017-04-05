@@ -1,6 +1,6 @@
 {
   "name": "makeen-core",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "Makeen core plugin",
   "main": "build/index.js",
   "repository": {
@@ -10,10 +10,6 @@
   "keywords": [
     "makeen",
     "octobus"
-  ],
-  "files": [
-    "dist",
-    "README.md"
   ],
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
