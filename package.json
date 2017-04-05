@@ -20,7 +20,8 @@
     "clean-setup": "npm run clean && yarn",
     "build": "babel-node ./scripts/build.js",
     "lint": "eslint .",
-    "open-monitor": "open http://localhost:3003/status-monitor"
+    "open-monitor": "open http://localhost:3003/status-monitor",
+    "precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -75,7 +76,16 @@
     "eslint-plugin-import": "~2.2.0",
     "eslint-plugin-jsx-a11y": "~4.0.0",
     "eslint-plugin-react": "~6.10.0",
+    "husky": "^0.13.3",
     "lerna": "2.0.0-beta.38",
-    "nodemon": "~1.11.0"
+    "lint-staged": "^3.4.0",
+    "nodemon": "~1.11.0",
+    "prettier": "0.22.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
