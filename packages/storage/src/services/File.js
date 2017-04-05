@@ -1,8 +1,8 @@
-import Joi from 'joi';
-import { decorators } from 'octobus.js';
-import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
-import path from 'path';
-import fs from 'fs-promise';
+import Joi from "joi";
+import { decorators } from "octobus.js";
+import ServiceContainer from "makeen-core/build/octobus/ServiceContainer";
+import path from "path";
+import fs from "fs-promise";
 
 const { service, withSchema } = decorators;
 
@@ -14,7 +14,7 @@ class File extends ServiceContainer {
 
   setServiceBus(...args) {
     super.setServiceBus(...args);
-    this.FileRepository = this.extract('FileRepository');
+    this.FileRepository = this.extract("FileRepository");
   }
 
   @service()
@@ -25,25 +25,27 @@ class File extends ServiceContainer {
     path: Joi.string().required(),
     bytes: Joi.number().required(),
     headers: Joi.object().required(),
-    getPath: Joi.func().allow(null),
+    getPath: Joi.func().allow(null)
   })
-  async createFromUpload({
-    accountId,
-    userId,
-    path: uploadPath,
-    filename,
-    bytes,
-    headers,
-    getPath,
-  }) {
+  async createFromUpload(
+    {
+      accountId,
+      userId,
+      path: uploadPath,
+      filename,
+      bytes,
+      headers,
+      getPath
+    }
+  ) {
     const file = await this.FileRepository.createOne({
       accountId,
       userId,
       filename: path.basename(filename),
       extension: path.extname(filename),
       size: bytes,
-      contentType: headers['content-type'],
-      uploadedAt: new Date(),
+      contentType: headers["content-type"],
+      uploadedAt: new Date()
     });
 
     const destination = getPath ? getPath(file) : await this.getPath(file);

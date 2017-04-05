@@ -1,14 +1,14 @@
-import Joi from 'joi';
-import Boom from 'boom';
-import { decorators } from 'octobus.js';
-import ServiceContainer from 'makeen-core/src/octobus/ServiceContainer';
+import Joi from "joi";
+import Boom from "boom";
+import { decorators } from "octobus.js";
+import ServiceContainer from "makeen-core/build/octobus/ServiceContainer";
 
 const { service, withSchema } = decorators;
 
 class Account extends ServiceContainer {
   setServiceBus(...args) {
     super.setServiceBus(...args);
-    this.AccountRepository = this.extract('AccountRepository');
+    this.AccountRepository = this.extract("AccountRepository");
   }
 
   @service()
@@ -17,14 +17,14 @@ class Account extends ServiceContainer {
     const account = await this.AccountRepository.findById(_id);
 
     if (!account) {
-      throw Boom.badRequest('Account not found!');
+      throw Boom.badRequest("Account not found!");
     }
 
-    if (account.labels.includes('isConfirmed')) {
-      throw Boom.badRequest('Account is already confirmed!');
+    if (account.labels.includes("isConfirmed")) {
+      throw Boom.badRequest("Account is already confirmed!");
     }
 
-    account.labels.push('isConfirmed');
+    account.labels.push("isConfirmed");
 
     return this.AccountRepository.replaceOne(account);
   }
@@ -32,31 +32,31 @@ class Account extends ServiceContainer {
   @service()
   @withSchema(Joi.string().email().required())
   async resendActivationEmail(email) {
-    const UserRepository = this.extract('user.UserRepository');
-    const Mail = this.extract('mailer.Mail');
+    const UserRepository = this.extract("user.UserRepository");
+    const Mail = this.extract("mailer.Mail");
 
     const user = await UserRepository.findOne({
-      query: { email },
+      query: { email }
     });
 
     if (!user) {
-      throw Boom.badRequest('User not found!');
+      throw Boom.badRequest("User not found!");
     }
 
     const account = await this.AccountRepository.findById(user.accountId);
 
-    if (account.labels.includes('isConfirmed')) {
-      throw Boom.badRequest('Account is already confirmed!');
+    if (account.labels.includes("isConfirmed")) {
+      throw Boom.badRequest("Account is already confirmed!");
     }
 
     await Mail.sendActivationEmail({
       user,
-      account,
+      account
     });
 
     return {
       user,
-      account,
+      account
     };
   }
 }
