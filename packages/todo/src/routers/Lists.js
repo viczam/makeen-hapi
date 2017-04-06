@@ -8,15 +8,18 @@ class ListsRouter extends MongoResourceRouter {
     super(ListRepository, {
       namespace: 'TodoLists',
       basePath: '/lists',
-      getRepository: (request, reply) => reply(request.server.plugins['makeen-todo'].ListRepository),
       entitySchema: omit(listSchema, [
-        '_id', 'createdBy', 'createdAt', 'updatedAt', 'accountId',
+        '_id',
+        'createdBy',
+        'createdAt',
+        'updatedAt',
+        'accountId',
       ]),
       ...config,
     });
 
     this.applyContext({
-      generateContext: (request) => ({
+      generateContext: request => ({
         accountId: objectId(request.auth.credentials.accountId),
       }),
     });
