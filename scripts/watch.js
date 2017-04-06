@@ -14,12 +14,12 @@ const watch = async () => {
 
   watcher.on('add', compileFile);
   watcher.on('change', compileFile);
-  watcher.on('unlink', (file) => fs.unlinkSync(getDestinationPath(file)));
-  watcher.on('unlinkDir', (dirPath) => {
+  watcher.on('unlink', file => fs.unlinkSync(getDestinationPath(file)));
+  watcher.on('unlinkDir', dirPath => {
     fsp.remove(getDestinationPath(dirPath));
   });
 
   return watcher;
 };
 
-watch().then(w => w.on('error', console.log.bind(console)));
+watch().then(w => w.on('error', console.log.bind(console))); // eslint-disable-line no-console
