@@ -6,39 +6,45 @@ import { toBSON, idValidator, idToQuery } from '../libs/mongo-helpers';
 import { route } from '../libs/decorators';
 
 class MongoResourceRouter extends Router {
-  static applyContextToRoute = (routeId, generateContext) => (request, reply) => {
-    const context = generateContext(request);
+  static applyContextToRoute = (routeId, generateContext) =>
+    (request, reply) => {
+      const context = generateContext(request);
 
-    switch (routeId) {
-      case 'count':
-      case 'deleteOne':
-      case 'deleteOneById':
-      case 'findById':
-      case 'findOne':
-        Object.assign(request.pre.query, context);
-        break;
-      case 'createOne':
-        Object.assign(request.pre.payload, context);
-        break;
-      case 'findMany':
-        Object.assign(request.pre.queryParams.query, context);
-        break;
-      case 'replaceOne':
-      case 'updateOne':
-        Object.assign(request.pre.query, context);
-        Object.assign(request.pre.payload, context);
-        break;
-      default:
-    }
+      switch (routeId) {
+        case 'count':
+        case 'deleteOne':
+        case 'deleteOneById':
+        case 'findById':
+        case 'findOne':
+          Object.assign(request.pre.query, context);
+          break;
+        case 'createOne':
+          Object.assign(request.pre.payload, context);
+          break;
+        case 'findMany':
+          Object.assign(request.pre.queryParams.query, context);
+          break;
+        case 'replaceOne':
+        case 'updateOne':
+          Object.assign(request.pre.query, context);
+          Object.assign(request.pre.payload, context);
+          break;
+        default:
+      }
 
-    reply();
-  };
+      reply();
+    };
 
   constructor(Repository, config) {
     super(
-      Joi.attempt(config, Joi.object().keys({
-        entitySchema: Joi.object(),
-      }).unknown()),
+      Joi.attempt(
+        config,
+        Joi.object()
+          .keys({
+            entitySchema: Joi.object(),
+          })
+          .unknown(),
+      ),
     );
 
     this.Repository = Repository;
@@ -54,10 +60,12 @@ class MongoResourceRouter extends Router {
           },
         },
         description: 'Delete an entity by id',
-        pre: [{
-          method: (request, reply) => reply(idToQuery(request.params.id)),
-          assign: 'query',
-        }],
+        pre: [
+          {
+            method: (request, reply) => reply(idToQuery(request.params.id)),
+            assign: 'query',
+          },
+        ],
       },
     });
 
@@ -65,9 +73,8 @@ class MongoResourceRouter extends Router {
     this.routes.replaceOne.config.validate.payload = this.config.entitySchema;
   }
 
-  @route({
+  @route.get({
     path: '/count',
-    method: 'GET',
     config: {
       validate: {
         query: {
@@ -75,10 +82,12 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Count entities',
-      pre: [{
-        method: (request, reply) => reply(toBSON(request.query.query)),
-        assign: 'query',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(toBSON(request.query.query)),
+          assign: 'query',
+        },
+      ],
     },
   })
   count(request) {
@@ -86,17 +95,17 @@ class MongoResourceRouter extends Router {
     return this.Repository.count({ query });
   }
 
-  @route({
+  @route.post({
     path: '/',
-    method: 'POST',
     config: {
-      validate: {
-      },
+      validate: {},
       description: 'Create a new entity',
-      pre: [{
-        method: (request, reply) => reply(toBSON(request.payload)),
-        assign: 'payload',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(toBSON(request.payload)),
+          assign: 'payload',
+        },
+      ],
     },
   })
   createOne(request) {
@@ -104,9 +113,8 @@ class MongoResourceRouter extends Router {
     return this.Repository.createOne(payload);
   }
 
-  @route({
+  @route.delete({
     path: '/deleteOne',
-    method: 'DELETE',
     config: {
       validate: {
         payload: {
@@ -114,10 +122,12 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Delete an entity',
-      pre: [{
-        method: (request, reply) => reply(toBSON(request.query.query)),
-        assign: 'query',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(toBSON(request.query.query)),
+          assign: 'query',
+        },
+      ],
     },
   })
   deleteOne(request) {
@@ -125,9 +135,8 @@ class MongoResourceRouter extends Router {
     return this.Repository.deleteOne({ query });
   }
 
-  @route({
+  @route.get({
     path: '/{id}',
-    method: 'GET',
     config: {
       validate: {
         params: {
@@ -135,10 +144,12 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Find an entity by id',
-      pre: [{
-        method: (request, reply) => reply(idToQuery(request.params.id)),
-        assign: 'query',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(idToQuery(request.params.id)),
+          assign: 'query',
+        },
+      ],
     },
   })
   async findById(request) {
@@ -152,9 +163,8 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
-  @route({
+  @route.get({
     path: '/',
-    method: 'GET',
     config: {
       validate: {
         query: {
@@ -166,26 +176,29 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Find entities',
-      pre: [{
-        method: (request, reply) => reply(toBSON(request.query.query)),
-        assign: 'query',
-      }, {
-        method: (request, reply) => {
-          const params = pick(request.query, ['fields', 'orderBy']);
-          params.query = request.pre.query;
-
-          if (request.query.offset !== undefined) {
-            params.skip = parseInt(request.query.offset, 10);
-          }
-
-          if (request.query.limit !== undefined) {
-            params.limit = parseInt(request.query.limit, 10);
-          }
-
-          reply(params);
+      pre: [
+        {
+          method: (request, reply) => reply(toBSON(request.query.query)),
+          assign: 'query',
         },
-        assign: 'queryParams',
-      }],
+        {
+          method: (request, reply) => {
+            const params = pick(request.query, ['fields', 'orderBy']);
+            params.query = request.pre.query;
+
+            if (request.query.offset !== undefined) {
+              params.skip = parseInt(request.query.offset, 10);
+            }
+
+            if (request.query.limit !== undefined) {
+              params.limit = parseInt(request.query.limit, 10);
+            }
+
+            reply(params);
+          },
+          assign: 'queryParams',
+        },
+      ],
     },
   })
   findMany(request) {
@@ -193,9 +206,8 @@ class MongoResourceRouter extends Router {
     return this.Repository.findMany(queryParams).then(c => c.toArray());
   }
 
-  @route({
+  @route.get({
     path: '/findOne',
-    method: 'GET',
     config: {
       validate: {
         query: {
@@ -203,10 +215,12 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Find one entity',
-      pre: [{
-        method: (request, reply) => reply(toBSON(request.query.query)),
-        assign: 'query',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(toBSON(request.query.query)),
+          assign: 'query',
+        },
+      ],
     },
   })
   async findOne(request) {
@@ -220,7 +234,7 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
-  @route({
+  @route.put({
     path: '/{id}',
     method: 'PUT',
     config: {
@@ -230,13 +244,16 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Replace an entity',
-      pre: [{
-        method: (request, reply) => reply(idToQuery(request.params.id)),
-        assign: 'query',
-      }, {
-        method: (request, reply) => reply(toBSON(request.payload)),
-        assign: 'payload',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(idToQuery(request.params.id)),
+          assign: 'query',
+        },
+        {
+          method: (request, reply) => reply(toBSON(request.payload)),
+          assign: 'payload',
+        },
+      ],
     },
   })
   async replaceOne(request) {
@@ -253,9 +270,8 @@ class MongoResourceRouter extends Router {
     });
   }
 
-  @route({
+  @route.patch({
     path: '/{id}',
-    method: 'PATCH',
     config: {
       validate: {
         params: {
@@ -263,13 +279,16 @@ class MongoResourceRouter extends Router {
         },
       },
       description: 'Update an entity',
-      pre: [{
-        method: (request, reply) => reply(idToQuery(request.params.id)),
-        assign: 'query',
-      }, {
-        method: (request, reply) => reply(toBSON(request.payload)),
-        assign: 'payload',
-      }],
+      pre: [
+        {
+          method: (request, reply) => reply(idToQuery(request.params.id)),
+          assign: 'query',
+        },
+        {
+          method: (request, reply) => reply(toBSON(request.payload)),
+          assign: 'payload',
+        },
+      ],
     },
   })
   async updateOne(request) {
@@ -302,7 +321,7 @@ class MongoResourceRouter extends Router {
   }
 
   applyContext({ routes, generateContext }) {
-    (routes || Object.keys(this.routes)).forEach((routeId) => {
+    (routes || Object.keys(this.routes)).forEach(routeId => {
       this.routes[routeId].config.pre.push({
         method: this.constructor.applyContextToRoute(routeId, generateContext),
       });
