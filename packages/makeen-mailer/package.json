@@ -1,6 +1,6 @@
 {
   "name": "makeen-mailer",
-  "version": "1.0.1",
+  "version": "0.4.0",
   "description": "",
   "main": "build/index.js",
   "scripts": {
