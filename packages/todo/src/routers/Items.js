@@ -12,22 +12,27 @@ class ItemsRouter extends MongoResourceRouter {
       namespace: 'TodoItems',
       basePath: '/lists/{listId}/items',
       entitySchema: omit(itemSchema, [
-        '_id', 'accountId', 'listId', 'createdBy', 'createdAt', 'updatedAt',
+        '_id',
+        'accountId',
+        'listId',
+        'createdBy',
+        'createdAt',
+        'updatedAt',
       ]),
       baseRouteConfig: {
-        pre: [{
-          method: MongoResourceRouter.wrapHandler(
-            function method(request) {
+        pre: [
+          {
+            method: MongoResourceRouter.wrapHandler(function method(request) {
               return this.ListRepository.findOne({
                 query: {
                   _id: objectId(request.params.listId),
                   accountId: objectId(request.auth.credentials.accountId),
                 },
               });
-            },
-          ),
-          assign: 'list',
-        }],
+            }),
+            assign: 'list',
+          },
+        ],
         validate: {
           params: {
             listId: idValidator,
@@ -37,10 +42,8 @@ class ItemsRouter extends MongoResourceRouter {
       ...config,
     });
 
-    this.ItemRepository = ItemRepository;
-
     this.applyContext({
-      generateContext: (request) => ({
+      generateContext: request => ({
         accountId: objectId(request.auth.credentials.accountId),
         listId: request.pre.list._id,
       }),
@@ -69,7 +72,7 @@ class ItemsRouter extends MongoResourceRouter {
     },
   })
   async toggle(request) {
-    const item = this.ItemRepository.findOne({
+    const item = this.Repository.findOne({
       query: {
         accountId: objectId(request.auth.credentials.accountId),
         listId: request.pre.list._id,
@@ -83,7 +86,7 @@ class ItemsRouter extends MongoResourceRouter {
 
     const isChecked = !item.isChecked;
 
-    await this.ItemRepository.updateOne({
+    await this.Repository.updateOne({
       query: {
         _id: item._id,
       },

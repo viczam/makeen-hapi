@@ -24,8 +24,6 @@ class ListsRouter extends MongoResourceRouter {
       }),
     });
 
-    this.ListRepository = ListRepository;
-
     this.routes.createOne.config.pre.push({
       async method(request, reply) {
         Object.assign(request.pre.payload, {
@@ -47,7 +45,7 @@ class ListsRouter extends MongoResourceRouter {
   findWithStats(request) {
     const accountId = objectId(request.auth.credentials.accountId);
 
-    return this.ListRepository.findManyWithStats({
+    return this.Repository.findManyWithStats({
       query: { accountId },
     });
   }
