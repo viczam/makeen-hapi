@@ -1,13 +1,14 @@
-import Joi from "joi";
-import Boom from "boom";
-import { ObjectID as objectId } from "mongodb";
-import jwt from "jsonwebtoken";
-import pick from "lodash/pick";
-import bcrypt from "bcryptjs";
-import moment from "moment";
-import { decorators } from "octobus.js";
-import crypto from "crypto";
-import ServiceContainer from "makeen-core/build/octobus/ServiceContainer";
+/* eslint-disable class-methods-use-this */
+import Joi from 'joi';
+import Boom from 'boom';
+import { ObjectID as objectId } from 'mongodb';
+import jwt from 'jsonwebtoken';
+import pick from 'lodash/pick';
+import bcrypt from 'bcryptjs';
+import moment from 'moment';
+import { decorators } from 'octobus.js';
+import crypto from 'crypto';
+import ServiceContainer from 'makeen-core/build/octobus/ServiceContainer';
 
 const { service, withSchema } = decorators;
 
@@ -19,9 +20,9 @@ class User extends ServiceContainer {
 
   setServiceBus(serviceBus) {
     super.setServiceBus(serviceBus);
-    this.UserRepository = serviceBus.extract("UserRepository");
-    this.AccountRepository = serviceBus.extract("AccountRepository");
-    this.Mail = serviceBus.extract("mailer.Mail");
+    this.UserRepository = serviceBus.extract('UserRepository');
+    this.AccountRepository = serviceBus.extract('AccountRepository');
+    this.Mail = serviceBus.extract('mailer.Mail');
   }
 
   @service()
@@ -30,39 +31,38 @@ class User extends ServiceContainer {
       id: Joi.string().required(),
       accountId: Joi.object(),
       username: Joi.string().required(),
-      scope: Joi.array().default([])
+      scope: Joi.array().default([]),
     }),
-    options: Joi.object().default({})
+    options: Joi.object().default({}),
   })
   createToken({ options, user }) {
-    // eslint-disable-line class-methods-use-this
     return jwt.sign(user, this.jwtConfig.key, {
       ...this.jwtConfig.options,
-      ...options
+      ...options,
     });
   }
 
   @service()
   @withSchema({
     username: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
   })
   async login({ username, password }) {
     const user = await this.UserRepository.findOne({
       query: {
         $or: [
           {
-            username
+            username,
           },
           {
-            email: username
-          }
-        ]
-      }
+            email: username,
+          },
+        ],
+      },
     });
 
-    if (!user || user.labels.includes("isDeleted")) {
-      throw Boom.badRequest("User not found!");
+    if (!user || user.labels.includes('isDeleted')) {
+      throw Boom.badRequest('User not found!');
     }
 
     await this.canLogin(user);
@@ -71,73 +71,73 @@ class User extends ServiceContainer {
   }
 
   async canLogin(user) {
-    if (!user.labels.includes("isActive")) {
-      throw Boom.badRequest("User is not active!");
+    if (!user.labels.includes('isActive')) {
+      throw Boom.badRequest('User is not active!');
     }
 
     const account = await this.AccountRepository.findById(user.accountId);
 
-    if (!account.labels.includes("isConfirmed")) {
-      throw Boom.badRequest("Account is not confirmed!");
+    if (!account.labels.includes('isConfirmed')) {
+      throw Boom.badRequest('Account is not confirmed!');
     }
 
-    if (!account.labels.includes("isActive")) {
-      throw Boom.badRequest("Account is not active!");
+    if (!account.labels.includes('isActive')) {
+      throw Boom.badRequest('Account is not active!');
     }
+
+    return account;
   }
 
   async doLogin({ password, user }) {
     const hashedPassword = await this.hashPassword({
       password,
-      salt: user.salt
+      salt: user.salt,
     });
 
     if (user.password !== hashedPassword) {
-      throw Boom.badRequest("Incorrect password!");
+      throw Boom.badRequest('Incorrect password!');
     }
 
     const updatedUser = await this.UserRepository.replaceOne({
       ...user,
-      lastLogin: new Date()
+      lastLogin: new Date(),
     });
 
     const token = await this.createToken({
-      user: await this.serialize(updatedUser)
+      user: await this.serialize(updatedUser),
     });
 
     return {
       ...updatedUser,
-      token
+      token,
     };
   }
 
   @service()
   dump(data) {
-    // eslint-disable-line class-methods-use-this
     return pick(data, [
-      "accountId",
-      "username",
-      "firstName",
-      "lastName",
-      "email",
-      "_id",
-      "updatedAt",
-      "createdAt",
-      "token",
-      "labels",
-      "lastLogin",
-      "roles"
+      'accountId',
+      'username',
+      'firstName',
+      'lastName',
+      'email',
+      '_id',
+      'updatedAt',
+      'createdAt',
+      'token',
+      'labels',
+      'lastLogin',
+      'roles',
     ]);
   }
 
   @service()
   serialize(data) {
-    // eslint-disable-line class-methods-use-this
     return {
       id: data._id.toString(),
       username: data.username,
       accountId: data.accountId,
-      scope: data.roles
+      scope: data.roles,
     };
   }
 
@@ -145,27 +145,27 @@ class User extends ServiceContainer {
   @withSchema({
     userId: Joi.object().required(),
     oldPassword: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
   })
   async changePassword({ userId, oldPassword, password }) {
     const user = await this.UserRepository.findById(userId);
 
     if (!user) {
-      throw Boom.badRequest("User not found!");
+      throw Boom.badRequest('User not found!');
     }
 
     const oldHashedPassword = await this.hashPassword({
       password: oldPassword,
-      salt: user.salt
+      salt: user.salt,
     });
 
     if (oldHashedPassword !== user.password) {
-      throw Boom.badRequest("Invalid password!");
+      throw Boom.badRequest('Invalid password!');
     }
 
     const hashedPassword = await this.hashPassword({
       password,
-      salt: user.salt
+      salt: user.salt,
     });
 
     if (hashedPassword === user.password) {
@@ -177,31 +177,31 @@ class User extends ServiceContainer {
       update: {
         $set: {
           resetPassword: {},
-          password: hashedPassword
-        }
-      }
+          password: hashedPassword,
+        },
+      },
     });
   }
 
   @service()
   @withSchema({
     password: Joi.string().required(),
-    token: Joi.string().required()
+    token: Joi.string().required(),
   })
   async recoverPassword({ password, token }) {
     const user = await this.UserRepository.findOne({
       query: {
-        "resetPassword.token": token
-      }
+        'resetPassword.token': token,
+      },
     });
 
     if (!user) {
-      throw Boom.badRequest("Token not found!");
+      throw Boom.badRequest('Token not found!');
     }
 
     const hashedPassword = await this.hashPassword({
       password,
-      salt: user.salt
+      salt: user.salt,
     });
 
     if (hashedPassword === user.password) {
@@ -213,14 +213,14 @@ class User extends ServiceContainer {
       update: {
         $set: {
           resetPassword: {},
-          password: hashedPassword
-        }
-      }
+          password: hashedPassword,
+        },
+      },
     });
 
     return {
       user,
-      updateResult
+      updateResult,
     };
   }
 
@@ -230,22 +230,22 @@ class User extends ServiceContainer {
       query: {
         $or: [
           {
-            username
+            username,
           },
           {
-            email
-          }
-        ]
-      }
+            email,
+          },
+        ],
+      },
     });
 
     if (existingUser) {
       if (existingUser.username === username) {
-        throw Boom.badRequest("Username already taken.");
+        throw Boom.badRequest('Username already taken.');
       }
 
       if (existingUser.email === email) {
-        throw Boom.badRequest("Email already taken.");
+        throw Boom.badRequest('Email already taken.');
       }
     }
 
@@ -253,34 +253,34 @@ class User extends ServiceContainer {
 
     const user = await this.UserRepository.createOne({
       accountId: account._id,
-      ...message.data
+      ...message.data,
     });
 
     this.Mail.send({
       to: user.email,
-      subject: "welcome",
-      template: "UserSignup",
+      subject: 'welcome',
+      template: 'UserSignup',
       context: {
         user,
-        account
-      }
+        account,
+      },
     });
 
     return {
       user: pick(user, [
-        "accountId",
-        "_id",
-        "title",
-        "firstName",
-        "lastName",
-        "email",
-        "username",
-        "roles",
-        "labels",
-        "createdAt",
-        "updatedAt"
+        'accountId',
+        '_id',
+        'title',
+        'firstName',
+        'lastName',
+        'email',
+        'username',
+        'roles',
+        'labels',
+        'createdAt',
+        'updatedAt',
       ]),
-      account: pick(account, ["labels", "_id", "updatedAt", "createdAt"])
+      account: pick(account, ['labels', '_id', 'updatedAt', 'createdAt']),
     };
   }
 
@@ -290,55 +290,55 @@ class User extends ServiceContainer {
       query: {
         $or: [
           {
-            username: usernameOrEmail
+            username: usernameOrEmail,
           },
           {
-            email: usernameOrEmail
-          }
-        ]
-      }
+            email: usernameOrEmail,
+          },
+        ],
+      },
     });
 
     if (!user) {
-      throw Boom.badRequest("User not found!");
+      throw Boom.badRequest('User not found!');
     }
 
     const resetPassword = {
-      token: crypto.randomBytes(20).toString("hex"),
-      resetAt: new Date()
+      token: crypto.randomBytes(20).toString('hex'),
+      resetAt: new Date(),
     };
 
     const updateResult = await this.UserRepository.updateOne({
       query: { _id: user._id },
       update: {
-        $set: { resetPassword }
-      }
+        $set: { resetPassword },
+      },
     });
 
     this.Mail.send({
       to: user.email,
-      subject: "forgot password",
-      template: "ForgotPassword",
+      subject: 'forgot password',
+      template: 'ForgotPassword',
       context: {
         user,
-        resetPassword
-      }
+        resetPassword,
+      },
     });
 
     return {
       user: {
         ...user,
-        resetPassword
+        resetPassword,
       },
-      updateResult
+      updateResult,
     };
   }
 
   @service()
   async socialLogin({ provider, token, expiresIn, profile }) {
-    if (provider === "google") {
+    if (provider === 'google') {
       Object.assign(profile, {
-        id: profile.raw.sub
+        id: profile.raw.sub,
       });
     }
 
@@ -346,17 +346,17 @@ class User extends ServiceContainer {
       query: {
         $or: [
           {
-            [`socialLogin.${provider}.id`]: profile.id
+            [`socialLogin.${provider}.id`]: profile.id,
           },
           {
-            email: profile.email
-          }
-        ]
-      }
+            email: profile.email,
+          },
+        ],
+      },
     });
 
     if (!user) {
-      throw Boom.badRequest("User not found!");
+      throw Boom.badRequest('User not found!');
     }
 
     user.socialLogin[provider] = {
@@ -364,28 +364,27 @@ class User extends ServiceContainer {
       name: profile.displayName,
       email: profile.email,
       token,
-      expiresAt: moment().add(expiresIn, "seconds").toDate()
+      expiresAt: moment().add(expiresIn, 'seconds').toDate(),
     };
 
     const updatedUser = await this.UserRepository.replaceOne({
       ...user,
-      lastLogin: new Date()
+      lastLogin: new Date(),
     });
 
     const authToken = await this.createToken({
       id: user._id,
-      username: user.username
+      username: user.username,
     });
 
     return {
       ...updatedUser,
-      token: authToken
+      token: authToken,
     };
   }
 
   @service()
   hashPassword({ password, salt }) {
-    // eslint-disable-line
     return new Promise((resolve, reject) => {
       bcrypt.hash(password, salt, (err, result) => {
         if (err) {
@@ -402,7 +401,7 @@ class User extends ServiceContainer {
       cb(null, false);
     } else {
       this.serviceBus
-        .send("UserRepository.findById", objectId(decodedToken.id))
+        .send('UserRepository.findById', objectId(decodedToken.id))
         .then(result => cb(null, !!result), cb);
     }
   };
