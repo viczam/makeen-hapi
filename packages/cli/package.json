@@ -1,5 +1,5 @@
 {
-  "name": "makeen-web",
+  "name": "makeen-cli",
   "version": "0.4.0",
   "description": "",
   "main": "build/index.js",
