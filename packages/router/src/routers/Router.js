@@ -144,8 +144,8 @@ class Router {
   }
 
   static wrapHandler(handler) {
+    // eslint-disable-next-line func-names
     return async function (request, reply) {
-      // eslint-disable-line func-names
       try {
         const response = await Promise.resolve(
           handler.call(this, request, reply),

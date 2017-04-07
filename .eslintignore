@@ -1,5 +1,5 @@
 **/node_modules/**
 packages/*/node_modules/**
 packages/*/build/**
-packages/web/config
-packages/web/scripts
+packages/web-app/config/**
+packages/web-app/scripts/**
