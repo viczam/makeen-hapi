@@ -1,3 +1,4 @@
+import path from 'path';
 import Joi from 'joi';
 import Inert from 'inert';
 import Vision from 'vision';
@@ -18,7 +19,7 @@ export async function register(server, options, next) {
         jsx: HapiReactViews,
       },
       relativeTo: __dirname,
-      path: 'views',
+      path: path.resolve(pluginOptions.viewsDir),
     });
 
     new MainRouter(pluginOptions).mount(server);
