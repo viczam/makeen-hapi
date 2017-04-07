@@ -58,7 +58,8 @@
       "plugin": {
         "register": "./web",
         "options": {
-          "assetsPath": "./packages/web-app/build"
+          "assetsPath": "./packages/web-app/build",
+          "viewsDir": "./packages/web/src/views"
         }
       }
     }],
