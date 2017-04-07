@@ -1,0 +1,18 @@
+{
+  "name": "makeen-web",
+  "version": "0.4.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {},
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "dependencies": {
+    "h2o2": "5.4.0",
+    "hapi-react-views": "9.2.1",
+    "inert": "4.2.0",
+    "joi": "10.4.1",
+    "makeen-router": "0.4.0",
+    "react": "15.4.2",
+    "vision": "4.1.1"
+  }
+}

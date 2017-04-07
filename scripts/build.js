@@ -1,9 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import DotEnv from 'dotenv';
 import { transformFileSync } from 'babel-core';
 import path from 'path';
 import fsp from 'fs-promise';
 import { getPackageDirs, getPackageFiles, getBabelConfig } from '../src/utils';
 import { SRC_DIR, BUILD_DIR } from '../src/constants';
+
+DotEnv.config();
 
 const build = async () => {
   const babelConfig = await getBabelConfig();

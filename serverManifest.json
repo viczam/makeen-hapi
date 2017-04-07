@@ -131,10 +131,6 @@
           "prefix": "/todo"
         }
       }
-    }, {
-      "plugin": {
-        "register": "./web"
-      }
     }],
     "$default": [],
     "development": [{

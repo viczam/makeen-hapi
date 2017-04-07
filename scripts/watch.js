@@ -1,8 +1,11 @@
+import DotEnv from 'dotenv';
 import chokidar from 'chokidar';
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs-promise';
 import { compileFile, getDestinationPath } from '../src/utils';
+
+DotEnv.config();
 
 const watch = async () => {
   const watcher = chokidar.watch(

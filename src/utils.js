@@ -4,7 +4,12 @@ import path from 'path';
 import fsp from 'fs-promise';
 import fs from 'fs';
 import glob from 'glob';
-import { PACKAGES_DIR, SRC_DIR, BUILD_DIR } from './constants';
+import {
+  PACKAGES_DIR,
+  SRC_DIR,
+  BUILD_DIR,
+  IGNORED_PACKAGES,
+} from './constants';
 
 export const getBabelConfig = () =>
   fsp.readJson(path.resolve(__dirname, '..', '.babelrc'));
@@ -12,7 +17,8 @@ export const getBabelConfig = () =>
 export const getPackageDirs = async () =>
   (await fsp.readdir(PACKAGES_DIR))
     .map(file => path.resolve(PACKAGES_DIR, file))
-    .filter(file => fs.lstatSync(path.resolve(file)).isDirectory());
+    .filter(file => fs.lstatSync(path.resolve(file)).isDirectory())
+    .filter(dir => !IGNORED_PACKAGES.includes(path.basename(dir)));
 
 export const getPackageFiles = pkg => {
   const srcDir = path.resolve(pkg, SRC_DIR);

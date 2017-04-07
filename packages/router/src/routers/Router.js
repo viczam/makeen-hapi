@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import Joi from 'joi';
 import Boom from 'boom';
 import pick from 'lodash/pick';
@@ -8,28 +9,31 @@ import get from 'lodash/get';
 
 class Router {
   static mergeRouteConfig(...configs) {
-    return configs.reduce((acc, config) => ({
-      ...acc,
-      ...config,
-      validate: ['query', 'params', 'payload'].reduce((validateAcc, type) => {
-        const validator = {
-          ...get(acc, `validate.${type}`, {}),
-          ...get(config, `validate.${type}`, {}),
-        };
+    return configs.reduce(
+      (acc, config) => ({
+        ...acc,
+        ...config,
+        validate: ['query', 'params', 'payload'].reduce(
+          (validateAcc, type) => {
+            const validator = {
+              ...get(acc, `validate.${type}`, {}),
+              ...get(config, `validate.${type}`, {}),
+            };
 
-        if (Object.keys(validator).length) {
-          Object.assign(validateAcc, {
-            [type]: validator,
-          });
-        }
+            if (Object.keys(validator).length) {
+              Object.assign(validateAcc, {
+                [type]: validator,
+              });
+            }
 
-        return validateAcc;
-      }, {}),
-      pre: [
-        ...get(acc, 'pre', []),
-        ...get(config, 'pre', []),
-      ],
-    }), {});
+            return validateAcc;
+          },
+          {},
+        ),
+        pre: [...get(acc, 'pre', []), ...get(config, 'pre', [])],
+      }),
+      {},
+    );
   }
 
   constructor(config) {
@@ -39,11 +43,8 @@ class Router {
   }
 
   loadRoutes() {
-    for (const propr in this) { // eslint-disable-line
-      if (
-        (typeof this[propr] === 'function') &&
-        this[propr].isRoute
-      ) {
+    for (const propr in this) {
+      if (typeof this[propr] === 'function' && this[propr].isRoute) {
         const { definition } = this[propr];
         const routeId = definition.id || propr;
         this.addRoute(routeId, {
@@ -55,11 +56,16 @@ class Router {
   }
 
   setConfig(config = {}) {
-    this.config = Joi.attempt(config, Joi.object().keys({
-      namespace: Joi.string().required(),
-      basePath: Joi.string().default(''),
-      baseRouteConfig: Joi.object().default({}),
-    }).unknown());
+    this.config = Joi.attempt(
+      config,
+      Joi.object()
+        .keys({
+          namespace: Joi.string().required(),
+          basePath: Joi.string().default(''),
+          baseRouteConfig: Joi.object().default({}),
+        })
+        .unknown(),
+    );
   }
 
   addRoute(id, routeConfig) {
@@ -81,7 +87,9 @@ class Router {
     this.routes[id] = {
       ...route,
       path: this.buildPath(route.path),
-      handler: Router.wrapHandler(route.handler),
+      handler: typeof route.handler === 'function'
+        ? Router.wrapHandler(route.handler)
+        : route.handler,
       config: this.constructor.mergeRouteConfig(
         this.config.baseRouteConfig,
         {
@@ -96,11 +104,14 @@ class Router {
   }
 
   buildPath(suffix) {
-    return trimEnd(`${trimEnd(this.config.basePath, '/')}/${trimStart(suffix, '/')}`, '/');
+    return trimEnd(
+      `${trimEnd(this.config.basePath, '/')}/${trimStart(suffix, '/')}`,
+      '/',
+    );
   }
 
   addRoutes(routes) {
-    Object.keys(routes).forEach((routeId) => {
+    Object.keys(routes).forEach(routeId => {
       this.addRoute(routeId, routes[routeId]);
     });
 
@@ -133,9 +144,12 @@ class Router {
   }
 
   static wrapHandler(handler) {
-    return async function (request, reply) { // eslint-disable-line func-names
+    return async function (request, reply) {
+      // eslint-disable-line func-names
       try {
-        const response = await Promise.resolve(handler.call(this, request, reply));
+        const response = await Promise.resolve(
+          handler.call(this, request, reply),
+        );
         if (typeof response !== 'undefined') {
           reply(response);
         }

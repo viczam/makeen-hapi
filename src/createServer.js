@@ -1,11 +1,8 @@
 import Glue from 'glue';
 import path from 'path';
-import DotEnv from 'dotenv';
 import override from 'environment-override';
 
-DotEnv.config();
-
-export default (store) => {
+export default store => {
   const manifest = store.get('/', {
     env: process.env.NODE_ENV,
     isDockerized: process.env.IS_DOCKERIZED,
@@ -24,15 +21,18 @@ export default (store) => {
       return console.log(err); // eslint-disable-line
     }
 
-    return server.start((startErr) => {
+    return server.start(startErr => {
       if (startErr) {
         console.log(startErr); // eslint-disable-line
         return;
       }
 
       if (Array.isArray(server.connections)) {
-        server.connections.forEach((connection) => {
-          server.log(['server', 'info'], `Server started at: ${connection.info.uri}`);
+        server.connections.forEach(connection => {
+          server.log(
+            ['server', 'info'],
+            `Server started at: ${connection.info.uri}`,
+          );
         });
       } else {
         server.log(['server', 'info'], `Server started at: ${server.info.uri}`);
