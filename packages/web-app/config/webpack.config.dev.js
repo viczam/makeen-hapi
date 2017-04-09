@@ -38,7 +38,7 @@ module.exports = {
     // the line below with these two lines if you prefer the stock client:
     // require.resolve('webpack-dev-server/client') + '?/',
     // require.resolve('webpack/hot/dev-server'),
-    `${require.resolve('webpack-dev-server/client')}?http://localhost:3000`,
+    require.resolve('webpack-dev-server/client') + '?http://localhost:3000',
     require.resolve('webpack/hot/only-dev-server'),
     require.resolve('react-hot-loader/patch'),
     require.resolve('react-dev-utils/webpackHotDevClient'),
@@ -206,5 +206,6 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
+    dns: 'empty',
   },
 };
