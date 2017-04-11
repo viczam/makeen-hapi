@@ -42,6 +42,7 @@
     "redux-logger": "3.0.1",
     "redux-thunk": "2.2.0",
     "redux-unhandled-action": "1.2.0",
+    "reselect": "3.0.0",
     "sanitize-html": "1.14.1",
     "semantic-ui-react": "0.67.2",
     "styled-components": "1.4.4",

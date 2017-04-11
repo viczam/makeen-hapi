@@ -33,7 +33,7 @@ export const createActionCreators = (
       COUNT,
     },
     pathPrefix,
-  }
+  },
 ) => ({
   createOne: data => ({
     types: CREATE_ONE,
@@ -162,7 +162,7 @@ export const createEntitiesReducers = (
       DELETE_ONE_BY_ID,
       COUNT,
     },
-  }
+  },
 ) => {
   const entityReducer = (state, { payload }) => ({
     ...state,
@@ -181,7 +181,7 @@ export const createEntitiesReducers = (
             ...acc,
             [item._id]: item,
           }),
-          state
+          state,
         ),
       [REPLACE_ONE[1]]: entityReducer,
       [UPDATE_ONE[1]]: (state, { meta }) => ({
@@ -201,11 +201,15 @@ export const createEntitiesReducers = (
         delete nextState[meta.previousAction.payload._id];
         return nextState;
       },
-    }
+    },
   );
 
-  const addEntityId = (state, { payload }) =>
-    state.includes(payload.data._id) ? state : state.concat([payload.data._id]);
+  const addEntityId = (state, { payload }) => {
+    if (state.includes(payload.data._id)) {
+      return state;
+    }
+    return state.concat([payload.data._id]);
+  };
 
   const ids = createReducer([], {
     [CREATE_ONE[1]]: (state, { payload }) => state.concat([payload.data._id]),
@@ -215,7 +219,7 @@ export const createEntitiesReducers = (
       state.concat(
         payload.data
           .filter(item => !state.includes(item._id))
-          .map(({ _id }) => _id)
+          .map(({ _id }) => _id),
       ),
     [DELETE_ONE[1]]: (state, { meta }) =>
       state.filter(item => item !== meta.previousAction.payload._id),
@@ -240,14 +244,14 @@ export const createAPIReducers = actionTypes =>
       ...acc,
       [actionType]: createAPIReducer({}, actionTypes[actionType]),
     }),
-    {}
+    {},
   );
 
 export const createIdsReducerMap = (
   {
     key,
     actionTypes,
-  }
+  },
 ) => {
   const itemReducer = (state, { payload }) => ({
     ...state,
@@ -261,7 +265,7 @@ export const createIdsReducerMap = (
     ...state,
     ...payload.data.reduce(
       (acc, item) => itemReducer(acc, { payload: { data: item } }),
-      {}
+      {},
     ),
   });
 
@@ -272,7 +276,7 @@ export const createIdsReducerMap = (
         [stateKey]: (state[stateKey] || [])
           .filter(item => item !== meta.previousAction.payload._id),
       }),
-      {}
+      {},
     );
 
   return createReducer(
@@ -284,6 +288,6 @@ export const createIdsReducerMap = (
       [actionTypes.FIND_MANY[1]]: findManyReducer,
       [actionTypes.DELETE_ONE[1]]: deleteOneReducer,
       [actionTypes.DELETE_ONE_BY_ID[1]]: deleteOneReducer,
-    }
+    },
   );
 };

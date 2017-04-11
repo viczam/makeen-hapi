@@ -10,7 +10,6 @@ import {
   RECOVER_PASSWORD,
   FETCH_PROFILE,
   UPDATE_PROFILE,
-  UPLOAD_PROFILE_PICTURE,
 } from './actionTypes';
 
 export const authenticate = token =>
@@ -128,20 +127,3 @@ export const updateProfile = data => ({
     data,
   },
 });
-
-export const uploadProfilePicture = file => {
-  const data = new FormData();
-  data.append('file', file);
-
-  return {
-    types: UPLOAD_PROFILE_PICTURE,
-    payload: {
-      request: {
-        url: '/users/me/profile-picture',
-        method: 'post',
-        data,
-      },
-      file,
-    },
-  };
-};

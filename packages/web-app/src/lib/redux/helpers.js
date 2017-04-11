@@ -20,8 +20,13 @@ export const createAPIActionTypes = ({ namespace = '', type }) => {
 };
 
 export const createReducer = (initialState, handlers) =>
-  (state = initialState, action) =>
-    handlers[action.type] ? handlers[action.type](state, action) : state;
+  (state = initialState, action) => {
+    if (handlers[action.type]) {
+      return handlers[action.type](state, action);
+    }
+
+    return state;
+  };
 
 export const createReducerForAction = (actionType, initialState) =>
   (state = initialState, action) => {
@@ -83,5 +88,24 @@ export const createAPIReducer = (initialState = {}, types) =>
       response: null,
       ...initialState,
     },
-    createAPIReducerHandlers(types)
+    createAPIReducerHandlers(types),
+  );
+
+export const combineSelectors = name =>
+  selectors =>
+    Object.keys(selectors).reduce(
+      (acc, selector) => ({
+        ...acc,
+        [selector]: state => selectors[selector](state[name]),
+      }),
+      {},
+    );
+
+export const combineSelectorGroups = groups =>
+  Object.keys(groups).reduce(
+    (acc, groupName) => ({
+      ...acc,
+      [groupName]: combineSelectors(groupName)(groups[groupName]),
+    }),
+    {},
   );

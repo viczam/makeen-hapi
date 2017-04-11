@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
+import selectors from 'store/selectors';
 import ProfileSummary from '../components/ProfileSummary';
 
 export default connect(
-  ({ user }) => ({ name: user.profile.name }),
+  (state) => selectors.user.getProfile(state),
 )(ProfileSummary);

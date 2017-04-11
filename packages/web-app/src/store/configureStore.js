@@ -38,7 +38,7 @@ const configureStore = initialState => {
   const store = createStore(
     rootReducer,
     initialState,
-    finalCompose(applyMiddleware(...middlewares))
+    finalCompose(applyMiddleware(...middlewares)),
   );
 
   if (module.hot) {

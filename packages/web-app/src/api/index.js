@@ -10,8 +10,8 @@ api.interceptors.request.use(config => {
     Object.assign(config, {
       headers: {
         ...(config.headers || {}),
+        authorization: window.localStorage.getItem('authToken'),
       },
-      authorization: window.localStorage.getItem('authToken'),
     });
   }
 

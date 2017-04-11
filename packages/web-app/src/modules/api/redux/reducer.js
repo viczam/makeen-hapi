@@ -14,7 +14,7 @@ export default combineReducers({
         'RECOVER_PASSWORD',
         'REGISTER',
         'FETCH_PROFILE',
-      ])
-    )
+      ]),
+    ),
   ),
 });

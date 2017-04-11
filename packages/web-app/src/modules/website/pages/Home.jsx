@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
+import Layout from '../components/Layout';
 
 const Home = () => (
-  <div>
+  <Layout>
     <h2>Home!</h2>
     <ul>
       <li>
@@ -12,13 +13,13 @@ const Home = () => (
         <Link to="/logout">Logout</Link>
       </li>
       <li>
-        <Link to="/about">About</Link>
+        <Link to="/admin">Admin</Link>
       </li>
       <li>
         <Link to="/register">Register</Link>
       </li>
     </ul>
-  </div>
+  </Layout>
 );
 
 export default Home;
