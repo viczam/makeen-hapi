@@ -1,27 +1,12 @@
-import React, { PropTypes } from 'react';
-import { Menu, Dropdown, Image } from 'semantic-ui-react';
+import React from 'react';
+import { Menu, Dropdown } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import logoImage from 'assets/images/logo.png';
-import styled from 'styled-components';
-import styles from 'constants/styles';
 
-const MainMenu = styled(Menu.Menu)`
-  &.menu {
-    flex: 1;
-    justify-content: center;
-  }
-`;
-
-const Navbar = ({ className }) => (
-  <Menu className={className}>
+const Navbar = () => (
+  <Menu>
     <Menu.Item name="home" as={Link} to="/admin">
-      <Image src={logoImage} />
+      Home
     </Menu.Item>
-    <MainMenu>
-      <Menu.Item>
-        Hey
-      </Menu.Item>
-    </MainMenu>
     <Menu.Menu position="right">
       <Menu.Item>
         <Dropdown inline>
@@ -35,12 +20,4 @@ const Navbar = ({ className }) => (
   </Menu>
 );
 
-Navbar.propTypes = {
-  className: PropTypes.string.isRequired,
-};
-
-export default styled(Navbar)`
-  &.ui {
-    background-color: ${styles.backgroundColor};
-  }
-`;
+export default Navbar;

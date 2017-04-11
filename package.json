@@ -12,7 +12,7 @@
     "watch": "babel-node ./scripts/watch.js",
     "build": "babel-node ./scripts/build.js",
     "start:server": "babel-watch server.js --exclude packages/*/src/** packages/web/** packages/web-app/**",
-    "start:client": "babel-watch client.js --exclude packages/*/src/** --watch packages/web/**",
+    "start:client": "babel-watch client.js --exclude packages/*/src/** packages/web-app/** --watch packages/web/**",
     "start": "npm run build && run-p watch start:*",
     "debug": "babel-node --inspect server.js",
     "babel-node": "babel-node",

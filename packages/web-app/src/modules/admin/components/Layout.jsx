@@ -11,7 +11,7 @@ const ContentWrapper = styled.div`
 `;
 
 const Admin = ({ children, className }) => (
-  <div className={classNames('ui fluid container', className)}>
+  <div className={classNames('ui container', className)}>
     <Navbar />
 
     <ContentWrapper>
@@ -37,6 +37,4 @@ Admin.defaultProps = {
 };
 
 export default styled(Admin)`
-  background-color: #22272F;
-  height: 100vh;
 `;

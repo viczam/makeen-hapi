@@ -9,7 +9,10 @@ DotEnv.config();
 
 const watch = async () => {
   const watcher = chokidar.watch(
-    path.resolve(__dirname, '../packages/*/src/**'),
+    [
+      path.resolve(__dirname, '../packages/*/src/**'),
+      `!${path.resolve(__dirname, '../packages/web-app/**')}`,
+    ],
     {
       ignoreInitial: true,
     },
