@@ -17,8 +17,8 @@
     "debug": "babel-node --inspect server.js",
     "babel-node": "babel-node",
     "nodemon": "nodemon --exec npm run babel-node -- server.js",
-    "clean": "rm -rf node_modules/ && rm -rf packages/*/node_modules",
-    "clean-setup": "npm run clean && yarn",
+    "clean-modules": "rm -rf node_modules/ && rm -rf packages/*/node_modules",
+    "clean-setup": "npm run clean-modules && yarn",
     "lint": "eslint .",
     "open-monitor": "open http://localhost:3003/status-monitor",
     "precommit": "lint-staged"
