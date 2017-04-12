@@ -4,7 +4,7 @@ import Field from 'components/form/Field';
 import Form from 'components/form/Form';
 import Joi from 'joi';
 
-const LoginForm = ({
+const SignUpForm = ({
   handleSubmit,
 }) => (
   <Form onSubmit={handleSubmit}>
@@ -19,12 +19,12 @@ const LoginForm = ({
   </Form>
 );
 
-LoginForm.propTypes = {
+SignUpForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
 };
 
 export default form({
-  form: 'register',
+  form: 'signUp',
   schema: Joi.object().keys({
     username: Joi.string().trim().min(3).required(),
     password: Joi.string().required(),
@@ -32,4 +32,4 @@ export default form({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
   }),
-})(LoginForm);
+})(SignUpForm);

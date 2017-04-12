@@ -3,22 +3,22 @@ import { connect } from 'react-redux';
 import { SubmissionError } from 'redux-form';
 import omit from 'lodash/omit';
 import * as actions from '../redux/actionCreators';
-import RegisterForm from '../forms/Register';
+import SignUpForm from '../forms/SignUp';
 import RedirectIfAuthenticated from './RedirectIfAuthenticated';
 
-class Register extends Component {
+class SignUp extends Component {
   static propTypes = {
-    register: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired,
   };
 
   state = {
-    didRegister: false,
+    didSignUp: false,
   };
 
   handleSubmit = (data) => { // eslint-disable-line
-    return this.props.register(omit(data, ['confirmPassword']))
+    return this.props.signUp(omit(data, ['confirmPassword']))
       .then(() => {
-        this.setState({ didRegister: true });
+        this.setState({ didSignUp: true });
       })
       .catch(({ error }) => {
         throw new SubmissionError({ _error: error.response.data.message });
@@ -26,7 +26,7 @@ class Register extends Component {
   }
 
   render() {
-    if (this.state.didRegister) {
+    if (this.state.didSignUp) {
       return (
         <div className="ui success message">
           <i className="close icon" />
@@ -38,10 +38,10 @@ class Register extends Component {
 
     return (
       <RedirectIfAuthenticated>
-        <RegisterForm onSubmit={this.handleSubmit} />
+        <SignUpForm onSubmit={this.handleSubmit} />
       </RedirectIfAuthenticated>
     );
   }
 }
 
-export default connect(null, actions)(Register);
+export default connect(null, actions)(SignUp);

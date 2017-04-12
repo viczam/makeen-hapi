@@ -7,7 +7,7 @@ const Hello = ({ user, account }) => (
     <p>Your account with username {user.username} was created.</p>
     <p>
       Click {' '}
-      <a href={`http://localhost:3003/account/${account._id.toString()}/confirm`}>here</a>
+      <a href={`http://localhost:3001/account/${account._id.toString()}/confirm`}>here</a>
       {' '} to confirm your account.
     </p>
     <p>ktxbye!</p>

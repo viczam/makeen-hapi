@@ -16,7 +16,7 @@ const Home = () => (
         <Link to="/admin">Admin</Link>
       </li>
       <li>
-        <Link to="/register">Register</Link>
+        <Link to="/signup">Sign up!</Link>
       </li>
     </ul>
   </Layout>
