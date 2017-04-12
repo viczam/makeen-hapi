@@ -183,9 +183,9 @@ asap@~2.0.3:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.5.tgz#522765b50c3510490e52d7dcfe085ef9ba96958f"
 
-"ase-makeen@git+ssh://git@github.com/makeen-project/ase-makeen.git#a3e5060d50e1b76d098616e23f749e07b649c70e":
+"ase-makeen@git+ssh://git@github.com/makeen-project/ase-makeen.git#npm":
   version "1.0.0"
-  resolved "git+ssh://git@github.com/makeen-project/ase-makeen.git#a3e5060d50e1b76d098616e23f749e07b649c70e"
+  resolved "git+ssh://git@github.com/makeen-project/ase-makeen.git#cf26d19faa70b44bd9be56a60ef941a0ee909fb9"
   dependencies:
     aws-sdk "^2.23.0"
     azure-arm-compute "0.18.1"
@@ -1056,7 +1056,7 @@ babel-register@^6.23.0, babel-register@^6.24.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0:
+babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0, babel-runtime@^6.6.1:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
   dependencies:
@@ -2809,7 +2809,7 @@ joi@10.2.2, joi@10.x.x:
     items "2.x.x"
     topo "2.x.x"
 
-joi@8.1.x:
+joi@8.1.x, joi@^8.0.5:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/joi/-/joi-8.1.1.tgz#2d8b52a5d909d217ed47248577eefe8b1798f48f"
   dependencies:
@@ -3178,6 +3178,17 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.1"
     yallist "^2.0.0"
 
+makeen-router@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/makeen-router/-/makeen-router-0.4.0.tgz#8abbc6cbeba581807e75afef7838a4833704a125"
+  dependencies:
+    boom "4.2.0"
+    joi "10.2.2"
+    lodash "^4.11.1"
+    mongodb "2.2.24"
+    mongodb-extended-json "1.9.0"
+    octobus.js "0.29.0"
+
 makeen-router@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/makeen-router/-/makeen-router-0.2.0.tgz#a640d5dd4d283891936533f957a2a12c4a983b39"
@@ -3529,6 +3540,15 @@ object.omit@^2.0.0:
   dependencies:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
+
+octobus.js@0.29.0:
+  version "0.29.0"
+  resolved "https://registry.yarnpkg.com/octobus.js/-/octobus.js-0.29.0.tgz#d56ec15c6ebb9946d7bc1e84f02b52d4e1b193b7"
+  dependencies:
+    babel-runtime "^6.6.1"
+    joi "^8.0.5"
+    lodash "^4.11.1"
+    uuid "3.0.0"
 
 once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
@@ -4651,6 +4671,10 @@ util-deprecate@~1.0.1:
 uuid@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.1.tgz#c2a30dedb3e535d72ccf82e343941a50ba8533ac"
+
+uuid@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.0.tgz#6728fc0459c450d796a99c31837569bdf672d728"
 
 uuid@3.0.1, uuid@^3.0.0, uuid@^3.0.1:
   version "3.0.1"
