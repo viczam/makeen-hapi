@@ -47,32 +47,30 @@ export const createAPIReducerHandlers = types => {
     throw new Error('Expected an array of three string types.');
   }
 
+  const [REQUEST, SUCCESS, FAILURE, RESET] = types;
+
   return {
-    // request
-    [types[0]]: state => ({
+    [REQUEST]: state => ({
       ...state,
       isFetching: true,
       error: null,
       response: null,
     }),
 
-    // success
-    [types[1]]: (state, { payload }) => ({
+    [SUCCESS]: (state, { payload }) => ({
       ...state,
       isFetching: false,
       response: payload,
       error: null,
     }),
 
-    // failure
-    [types[2]]: (state, { error }) => ({
+    [FAILURE]: (state, { error }) => ({
       ...state,
       isFetching: false,
       error,
     }),
 
-    // reset
-    [types[3]]: () => ({
+    [RESET]: () => ({
       isFetching: false,
       error: null,
       response: null,
