@@ -145,7 +145,7 @@
       }
     }, {
       "plugin": {
-        "register": "../node_modules/ase-makeen",
+        "register": "../node_modules/makeen-vm",
         "options": {
           "awsCredentials": {
             "apiVersion": "",
@@ -160,13 +160,6 @@
             "subscriptionId": "",
             "user": "",
             "password": ""
-          },
-          "aseCredentials": {
-            "username": "",
-            "password": "",
-            "port": "",
-            "host": "",
-            "protocol": ""
           }
         }
       }

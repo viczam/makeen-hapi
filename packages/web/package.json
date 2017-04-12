@@ -13,6 +13,7 @@
     "joi": "10.4.1",
     "makeen-router": "0.4.0",
     "react": "15.4.2",
+    "react-dom": "^15.5.4",
     "vision": "4.1.1"
   }
 }

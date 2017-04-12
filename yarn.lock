@@ -183,26 +183,6 @@ asap@~2.0.3:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.5.tgz#522765b50c3510490e52d7dcfe085ef9ba96958f"
 
-"ase-makeen@git+ssh://git@github.com/makeen-project/ase-makeen.git#npm":
-  version "1.0.0"
-  resolved "git+ssh://git@github.com/makeen-project/ase-makeen.git#cf26d19faa70b44bd9be56a60ef941a0ee909fb9"
-  dependencies:
-    aws-sdk "^2.23.0"
-    azure-arm-compute "0.18.1"
-    azure-arm-network "0.13.2"
-    azure-arm-resource "1.4.4-preview"
-    azure-arm-storage "0.13.1-preview"
-    babel-register "^6.23.0"
-    bluebird "^3.5.0"
-    confidence "^3.0.2"
-    environment-override "^1.0.2"
-    joi "^10.3.0"
-    lodash "^4.17.4"
-    makeen-router "^0.2.0"
-    ms-rest-azure "1.14.3"
-    request-promise "^4.2.0"
-    xml2js "^0.4.17"
-
 asn1@~0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.3.tgz#dac8787713c9966849fc8180777ebe9c1ddf3b86"
@@ -3199,6 +3179,26 @@ makeen-router@^0.2.0:
     mongodb "2.2.24"
     mongodb-extended-json "1.9.0"
 
+makeen-vm@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/makeen-vm/-/makeen-vm-1.0.0.tgz#85832e358568bcd20edbd9eab9b2c95e0dc31e88"
+  dependencies:
+    aws-sdk "^2.23.0"
+    azure-arm-compute "0.18.1"
+    azure-arm-network "0.13.2"
+    azure-arm-resource "1.4.4-preview"
+    azure-arm-storage "0.13.1-preview"
+    babel-register "^6.23.0"
+    bluebird "^3.5.0"
+    confidence "^3.0.2"
+    environment-override "^1.0.2"
+    joi "^10.3.0"
+    lodash "^4.17.4"
+    makeen-router "^0.2.0"
+    ms-rest-azure "1.14.3"
+    request-promise "^4.2.0"
+    xml2js "^0.4.17"
+
 map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
@@ -4672,11 +4672,11 @@ uuid@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.1.tgz#c2a30dedb3e535d72ccf82e343941a50ba8533ac"
 
-uuid@3.0.0:
+uuid@3.0.0, uuid@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.0.tgz#6728fc0459c450d796a99c31837569bdf672d728"
 
-uuid@3.0.1, uuid@^3.0.0, uuid@^3.0.1:
+uuid@3.0.1, uuid@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
