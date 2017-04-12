@@ -143,6 +143,33 @@
         "options": {
         }
       }
+    }, {
+      "plugin": {
+        "register": "../node_modules/ase-makeen",
+        "options": {
+          "awsCredentials": {
+            "apiVersion": "",
+            "region": "",
+            "accessKeyId": "",
+            "secretAccessKey": ""
+          },
+          "azureCredentials": {
+            "key": "",
+            "appId": "",
+            "tenantId": "",
+            "subscriptionId": "",
+            "user": "",
+            "password": ""
+          },
+          "aseCredentials": {
+            "username": "",
+            "password": "",
+            "port": "",
+            "host": "",
+            "protocol": ""
+          }
+        }
+      }
     }],
     "production": []
   }
