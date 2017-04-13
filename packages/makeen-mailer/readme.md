@@ -2,12 +2,12 @@ Makeen Mailer
 =============
 
 Makeen package that provides logic for sending HTML templated emails. Under the hood the mailer package uses
-[nodemailer](https://nodemailer.com/about/) and [hapi-react-views](https://github.com/jedireza/hapi-react-views) for transpiling JSX templates to HTML.
+[nodemailer](https://nodemailer.com/about/) for transporting emails and [hapi-react-views](https://github.com/jedireza/hapi-react-views) for transpiling JSX templates to HTML.
 
 
 #### Usage
 
- - Create a new hapi plugin, whe can call it GMail
+ - Create a new hapi plugin
  - Import the makeen-mailer plugin and programatically register it by passing it the required options:
 
 ```js
@@ -38,7 +38,7 @@ import * as MakeenMailer from 'makeen-mailer';
     }]);
 ```
 
-- create email templates. Email templates are React components that take in an object with required data. For example we'll create a template called `DummyMessage.jsx` and save it under the `src/views/` folder:
+- create email templates. Email templates are React components that take in an object with all data required by the template. For example we'll create a template called `DummyMessage.jsx` and save it under the `src/views/` folder:
 
 ```jsx
 import React, { PropTypes } from 'react';
