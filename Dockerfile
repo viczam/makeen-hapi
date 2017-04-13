@@ -15,7 +15,8 @@ RUN mkdir -p ${APP_ROOT} && \
 	apk add --update ${APK_ADDPACK} && \
 	addgroup -S ${APP_USER} && \
 	adduser -S -g ${APP_USER} ${APP_USER} && \
-	npm install -g modclean
+	npm install -g modclean && \
+	npm install -g yarn
 
 ADD package.json /tmp/package.json
 
@@ -28,6 +29,9 @@ ADD . ${APP_ROOT}
 
 RUN cd ${APP_ROOT} && \
 	node ./node_modules/lerna/bin/lerna.js bootstrap && \
+	npm run clean-setup && \
+	yarn && \
+	npm run build && \
 	apk del ${APK_RMPACK}
 
 EXPOSE ${MAKEEN_LISTEN_PORT}
