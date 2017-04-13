@@ -51,7 +51,7 @@
     "hapi": "~16.1.1",
     "hoek": "~4.1.1",
     "makeen-router": "0.4.0",
-    "makeen-vm": "1.0.1",
+    "makeen-vm": "1.0.6",
     "moment": "~2.18.1",
     "npm-run-all": "4.0.2",
     "pretty-format": "~19.0.0",
