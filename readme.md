@@ -17,14 +17,16 @@ Table of Contents
 * [Usage](#usage)
 *  [Demo](#demo)
 *  [Advanced Dive](#advanced-dive)
-	* [Octobus](#octobus)
-	* [Makeen Router](#mackeen-router)
-	* [Makeen Core](#makeen-core)
-	* [Makeen Crud](#makeen-crud)
-	* [Makeen Mailer](#makeen-mailer)
-	* [Makeen User](#makeen-user)
-	* [Makeen Storage](#makeen-storage)
-	* [Makeen-monitoring](#makeen-monitoring)
+	* [Octobus](https://github.com/makeen-project/octobus)
+	* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
+	* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
+	* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
+	* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
+	* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
+	* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
+	* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
+	* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
+	* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 * [Build and Deployment](#build-and-deployment)
 * [Contributing](#contributing)
 * [Credits](#credits)
@@ -59,11 +61,9 @@ Makeen is delivered as a feature-rich extensible backend hapi.js server.
 
 Architecture being modular you can write a hapi.js plugin and plug it into the server easily.
 
-We will cover the hapijs plugin part in the [Demo](#demo) section but all you need to know is that hapijs plugin is composed of a package.json and index.js files with a register function and the rest is javascript logic.
+We will cover the hapijs plugin part in the [Demo](#demo) section but all you need to know is that a hapijs plugin is composed of `package.json` and `index.js` files with a register function and the rest is javascript logic.
 
-Makeen principles and concepts:
-
-Makeen as a whole is based on a few key concepts and principles which we'll discuss:
+Makeen as a whole is based on a few key **concepts and principles** which we'll discuss:
 
  - modular message driven arhitecture by way of [Octobus.js](https://github.com/makeen-project/octobus)
  - CRUD database operations on the fly
@@ -71,7 +71,7 @@ Makeen as a whole is based on a few key concepts and principles which we'll disc
 
 #### Modular message driven architecture by way of [Octobus.js](https://github.com/makeen-project/octobus)
 
-Octobus.js is a library which promotes decoupling application logic into modules and enable cross-module interaction through a message driven approach.
+Octobus.js is a library which promotes decoupling application logic into isolated modules and enabling cross-module interaction through a message driven approach.
 
 As a basic example let's consider we have a monolithic block of code which implements math logic and currency logic and has the following two functions:
 
@@ -109,7 +109,7 @@ serviceBus.subscribe('currency.convertEuroToUsd', ({ message, dispatch }) => {
 
 ```
 
-As you can see above implementation allows services to reside in different locations and removes hard dependency by providing the dispatch function which takes in the remote service name and action along with required parameters.
+As you can see above implementation allows services to reside in different locations and removes hard dependency by relying on the dispatch function to execute all external actions.
 
 This is just the tip of the iceberg but enough to give you a taste of the power and simplicity [Octobus.js](https://github.com/makeen-project/octobus) brings.
 
@@ -168,7 +168,7 @@ const BooksRepository = serviceBus.register(
 
 ```
 
-With just a few lines of code we've creted the BooksRepository object which exposes full CRUD database operations and
+With just a few lines of code we've creted the BooksRepository object which exposes **full CRUD database operations** and
 can be used as following:
 
 ```js
@@ -192,7 +192,7 @@ const book = await dispatch('BooksRepository.find', {
 ```
 
 Voila! using the serviceBus or dispatch method you can trigger BooksRepository related logic from different locations
-of the application without the need of importing or hard requiring it.
+of the application without the need of importing or hard-requiring it.
 
 
 #### CRUD REST API endpoints on the fly
@@ -521,61 +521,17 @@ export async function register(server, options, next) {
 
 ## Advanced Dive
 
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
+	* [Octobus](https://github.com/makeen-project/octobus)
+	* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
+	* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
+	* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
+	* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
+	* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
+	* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
+	* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
+	* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
+	* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 
-----------
-
-
-## Octobus
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-
-## Makeen Router
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-
-## Makeen Core
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-
-## Makeen Crud
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-
-## Makeen Mailer
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-
-## Makeen User
-----------
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
---------------
-## Makeen Storage
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
-
-----------
-
-## Makeen Monitoring
-
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
 
 ----------
 
