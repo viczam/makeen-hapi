@@ -8,11 +8,13 @@ export default {
   saveToDisk: Joi.boolean().default(false),
   emailsDir: Joi.string().required(),
   messageBus: Joi.object(),
-  views: Joi.object().keys({
-    engines: Joi.object().default({
-      jsx: HapiReactViews,
-    }),
-    relativeTo: Joi.string().required(),
-    path: Joi.string().default('views'),
-  }).required(),
+  views: Joi.object()
+    .keys({
+      engines: Joi.object().default({
+        jsx: HapiReactViews,
+      }),
+      relativeTo: Joi.string().required(),
+      path: Joi.string().default('views'),
+    })
+    .required(),
 };
