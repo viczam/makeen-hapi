@@ -9,7 +9,7 @@ export default store => {
   });
 
   const options = {
-    relativeTo: path.join(__dirname, '..', 'packages'),
+    relativeTo: path.resolve('./packages'),
   };
 
   const prefix = 'MAKEEN_ENV_';
