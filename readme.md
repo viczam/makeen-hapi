@@ -17,7 +17,7 @@ Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
 *  [Demo](#demo)
-*  [Advanced Dive](#advanced-dive)
+*  [Makeen Plugins](#makeen-plugins)
 	* [Octobus](https://github.com/makeen-project/octobus)
 	* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
 	* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
@@ -519,7 +519,9 @@ export async function register(server, options, next) {
 ----------
 
 
-## Advanced Dive
+## Makeen Plugins
+
+Makeen represents an echosistem of hapijs plugins that
 
 * [Octobus](https://github.com/makeen-project/octobus)
 * [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
@@ -546,6 +548,7 @@ Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius
 You can contribute by:
 - creating a github issue
 - creating a github pull request
+- [getting in touch](#get-in-touch)
 
 ----------
 
@@ -557,7 +560,7 @@ Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius
 
 ## License
 
-Makeen  is licensed under the [MIT license](https://github.com/makeen-project/makeen/blob/feature/doc/LICENSE).
+Makeen  is licensed under the [MIT license](LICENSE).
 
 ----------
 
