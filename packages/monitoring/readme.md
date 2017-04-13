@@ -13,4 +13,4 @@ Real time usage indicators:
   - Requests per Second
   - Status Codes
 
-![](https://github.com/makeen-project/makeen/tree/feature/doc/packages/monitoring/assets/makeen_monitoring.png?raw=true)
+![](assets/makeen_monitoring.png?raw=true)
