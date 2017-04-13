@@ -1,7 +1,7 @@
 Makeen Mailer
 =============
 
-Makeen package that provides logic for sending HTML templated emails. Under the hood the mailer package uses
+Makeen plugin that provides logic for sending HTML templated emails. Under the hood the mailer package uses
 [nodemailer](https://nodemailer.com/about/) for transporting emails and [hapi-react-views](https://github.com/jedireza/hapi-react-views) for transpiling JSX templates to HTML.
 
 
