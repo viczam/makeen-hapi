@@ -124,13 +124,6 @@
           }
         }
       }
-    }, {
-      "plugin": {
-        "register": "./todo",
-        "routes": {
-          "prefix": "/todo"
-        }
-      }
     }],
     "$default": [],
     "development": [{
