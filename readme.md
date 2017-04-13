@@ -567,8 +567,9 @@ Makeen  is licensed under the [MIT license](LICENSE).
 ## Get in Touch
 
 What are you waiting for ? let us know what you think on:
-	- Makeen on stackoverflow
-	- Makeen on twitter
-	- Makeen on slack
+- StackOverflow
+- Twitter
+- Slack
+- [Reddit](https://www.reddit.com/r/makeen/)
 
 
