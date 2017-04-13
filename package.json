@@ -14,6 +14,7 @@
     "start:server": "babel-watch server.js --exclude packages/*/src/** packages/web/** packages/web-app/**",
     "start:client": "babel-watch client.js --exclude packages/*/src/** --watch packages/web/**",
     "start": "npm run build && run-p watch start:*",
+    "start:nowatch": "babel-node server.js",
     "debug": "babel-node --inspect server.js",
     "babel-node": "babel-node",
     "nodemon": "nodemon --exec npm run babel-node -- server.js",

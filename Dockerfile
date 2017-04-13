@@ -39,4 +39,4 @@ EXPOSE ${MAKEEN_LISTEN_PORT}
 WORKDIR ${APP_ROOT}
 USER ${APP_USER}
 ENTRYPOINT ["npm", "run"]
-CMD ["start"]
+CMD ["start:nowatch"]
