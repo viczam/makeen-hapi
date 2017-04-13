@@ -4,7 +4,8 @@ Makeen
 A back-end development platform for rapid application development that is battle tested production ready.
 
 Makeen promotes a pluggable architecture that allows you to use a broad range of pre-developed plugins which
-provide all the functionality a modern application might need: user,  storage, mailing, database, CRUD routing etc.
+provide all the functionality a modern application might need: user,  storage, mailing, database, REST API, documentation,
+backend performance monitoring, CLI and cloud (AW & Azure) virtual instances mangement.
 
 
 ----------
@@ -39,8 +40,8 @@ Table of Contents
 
 ## Installation
 
-Requirements:
- - Node v6 or higher
+Before ramping up makeen the following requirements must be met:
+ - Node v6 or higher version
  - mongodb connection
 
 Running `npm install` will install all dependencies.
@@ -521,16 +522,16 @@ export async function register(server, options, next) {
 
 ## Advanced Dive
 
-	* [Octobus](https://github.com/makeen-project/octobus)
-	* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
-	* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
-	* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
-	* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
-	* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
-	* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
-	* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
-	* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
-	* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
+* [Octobus](https://github.com/makeen-project/octobus)
+* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
+* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
+* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
+* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
+* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
+* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
+* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
+* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
+* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 
 
 ----------
@@ -557,7 +558,7 @@ Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius
 
 ## License
 
-Makeen is MIT licenesed.
+Makeen  is licensed under the [MIT license](https://github.com/makeen-project/makeen/blob/feature/doc/LICENSE).
 
 ----------
 
