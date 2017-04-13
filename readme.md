@@ -25,7 +25,6 @@ Table of Contents
 	* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
 	* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
 	* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
-	* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
 	* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
 	* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 * [Build and Deployment](#build-and-deployment)
