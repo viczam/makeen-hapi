@@ -21,7 +21,7 @@ Table of Contents
 	* [Octobus](https://github.com/makeen-project/octobus)
 	* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
 	* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
-	* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
+	* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/makeen-mailer)
 	* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
 	* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
 	* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
