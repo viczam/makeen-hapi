@@ -1,7 +1,6 @@
 import chokidar from 'chokidar';
 import fs from 'fs';
 import fsp from 'fs-promise';
-import { argv } from 'yargs';
 import {
   compileFile,
   getBuildDestinationPath,
@@ -37,4 +36,4 @@ const run = async (
   return watcher;
 };
 
-run(makeConfig(argv));
+run(makeConfig());

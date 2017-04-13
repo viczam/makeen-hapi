@@ -4,6 +4,7 @@ import path from 'path';
 import fsp from 'fs-promise';
 import fs from 'fs';
 import glob from 'glob';
+import yargs from 'yargs';
 
 export const getPackageDirs = async ({ packagesDir, ignoredPackages }) =>
   (await fsp.readdir(packagesDir))
@@ -38,15 +39,15 @@ export const compileFile = async (
   );
 };
 
-export const makeConfig = (config = {}) => ({
+export const makeConfig = () => ({
   srcDir: 'src',
   buildDir: 'build',
   packagesDir: path.resolve('./packages'),
-  ignoredPackages: ['web-app'],
+  ignoredPackages: [],
   babelConfig: fsp.readJsonSync(path.resolve('./.babelrc')),
   watchGlob: [
     path.resolve('./packages/*/src/**'),
     `!${path.resolve('./packages/web-app/**')}`,
   ],
-  ...config,
+  ...yargs.array('ignoredPackages').argv,
 });

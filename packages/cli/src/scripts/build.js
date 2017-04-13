@@ -1,7 +1,6 @@
 import { transformFileSync } from 'babel-core';
 import path from 'path';
 import fsp from 'fs-promise';
-import { argv } from 'yargs';
 import { getPackageDirs, getPackageFiles, makeConfig } from '../libs/utils';
 
 const run = async (
@@ -36,4 +35,4 @@ const run = async (
   );
 };
 
-run(makeConfig(argv));
+run(makeConfig());
