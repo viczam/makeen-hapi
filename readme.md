@@ -44,7 +44,7 @@ Before ramping up makeen the following requirements must be met:
  - yarn installed globally
  - mongodb connection
 
-Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to loand and run them. To speed things even more Makeen is also providing a server component in the shape of a boilerplate:
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing a server component in the shape of a boilerplate which you can clone and install:
 
 - `git clone git@github.com:makeen-project/boilerplate.git`
 - `yarn`
