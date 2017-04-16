@@ -76,11 +76,11 @@ And load them whereve needed, be it inside a hapijs plugin or anywhere else serv
 
 ## Usage
 
-Makeen is delivered as a feature-rich extensible backend hapi.js server.
+The Makeen boilerplate is delivered as a feature-rich extensible backend [hapi.js](https://hapijs.com) server.
 
-Architecture being modular you can write a hapi.js plugin and plug it into the server easily.
+Architecture being modular you can write a new plugin and plug it into the server easily.
 
-We will cover the hapijs plugin part in the [Demo](#demo) section but all you need to know is that a hapijs plugin is composed of `package.json` and `index.js` files with a register function and the rest is javascript logic.
+We will cover the plugin creation part in the [Demo](#demo) section but all you need to know is that a [hapi.js](https://hapijs.com) plugin is composed of `package.json` and `index.js` files with a register function and the rest is javascript logic.
 
 Makeen as a whole is based on a few key **concepts and principles** which we'll discuss:
 
