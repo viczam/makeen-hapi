@@ -554,13 +554,21 @@ You can contribute by:
 
 ## Credits
 
-Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.
+Meet the swiss-army team behind Makeen:
+
+- [Victor Zamfir](https://github.com/viczam)
+- [Abdul Masri](https://github.com/abdulmasri)
+- [Ameer Al Sayyed]( https://github.com/Ameerplus)
+- [Dan Ochiana](https://github.com/danmo)
+- [Nick Burke](https://github.com/neekz0r)
+- [Nicolas Embleton](https://github.com/nicolasembleton)
+- [Olya Surits](https://www.linkedin.com/in/olyasurits)
 
 ----------
 
 ## License
 
-Makeen  is licensed under the [MIT license](LICENSE).
+Makeen is licensed under the [MIT license](LICENSE).
 
 ----------
 
