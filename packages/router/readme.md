@@ -1,4 +1,11 @@
-# Router package
+Makeen Router
+================
+
+#### Requirements
+- Node v6 or higher
+
+#### Installation
+`npm install makeen-router`
 
 ## Benefits
 1. Define the routes using annotations. The focus is shifted to handler, instead of configuration, which becomes metadata attached to it.

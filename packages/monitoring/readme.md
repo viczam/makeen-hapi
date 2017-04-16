@@ -14,3 +14,10 @@ Real time usage indicators:
   - Status Codes
 
 ![](assets/makeen_monitoring.png?raw=true)
+
+## Requirements
+- Node v6 or higher
+
+## Installation
+`npm install makeen-monitoring`
+

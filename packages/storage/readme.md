@@ -5,6 +5,11 @@ Makeen plugin that provides files storage functionality.
 
 Under the hood it uses [hapi-auth-hawk](https://github.com/hapijs/hapi-auth-hawk) for providing a holder-of-key authentication model this way to can share self-expiring pre-authenticated links to non-autneticated users without worring too much about security or password/credential leaks.
 
+#### Requirements
+- Node v6 or higher
+
+#### Installation
+`npm install makeen-storage`
 
 #### Usage
 

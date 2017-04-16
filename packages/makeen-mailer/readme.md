@@ -5,6 +5,12 @@ Makeen plugin that provides logic for sending HTML templated emails. Under the h
 [nodemailer](https://nodemailer.com/about/) for transporting emails and [hapi-react-views](https://github.com/jedireza/hapi-react-views) for transpiling JSX templates to HTML.
 
 
+#### Requirements
+- Node v6 or higher
+
+#### Installation
+`npm install makeen-mailer`
+
 #### Usage
 
  - Create a new hapi plugin
