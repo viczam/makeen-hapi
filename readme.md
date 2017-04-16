@@ -7,7 +7,7 @@ Makeen promotes a pluggable architecture that allows you to use a broad range of
 provide all the functionality a modern application might need: user,  storage, mailing, database, REST API, documentation,
 backend performance monitoring, CLI and cloud (AW & Azure) virtual instances mangement.
 
-
+The majority of makeen plugins are hosted in the current mono-repository.
 ----------
 
 
@@ -41,19 +41,37 @@ Table of Contents
 
 Before ramping up makeen the following requirements must be met:
  - Node v6 or higher version
+ - yarn installed globally
  - mongodb connection
 
-Running `npm install` will install all dependencies.
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to loand and run them. To speed things even more Makeen is also providing a server component in the shape of a boilerplate:
 
-Running `NODE_ENV=development npm run dev` will start the application.
+- `git clone git@github.com:makeen-project/boilerplate.git`
+- `yarn`
+
+Running `npm run start` will start the following servers:
+- development server - http://localhost:3001
+- client server - http://localhost:3004
+- web-app server - http://localhost:3000
+
+Running the API
+- API documentation will be available on- http://localhost:3001/documentation
 
 Environment variables that override default mongodb uri 127.0.0.1:
  - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://{ MONGO_URI }
  - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST={ MONGO_HOST_NAME }
 
-Running the API
-- the API will run on http://localhost:3003/
-- API documentation will be available on- http://localhost:3003/documentation
+
+From here on using a makeen plugin will require first installing it by way of npm:
+- `npm install makeen-core`
+- `npm install makeen-router`
+- `npm install makeen-documentation`
+- `npm install makeen-mailer`
+- `npm install makeen-storage`
+- `npm install makeen-monitoring`
+- `npm install makeen-vm`
+
+And load them whereve needed, be it inside a hapijs plugin or anywhere else server-side.
 
 ## Usage
 
@@ -521,17 +539,17 @@ export async function register(server, options, next) {
 
 ## Makeen Plugins
 
-Makeen represents an echosistem of hapijs plugins that
+Makeen forms an echosistem of hapijs plugins that combined togheter can provide a full-range of
+functionalities required from a full stack profesional web application:
 
 * [Octobus](https://github.com/makeen-project/octobus)
-* [Makeen Router](https://github.com/makeen-project/makeen/tree/master/packages/router)
-* [Makeen Core](https://github.com/makeen-project/makeen/tree/master/packages/core)
-* [Makeen Mailer](https://github.com/makeen-project/makeen/tree/master/packages/mailer)
-* [Makeen User](https://github.com/makeen-project/makeen/tree/master/packages/user)
-* [Makeen Storage](https://github.com/makeen-project/makeen/tree/master/packages/storage)
-* [Makeen Monitoring](https://github.com/makeen-project/makeen/tree/master/packages/monitoring)
-* [Makeen CLI](https://github.com/makeen-project/makeen/tree/master/packages/cli)
-* [Makeen Documentation](https://github.com/makeen-project/makeen/tree/master/packages/documentation)
+* [Makeen Router](packages/router)
+* [Makeen Core](packages/core)
+* [Makeen Mailer](packages/makeen-mailer)
+* [Makeen User](packages/user)
+* [Makeen Storage](packages/storage)
+* [Makeen Monitoring](packages/monitoring)
+* [Makeen Documentation](packages/documentation)
 * [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 
 
