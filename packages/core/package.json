@@ -1,6 +1,6 @@
 {
   "name": "makeen-core",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Makeen core plugin",
   "main": "build/index.js",
   "repository": {
