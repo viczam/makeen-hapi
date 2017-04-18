@@ -1,14 +1,14 @@
 {
   "name": "makeen-cli",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "",
   "main": "build/index.js",
   "scripts": {},
   "author": "Victor Zamfir <victor@makeen.io>",
   "license": "MIT",
   "bin": {
-    "build": "./build/scripts/build.js",
-    "watch": "./build/scripts/watch.js"
+    "makeen-build": "./build/scripts/build.js",
+    "makeen-watch": "./build/scripts/watch.js"
   },
   "dependencies": {
     "joi": "10.0.2",
