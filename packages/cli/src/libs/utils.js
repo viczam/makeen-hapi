@@ -1,10 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import Joi from 'joi';
 import { transformFileSync } from 'babel-core';
 import path from 'path';
 import fsp from 'fs-promise';
 import fs from 'fs';
 import glob from 'glob';
 import yargs from 'yargs';
+import omit from 'lodash/omit';
+import argsSchema from '../schemas/args';
 
 export const getPackageDirs = async ({ packagesDir, ignoredPackages }) =>
   (await fsp.readdir(packagesDir))
@@ -39,15 +42,16 @@ export const compileFile = async (
   );
 };
 
-export const makeConfig = () => ({
-  srcDir: 'src',
-  buildDir: 'build',
-  packagesDir: path.resolve('./packages'),
-  ignoredPackages: [],
-  babelConfig: fsp.readJsonSync(path.resolve('./.babelrc')),
-  watchGlob: [
-    path.resolve('./packages/*/src/**'),
-    `!${path.resolve('./packages/web-app/**')}`,
-  ],
-  ...yargs.array('ignoredPackages').argv,
-});
+export const makeConfig = () =>
+  Joi.attempt(
+    {
+      packagesDir: path.resolve('./packages'),
+      babelConfig: fsp.readJsonSync(path.resolve('./.babelrc')),
+      watchGlob: [path.resolve('./packages/*/src/**')],
+      ...omit(yargs.array('watchGlob').array('ignoredPackages').argv, [
+        '_',
+        '$0',
+      ]),
+    },
+    argsSchema,
+  );

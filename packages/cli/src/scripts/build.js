@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { transformFileSync } from 'babel-core';
 import path from 'path';
 import fsp from 'fs-promise';
