@@ -575,13 +575,14 @@ You can contribute by:
 
 Meet the swiss-army team behind Makeen:
 
-- [Victor Zamfir](https://github.com/viczam)
 - [Abdul Masri](https://github.com/abdulmasri)
 - [Ameer Al Sayyed]( https://github.com/Ameerplus)
+- [Catalin Rizea](https://github.com/catarizea)
 - [Dan Ochiana](https://github.com/danmo)
 - [Nick Burke](https://github.com/neekz0r)
 - [Nicolas Embleton](https://github.com/nicolasembleton)
 - [Olya Surits](https://www.linkedin.com/in/olyasurits)
+- [Victor Zamfir](https://github.com/viczam)
 
 ----------
 
