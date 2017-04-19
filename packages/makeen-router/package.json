@@ -1,6 +1,6 @@
 {
   "name": "makeen-router",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Makeen router",
   "main": "build/index.js",
   "repository": {
@@ -23,6 +23,6 @@
     "lodash": "^4.11.1",
     "mongodb": "2.2.24",
     "mongodb-extended-json": "1.9.0",
-    "octobus.js": "0.29.0"
+    "octobus.js": "0.30.0"
   }
 }
