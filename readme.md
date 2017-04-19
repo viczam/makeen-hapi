@@ -22,7 +22,7 @@ Table of Contents
 	* [Octobus](https://github.com/makeen-project/octobus)
 	* [Makeen Router](packages/router)
 	* [Makeen Core](packages/core)
-	* [Makeen Mailer](packages/makeen-mailer)
+	* [Makeen Mailer](packages/mailer)
 	* [Makeen User](packages/user)
 	* [Makeen Storage](packages/storage)
 	* [Makeen Monitoring](packages/monitoring)
@@ -42,13 +42,12 @@ Table of Contents
 
 Before ramping up makeen the following requirements must be met:
  - Node v6 or higher version
- - yarn installed globally
  - mongodb connection
 
 Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install:
 
 - `git clone git@github.com:makeen-project/boilerplate.git`
-- `yarn`
+- `npm install`
 
 Running `npm run start` will start the following servers:
 - development server - http://localhost:3001
@@ -119,11 +118,11 @@ serviceBus.subscribe('math.multiply', ({ message }) => {
   return a * b;
 });
 
-serviceBus.subscribe('currency.convertEuroToUsd', ({ message, dispatch }) => {
+serviceBus.subscribe('currency.convertEuroToUsd', ({ message, send }) => {
   const euroToUsdRate = 1.3;
   const {euro } = message.data;
 
-  return dispatch('math.currency', { a: euro, b: euroToUsdRate });
+  return send('math.currency', { a: euro, b: euroToUsdRate });
 });
 
 ```
@@ -187,7 +186,7 @@ const BooksRepository = serviceBus.register(
 
 ```
 
-With just a few lines of code we've creted the BooksRepository object which exposes **full CRUD database operations** and
+With just a few lines of code we've created the BooksRepository object which exposes **full CRUD database operations** and
 can be used as following:
 
 ```js
