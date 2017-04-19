@@ -20,13 +20,13 @@ Table of Contents
 *  [Demo](#demo)
 *  [Makeen Plugins](#makeen-plugins)
 	* [Octobus](https://github.com/makeen-project/octobus)
-	* [Makeen Router](packages/router)
-	* [Makeen Core](packages/core)
-	* [Makeen Mailer](packages/mailer)
-	* [Makeen User](packages/user)
-	* [Makeen Storage](packages/storage)
-	* [Makeen Monitoring](packages/monitoring)
-	* [Makeen Documentation](packages/documentation)
+	* [Makeen Router](packages/makeen-router)
+	* [Makeen Core](packages/makeen-core)
+	* [Makeen Mailer](packages/makeen-mailer)
+	* [Makeen User](packages/makeen-user)
+	* [Makeen Storage](packages/makeen-storage)
+	* [Makeen Monitoring](packages/makeen-monitoring)
+	* [Makeen Documentation](packages/makeen-documentation)
 	* [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 * [Build and Deployment](#build-and-deployment)
 * [Contributing](#contributing)
@@ -140,7 +140,7 @@ The CRUD oparations bit can get huge and out of control if not centralized in a 
 
 [Octobus-CRUD](https://github.com/makeen-project/octobus-crud) comes to the rescue and does just that.
 
-The CRUD generator requires an entity schema and an [Octobus-mongodb-store] (https://github.com/makeen-project/mongodb-store):
+The CRUD generator requires an entity schema and an [Octobus-mongodb-store](https://github.com/makeen-project/mongodb-store):
 
 ```js
 const bookSchema = {
@@ -218,7 +218,7 @@ of the application without the need of importing or hard-requiring it.
 Now that we've seen the power of octobus.js and the easy way of creating CRUD storage octobus services the last
 required piece of functionality would be a set of REST API endpoints that would expose all this functionality.
 
-This is easily accomplished using [makeen-router](#makeen-router) and it's exported class MongoResourceRouter
+This is easily accomplished using [makeen-router](packages/makeen-router) and it's exported class MongoResourceRouter
 
 ```js
 class BooksRouter extends MongoResourceRouter {
@@ -387,7 +387,7 @@ The next step will be to create HTTP endpoints for all of this methods such that
 
 #### Step 4. Create HTTP endpoints for Item and List CRUD operations
 
-For this we will be using the makeen-router package which takes in a generated octobus CRUD repository and builds all the CRUD endpoints
+For this we will be using the [makeen-router](packages/makeen-router) package which takes in a generated octobus CRUD repository and builds all the CRUD endpoints
 based on it:
 
 
@@ -479,13 +479,13 @@ class ListsRouter extends MongoResourceRouter {
   }
 }
 ```
-Above you can see another makeen-router feature, the @route function decorator which takes in metadata and transforms
+Above you can see another [makeen-router](packages/makeen-router) feature, the @route function decorator which takes in metadata and transforms
 a simple function into a hapi HTTP endpoint, in above case we've used it to create a custom endpoint.
 
 
 
 
-And finally, once we have Octbus CRUD repositories and makeen-router CRUD routers we need to assemble all this and
+And finally, once we have Octbus CRUD repositories and [makeen-router](packages/makeen-router) CRUD routers we need to assemble all this and
 bootstrap it in the plugin index.js file.
 
 
@@ -543,13 +543,13 @@ Makeen forms an echosistem of hapijs plugins that combined togheter can provide 
 functionalities required from a full stack profesional web application:
 
 * [Octobus](https://github.com/makeen-project/octobus)
-* [Makeen Router](packages/router)
-* [Makeen Core](packages/core)
+* [Makeen Router](packages/makeen-router)
+* [Makeen Core](packages/makeen-core)
 * [Makeen Mailer](packages/makeen-mailer)
-* [Makeen User](packages/user)
-* [Makeen Storage](packages/storage)
-* [Makeen Monitoring](packages/monitoring)
-* [Makeen Documentation](packages/documentation)
+* [Makeen User](packages/makeen-user)
+* [Makeen Storage](packages/makeen-storage)
+* [Makeen Monitoring](packages/makeen-monitoring)
+* [Makeen Documentation](packages/makeen-documentation)
 * [Makeen Virtual Machines](https://github.com/makeen-project/makeen-vm)
 
 
