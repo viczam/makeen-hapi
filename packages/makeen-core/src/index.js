@@ -6,6 +6,7 @@ import MessageBus from './octobus/MessageBus';
 import ServiceBus from './octobus/ServiceBus';
 import pkg from '../package.json';
 import createServer from './libs/createServer';
+import Plugin from './libs/Plugin';
 
 const MongoDbStore = decorators.withTimestamps(Store);
 
@@ -35,6 +36,8 @@ const register = async (server, options, next) => {
       },
     ]);
 
+    server.expose('messageBus', messageBus);
+
     server.method('createServiceBus', (...args) => {
       const serviceBus = new ServiceBus(...args);
       serviceBus.connect(messageBus);
@@ -62,4 +65,4 @@ register.attributes = {
   dependencies: ['hapi-octobus', 'makeen-db'],
 };
 
-export { register, createServer };
+export { register, createServer, Plugin };
