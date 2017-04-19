@@ -1,0 +1,25 @@
+{
+  "name": "makeen-cli",
+  "version": "0.5.4",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {},
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "bin": {
+    "makeen-build": "./build/scripts/build.js",
+    "makeen-watch": "./build/scripts/watch.js"
+  },
+  "dependencies": {
+    "joi": "10.0.2",
+    "lodash": "4.17.2",
+    "yargs": "7.0.2"
+  },
+  "devDependencies": {
+    "babel-core": "~6.23.1",
+    "chokidar": "1.6.1",
+    "dotenv": "~4.0.0",
+    "fs-promise": "2.0.2",
+    "glob": "7.1.1"
+  }
+}

@@ -9,8 +9,8 @@
   "scripts": {
     "postinstall": "npm run bootstrap && npm run build",
     "bootstrap": "lerna bootstrap",
-    "watch": "babel-node ./packages/cli/src/scripts/watch.js",
-    "build": "babel-node ./packages/cli/src/scripts/build.js",
+    "watch": "babel-node ./packages/makeen-cli/src/scripts/watch.js",
+    "build": "babel-node ./packages/makeen-cli/src/scripts/build.js",
     "babel-node": "babel-node",
     "clean-modules": "rm -rf node_modules/ && rm -rf packages/*/node_modules && rm -rf packages/*/build",
     "clean-setup": "npm run clean-modules && yarn",

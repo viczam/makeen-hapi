@@ -1,0 +1,32 @@
+{
+  "name": "makeen-user",
+  "version": "0.5.1",
+  "description": "User system",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Victor Zamfir <victor@makeen.io>",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bell": "^8.5.0",
+    "boom": "4.2.0",
+    "date-fns": "1.15.1",
+    "fs-promise": "1.0.0",
+    "hapi-auth-jwt2": "^7.2.4",
+    "hb-user": "0.9.0",
+    "hoek": "4.1.0",
+    "inert": "4.1.0",
+    "joi": "10.0.2",
+    "jsonwebtoken": "^7.3.0",
+    "lodash": "4.17.2",
+    "moment": "2.16.0",
+    "makeen-core": "^0.5.2",
+    "makeen-mailer": "^0.5.0",
+    "makeen-router": "^0.5.0",
+    "mongodb": "2.2.12",
+    "octobus-crud": "0.5.0",
+    "octobus.js": "0.29.0"
+  }
+}
