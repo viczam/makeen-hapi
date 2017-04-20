@@ -41,7 +41,7 @@ class UserPlugin extends Plugin {
       });
     }
 
-    const serviceBus = this.createServiceBus('user', [
+    this.serviceBus = this.createServiceBus('user', [
       {
         matcher: /^mailer/,
       },
@@ -57,18 +57,18 @@ class UserPlugin extends Plugin {
       User: new UserService({
         jwtConfig: options.jwt,
       }),
-      UserRepository: serviceBus.register(
+      UserRepository: this.serviceBus.register(
         new UserRepositoryService({
           store: server.methods.createStore({ collectionName: 'User' }),
         }),
       ),
-      Account: serviceBus.register(new AccountService()),
-      AccountRepository: serviceBus.register(
+      Account: this.serviceBus.register(new AccountService()),
+      AccountRepository: this.serviceBus.register(
         new AccountRepositoryService({
           store: server.methods.createStore({ collectionName: 'Account' }),
         }),
       ),
-      UserLoginRepository: serviceBus.register(
+      UserLoginRepository: this.serviceBus.register(
         new UserLoginRepositoryService({
           store: server.methods.createStore({ collectionName: 'UserLogin' }),
         }),
