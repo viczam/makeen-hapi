@@ -1,28 +1,29 @@
+import { Plugin } from 'makeen-core';
 import Inert from 'inert';
 import Vision from 'vision';
-import Joi from 'joi';
-import pkg from '../package.json';
-import pluginOptionsSchema from './schemas/pluginOptions';
+import schema from './schemas/pluginOptions';
 import browseEmailsRoute from './routes/browseEmails';
-import Mail from './services/Mail';
+import MailService from './services/Mail';
 
-export async function register(server, options, next) {
-  try {
-    const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-    const { saveToDisk, emailsDir, views } = pluginOptions;
-    const messageBus = pluginOptions.messageBus ||
-      server.plugins['hapi-octobus'].messageBus;
-    const serviceBus = server.methods.createServiceBus('mailer');
-    serviceBus.connect(messageBus);
+class MailerPlugin extends Plugin {
+  constructor() {
+    super({
+      schema,
+      name: 'Mailer',
+      plugins: [Inert, Vision],
+    });
 
-    await server.register([Inert, Vision]);
+    this.register.attributes.pkg.name = 'makeen-mailer';
+  }
+
+  async boot(server, options) {
+    const { saveToDisk, emailsDir, views } = options;
 
     server.views(views);
 
-    const mail = serviceBus.register(
-      'Mail',
-      new Mail({
-        ...pluginOptions,
+    const Mail = this.serviceBus.register(
+      new MailService({
+        ...options,
         renderTemplate: (template, context, renderOptions) =>
           new Promise((resolve, reject) => {
             server.render(
@@ -41,19 +42,26 @@ export async function register(server, options, next) {
       }),
     );
 
-    server.expose('Mail', mail);
+    server.expose('Mail', Mail);
 
     if (saveToDisk) {
       server.route(browseEmailsRoute(emailsDir));
     }
 
-    next();
-  } catch (error) {
-    next(error);
+    this.serviceBus.subscribe('user.User.didSignUp', ({ message }) => {
+      const { user, account } = message.data;
+
+      Mail.send({
+        to: user.email,
+        subject: 'welcome',
+        template: 'UserSignup',
+        context: {
+          user,
+          account,
+        },
+      });
+    });
   }
 }
 
-register.attributes = {
-  pkg,
-  dependencies: [],
-};
+export const { register } = new MailerPlugin();

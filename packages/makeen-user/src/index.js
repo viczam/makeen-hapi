@@ -1,9 +1,8 @@
-import Joi from 'joi';
+import { Plugin } from 'makeen-core';
 import Bell from 'bell';
 import Inert from 'inert';
 import HapiAuthJwt2 from 'hapi-auth-jwt2';
-import pkg from '../package.json';
-import pluginOptionsSchema from './schemas/pluginOptions';
+import schema from './schemas/pluginOptions';
 import UserService from './services/User';
 import UserRepositoryService from './services/UserRepository';
 import AccountService from './services/Account';
@@ -12,62 +11,72 @@ import UserLoginRepositoryService from './services/UserLoginRepository';
 import AccountRouter from './routers/Account';
 import UsersRouter from './routers/Users';
 
-export async function register(server, options, next) {
-  try {
-    const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
+class UserPlugin extends Plugin {
+  constructor() {
+    super({
+      schema,
+      name: 'User',
+      plugins: [Bell, Inert, HapiAuthJwt2],
+      autoCreateServiceBus: false,
+      dependencies: ['makeen-core', 'makeen-mailer'],
+    });
 
-    await server.register([Bell, Inert, HapiAuthJwt2]);
+    this.register.attributes.pkg.name = 'makeen-user';
+  }
 
-    if (pluginOptions.socialPlatforms.facebook) {
+  async boot(server, options) {
+    if (options.socialPlatforms.facebook) {
       server.auth.strategy('facebook', 'bell', {
         provider: 'facebook',
         isSecure: false,
-        ...pluginOptions.socialPlatforms.facebook,
+        ...options.socialPlatforms.facebook,
       });
     }
 
-    if (pluginOptions.socialPlatforms.google) {
+    if (options.socialPlatforms.google) {
       server.auth.strategy('google', 'bell', {
         provider: 'google',
         isSecure: false,
-        ...pluginOptions.socialPlatforms.google,
+        ...options.socialPlatforms.google,
       });
     }
 
-    const serviceBus = server.methods.createServiceBus('user', [
+    const serviceBus = this.createServiceBus('user', [
       {
         matcher: /^mailer/,
       },
     ]);
 
-    const User = serviceBus.register(
-      new UserService({
-        jwtConfig: pluginOptions.jwt,
+    const {
+      User,
+      UserRepository,
+      Account,
+      AccountRepository,
+      UserLoginRepository,
+    } = this.registerServices({
+      User: new UserService({
+        jwtConfig: options.jwt,
       }),
-    );
-
-    const UserRepository = serviceBus.register(
-      new UserRepositoryService({
-        store: server.methods.createStore({ collectionName: 'User' }),
-      }),
-    );
-
-    const Account = serviceBus.register(new AccountService());
-
-    const AccountRepository = serviceBus.register(
-      new AccountRepositoryService({
-        store: server.methods.createStore({ collectionName: 'Account' }),
-      }),
-    );
-
-    const UserLoginRepository = serviceBus.register(
-      new UserLoginRepositoryService({
-        store: server.methods.createStore({ collectionName: 'UserLogin' }),
-      }),
-    );
+      UserRepository: serviceBus.register(
+        new UserRepositoryService({
+          store: server.methods.createStore({ collectionName: 'User' }),
+        }),
+      ),
+      Account: serviceBus.register(new AccountService()),
+      AccountRepository: serviceBus.register(
+        new AccountRepositoryService({
+          store: server.methods.createStore({ collectionName: 'Account' }),
+        }),
+      ),
+      UserLoginRepository: serviceBus.register(
+        new UserLoginRepositoryService({
+          store: server.methods.createStore({ collectionName: 'UserLogin' }),
+        }),
+      ),
+    });
 
     server.auth.strategy('jwt', 'jwt', {
-      key: pluginOptions.jwt.key,
+      key: options.jwt.key,
       validateFunc: User.validateJWT,
       verifyOptions: {
         algorithms: ['HS256'],
@@ -90,23 +99,18 @@ export async function register(server, options, next) {
     server.expose('Account', Account);
     server.expose('AccountRepository', AccountRepository);
 
-    new UsersRouter({
-      User,
-      UserLoginRepository,
-      UserRepository,
-    }).mount(server);
-    new AccountRouter({
-      User,
-      Account,
-    }).mount(server);
-
-    next();
-  } catch (err) {
-    next(err);
+    this.mountRouters([
+      new UsersRouter({
+        User,
+        UserLoginRepository,
+        UserRepository,
+      }),
+      new AccountRouter({
+        User,
+        Account,
+      }),
+    ]);
   }
 }
 
-register.attributes = {
-  pkg,
-  dependencies: ['makeen-core', 'makeen-mailer'],
-};
+export const { register } = new UserPlugin();
