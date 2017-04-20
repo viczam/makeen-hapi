@@ -23,18 +23,12 @@ Account REST API:
 
 
 The plugin exposes 4 Octobus service containers:
-- User:
-Exposes various service handlers arround user functionality
-- UserRepository:
-Exposes full CRUD database service handlers
-- Account:
-Exposes various service handlers arround account functionality
-- AccountRepository:
-Exposes full CRUD database service handlers
+- User: service handlers arround user functionality
+- UserRepository: full CRUD database service handlers
+- Account: service handlers arround account functionality
+- AccountRepository: full CRUD database service handlers
 
 
-
-Under the hood it uses [hapi-auth-jwt2]()
 #### Requirements
 - Node v6 or higher
 
