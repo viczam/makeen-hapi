@@ -27,8 +27,9 @@ The plugin exposes 4 Octobus service containers:
 - UserRepository: full CRUD database service handlers
 - Account: service handlers arround account functionality
 - AccountRepository: full CRUD database service handlers
+- UserLoginRepository: full CRUD databse service handlers that track all user login activity
 
-
+Under the hood the pluing uses default 'jwt' authentication strategy by way of [hapi-auth-jwt2](https://www.npmjs.com/package/hapi-auth-jwt2).
 #### Requirements
 - Node v6 or higher
 
