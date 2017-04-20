@@ -1,6 +1,6 @@
 {
   "name": "makeen-user",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "User system",
   "main": "build/index.js",
   "scripts": {
@@ -22,9 +22,9 @@
     "jsonwebtoken": "^7.3.0",
     "lodash": "4.17.2",
     "moment": "2.16.0",
-    "makeen-core": "^0.5.14",
-    "makeen-mailer": "^0.5.1",
-    "makeen-router": "^0.5.1",
+    "makeen-core": "^0.5.16",
+    "makeen-mailer": "^0.5.2",
+    "makeen-router": "^0.5.2",
     "mongodb": "2.2.12",
     "octobus-crud": "0.5.0",
     "octobus.js": "0.31.0"

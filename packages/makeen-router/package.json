@@ -1,6 +1,6 @@
 {
   "name": "makeen-router",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Makeen router",
   "main": "build/index.js",
   "repository": {

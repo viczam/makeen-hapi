@@ -1,6 +1,6 @@
 {
   "name": "makeen-mailer",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "",
   "main": "build/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "inert": "4.1.0",
     "joi": "10.0.1",
     "lodash": "4.17.2",
-    "makeen-core": "0.5.15",
+    "makeen-core": "^0.5.16",
     "nodemailer": "3.1.7",
     "octobus.js": "0.31.0",
     "react": "15.4.0",
