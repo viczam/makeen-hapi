@@ -20,6 +20,6 @@
     "makeen-router": "^0.5.1",
     "mongodb": "2.2.25",
     "octobus-crud": "0.5.0",
-    "octobus.js": "0.30.0"
+    "octobus.js": "0.31.0"
   }
 }

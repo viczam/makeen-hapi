@@ -1,6 +1,6 @@
 {
   "name": "makeen-core",
-  "version": "0.5.14",
+  "version": "0.5.15",
   "description": "Makeen core plugin",
   "main": "build/index.js",
   "repository": {
@@ -32,7 +32,7 @@
     "mongodb-extended-json": "1.9.0",
     "octobus-crud": "0.5.0",
     "octobus-mongodb-store": "0.4.1",
-    "octobus.js": "0.30.0",
+    "octobus.js": "0.31.0",
     "scooter": "4.0.0"
   }
 }

@@ -14,8 +14,9 @@
     "inert": "4.1.0",
     "joi": "10.0.1",
     "lodash": "4.17.2",
+    "makeen-core": "0.5.15",
     "nodemailer": "3.1.7",
-    "octobus.js": "0.30.0",
+    "octobus.js": "0.31.0",
     "react": "15.4.0",
     "react-dom": "15.4.0",
     "vision": "4.1.0"

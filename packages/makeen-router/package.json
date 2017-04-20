@@ -23,6 +23,6 @@
     "lodash": "^4.11.1",
     "mongodb": "2.2.24",
     "mongodb-extended-json": "1.9.0",
-    "octobus.js": "0.30.0"
+    "octobus.js": "0.31.0"
   }
 }
