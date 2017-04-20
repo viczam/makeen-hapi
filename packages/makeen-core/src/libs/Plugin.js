@@ -14,6 +14,7 @@ class Plugin {
   constructor(config = {}) {
     this.config = {
       name: camelCase(this.constructor.name),
+      createServiceBus: true,
       ...config,
     };
 
@@ -27,7 +28,35 @@ class Plugin {
     };
   }
 
+  async register(server, options, next) {
+    try {
+      this.options = this.config.schema
+        ? Joi.attempt(options, this.config.schema)
+        : options;
+      this.server = server;
+
+      if (this.config.createServiceBus) {
+        this.serviceBus = this.createServiceBus(this.config.name);
+        this.serviceBus.connect(server.plugins['hapi-octobus'].messageBus);
+      }
+
+      if (this.getPlugins().length) {
+        await server.register(this.getPlugins());
+      }
+
+      this.boot(this.server, this.options);
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
   boot() {}
+
+  getPlugins() {
+    return [];
+  }
 
   createServiceBus(...args) {
     return new ServiceBus(...args);
@@ -35,8 +64,8 @@ class Plugin {
 
   createStore(options) {
     return new MongoDbStore({
-      db: this.db,
-      refManager: this.refManager,
+      db: this.server.plugins['makeen-db'].mongoDb,
+      refManager: this.server.plugins['makeen-db'].refManager,
       ...options,
     });
   }
@@ -72,24 +101,21 @@ class Plugin {
     };
   }
 
-  async register(server, options, next) {
-    try {
-      this.options = this.config.schema
-        ? Joi.attempt(options, this.config.schema)
-        : options;
-      this.server = server;
-      this.messageBus = server.plugins['hapi-octobus'].messageBus;
-      this.db = server.plugins['makeen-db'].mongoDb;
-      this.refManager = server.plugins['makeen-db'].refManager;
-      this.serviceBus = this.createServiceBus(this.config.name);
+  mountRouters(routers) {
+    routers.forEach(router => {
+      router.mount(this.server);
+    });
+  }
 
-      this.serviceBus.connect(this.messageBus);
-
-      this.boot(this.server, this.options);
-
-      next();
-    } catch (err) {
-      next(err);
+  registerServices(services) {
+    if (Array.isArray(services)) {
+      services.forEach(service => {
+        this.serviceBus.register(service);
+      });
+    } else {
+      Object.keys(services).forEach(serviceName => {
+        this.serviceBus.register(serviceName, services[serviceName]);
+      });
     }
   }
 }
