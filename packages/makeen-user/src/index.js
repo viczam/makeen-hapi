@@ -57,22 +57,16 @@ class UserPlugin extends Plugin {
       User: new UserService({
         jwtConfig: options.jwt,
       }),
-      UserRepository: this.serviceBus.register(
-        new UserRepositoryService({
-          store: server.methods.createStore({ collectionName: 'User' }),
-        }),
-      ),
-      Account: this.serviceBus.register(new AccountService()),
-      AccountRepository: this.serviceBus.register(
-        new AccountRepositoryService({
-          store: server.methods.createStore({ collectionName: 'Account' }),
-        }),
-      ),
-      UserLoginRepository: this.serviceBus.register(
-        new UserLoginRepositoryService({
-          store: server.methods.createStore({ collectionName: 'UserLogin' }),
-        }),
-      ),
+      UserRepository: new UserRepositoryService({
+        store: server.methods.createStore({ collectionName: 'User' }),
+      }),
+      Account: new AccountService(),
+      AccountRepository: new AccountRepositoryService({
+        store: server.methods.createStore({ collectionName: 'Account' }),
+      }),
+      UserLoginRepository: new UserLoginRepositoryService({
+        store: server.methods.createStore({ collectionName: 'UserLogin' }),
+      }),
     });
 
     server.auth.strategy('jwt', 'jwt', {
