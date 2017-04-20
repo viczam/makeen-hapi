@@ -14,7 +14,7 @@ class Plugin {
   constructor(config = {}) {
     this.config = {
       name: camelCase(this.constructor.name),
-      createServiceBus: true,
+      autoCreateServiceBus: true,
       dependencies: ['makeen-core'],
       plugins: [],
       ...config,
@@ -37,9 +37,8 @@ class Plugin {
         : options;
       this.server = server;
 
-      if (this.config.createServiceBus) {
+      if (this.config.autoCreateServiceBus) {
         this.serviceBus = this.createServiceBus(this.config.name);
-        this.serviceBus.connect(server.plugins['hapi-octobus'].messageBus);
       }
 
       if (this.getPlugins().length) {
@@ -61,7 +60,10 @@ class Plugin {
   }
 
   createServiceBus(...args) {
-    return new ServiceBus(...args);
+    const serviceBus = new ServiceBus(...args);
+    serviceBus.connect(this.server.plugins['hapi-octobus'].messageBus);
+    this.server.expose('serviceBus', serviceBus);
+    return serviceBus;
   }
 
   createStore(options) {
@@ -111,14 +113,18 @@ class Plugin {
 
   registerServices(services) {
     if (Array.isArray(services)) {
-      services.forEach(service => {
-        this.serviceBus.register(service);
-      });
-    } else {
-      Object.keys(services).forEach(serviceName => {
-        this.serviceBus.register(serviceName, services[serviceName]);
-      });
+      return services.map(service => this.serviceBus.register(service));
     }
+    return Object.keys(services).reduce(
+      (acc, serviceName) => ({
+        ...acc,
+        [serviceName]: this.serviceBus.register(
+          serviceName,
+          services[serviceName],
+        ),
+      }),
+      {},
+    );
   }
 }
 
