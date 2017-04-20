@@ -1,7 +1,7 @@
 Makeen User
 ===========
 
-The User plugin provides user management functionality that covers:
+Makeen User plugin that provides user management functionality covering:
 - authentication and authorization
 - full REST API including: signing up, logging in/out, token refresh etc.
 - email notificatons on key events such as registration or password recovery
