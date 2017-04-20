@@ -15,6 +15,8 @@ class Plugin {
     this.config = {
       name: camelCase(this.constructor.name),
       createServiceBus: true,
+      dependencies: ['makeen-core'],
+      plugins: [],
       ...config,
     };
 
@@ -24,7 +26,7 @@ class Plugin {
       pkg: {
         name: this.config.name,
       },
-      dependencies: ['makeen-core'],
+      dependencies: this.config.dependencies,
     };
   }
 
@@ -44,7 +46,7 @@ class Plugin {
         await server.register(this.getPlugins());
       }
 
-      this.boot(this.server, this.options);
+      await this.boot(this.server, this.options);
 
       next();
     } catch (err) {
@@ -55,7 +57,7 @@ class Plugin {
   boot() {}
 
   getPlugins() {
-    return [];
+    return this.config.plugins;
   }
 
   createServiceBus(...args) {
