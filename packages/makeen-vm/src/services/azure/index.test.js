@@ -21,8 +21,6 @@ test('should authenticate correctly', async () => {
 test('should list instances correctly', async () => {
   const instances = await azureClient.listInstances();
 
-  // console.log(JSON.stringify(instances.map(i => i), null, 2));
-
   expect(instances).toBeDefined();
 });
 

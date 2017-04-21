@@ -1,20 +1,16 @@
 import Joi from 'joi';
 import { Router, route } from 'makeen-router';
 import Boom from 'boom';
-import AzureClient from '../services/azure';
 import * as azureSchemas from '../schemas/azuerSchema';
 
 export default class AzureRoutes extends Router {
-  es2Client = null;
-
-  constructor(azureCredentials, authOption) {
+  constructor(AzureService, authOption) {
     super({
       namespace: 'MakeenVM.Azure',
       basePath: '/vm/azure',
     });
 
-    this.azureClient = new AzureClient();
-    this.azureClient.init(azureCredentials);
+    this.AzureService = AzureService;
 
     Object.keys(this.routes).forEach(routeName => {
       const { config } = this.routes[routeName];
@@ -37,7 +33,7 @@ export default class AzureRoutes extends Router {
   })
   async listAzureInstances() {
     try {
-      const result = await this.azureClient.listInstances();
+      const result = await this.AzureService.listInstances();
 
       return result;
     } catch (e) {
@@ -70,7 +66,7 @@ export default class AzureRoutes extends Router {
   async stopAzureInstances(request) {
     try {
       const { instanceIds } = request.query;
-      const result = await this.azureClient.turnInstancesOff(instanceIds);
+      const result = await this.AzureService.turnInstancesOff(instanceIds);
 
       return result;
     } catch (e) {
@@ -103,7 +99,7 @@ export default class AzureRoutes extends Router {
   async startAzureInstances(request) {
     try {
       const { instanceIds } = request.query;
-      const result = await this.azureClient.turnInstancesOn(instanceIds);
+      const result = await this.AzureService.turnInstancesOn(instanceIds);
 
       return result;
     } catch (e) {

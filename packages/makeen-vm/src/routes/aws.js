@@ -1,18 +1,16 @@
 import Joi from 'joi';
 import { Router, route } from 'makeen-router';
 import Boom from 'boom';
-import EC2Client from '../services/aws';
 import * as awsSchemas from '../schemas/awsSchema';
 
 export default class AwsRoutes extends Router {
-  es2Client = null;
-  constructor(awsCredentials, authOption) {
+  constructor(AwsService, authOption) {
     super({
       namespace: 'MakeenVM.AWS',
       basePath: '/vm/aws',
     });
 
-    this.ec2Client = new EC2Client(awsCredentials);
+    this.AwsService = AwsService;
 
     Object.keys(this.routes).forEach(routeName => {
       const { config } = this.routes[routeName];
@@ -35,7 +33,7 @@ export default class AwsRoutes extends Router {
   })
   async listAwsInstances() {
     try {
-      const result = await this.ec2Client.listInstances();
+      const result = await this.AwsService.listInstances();
 
       return result;
     } catch (e) {
@@ -68,7 +66,7 @@ export default class AwsRoutes extends Router {
   async stopInstances(request) {
     try {
       const { instanceIds } = request.query;
-      const result = await this.ec2Client.turnInstancesOff(instanceIds);
+      const result = await this.AwsService.turnInstancesOff(instanceIds);
 
       return result;
     } catch (e) {
@@ -101,7 +99,7 @@ export default class AwsRoutes extends Router {
   async startInstances(request) {
     try {
       const { instanceIds } = request.query;
-      const result = await this.ec2Client.turnInstancesOn(instanceIds);
+      const result = await this.AwsService.turnInstancesOn(instanceIds);
 
       return result;
     } catch (e) {

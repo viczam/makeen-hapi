@@ -1,6 +1,6 @@
 {
   "name": "makeen-vm",
-  "version": "0.0.21",
+  "version": "0.0.23",
   "description": "",
   "main": "./build/index.js",
   "scripts": {
@@ -21,8 +21,10 @@
     "environment-override": "^1.0.2",
     "joi": "^10.3.0",
     "lodash": "^4.17.4",
+    "makeen-core": "^0.5.15",
     "makeen-router": "^0.5.1",
     "ms-rest-azure": "1.14.3",
+    "octobus.js": "^0.31.0",
     "request-promise": "^4.2.0",
     "xml2js": "^0.4.17"
   },

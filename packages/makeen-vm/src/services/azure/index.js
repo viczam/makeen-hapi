@@ -5,21 +5,25 @@ import ComputeManagementClient from 'azure-arm-compute';
 import StorageManagementClient from 'azure-arm-storage';
 import NetworkManagementClient from 'azure-arm-network';
 import { ResourceManagementClient } from 'azure-arm-resource';
-
+import { decorators } from 'octobus.js';
+import ServiceContainer from 'makeen-core/build/octobus/ServiceContainer';
 import { flatten } from 'lodash';
 
 import {
   listInstancesResponse /* stopInstancesResponse, startInstancesResponse, */,
   azureOptionsSchema,
-} from '../../schemas/awsSchema';
+} from '../../schemas/azuerSchema';
 
-export default class AzureClient {
+const { service, withSchema } = decorators;
+
+export default class AzureClient extends ServiceContainer {
   resourceClient = null;
   resourceClient = null;
   computeClient = null;
   storageClient = null;
   networkClient = null;
 
+  @service()
   async init(azureCredentials) {
     Joi.attempt(azureCredentials, azureOptionsSchema);
 
@@ -57,10 +61,12 @@ export default class AzureClient {
     return this;
   }
 
+  @service()
   async isConnected() {
     return !!this.resourceClient;
   }
 
+  @service()
   async listInstances() {
     const groups = await new Promise((resolve, reject) => {
       this.resourceClient.resourceGroups.list((err, result) => {
@@ -115,6 +121,8 @@ export default class AzureClient {
     return instances;
   }
 
+  @service()
+  @withSchema(Joi.array().items(Joi.string()))
   async turnInstancesOff(ids) {
     const stopTasks = ids.map(id => {
       const { resourceGroupName, vmName } = AzureClient.extractGroupAndName(id);
@@ -142,6 +150,8 @@ export default class AzureClient {
     return result;
   }
 
+  @service()
+  @withSchema(Joi.array().items(Joi.string()))
   async turnInstancesOn(ids) {
     const stopTasks = ids.map(id => {
       const { resourceGroupName, vmName } = AzureClient.extractGroupAndName(id);
