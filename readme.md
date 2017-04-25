@@ -340,7 +340,7 @@ In order to see it in action we'll:
 >     package.json
 ```
 
-#### Step 2. Define todo package main entities and their data schema
+#### Step 2. Define todo plugin main entities and their data schema
 
 We will be working with items and item lists thus we have Item and List entities.
 
@@ -532,6 +532,10 @@ bootstrap it in the plugin index.js file.
 
 #### Step 6. Create new ToDo Plugin class
 
+Create `./packages/todo/src/index.js` file
+
+Inside it we import the service and router files:
+
 ```js
 import { Plugin } from 'makeen-core';
 import ItemRepositoryService from './services/ItemRepository';
@@ -579,9 +583,9 @@ class ToDoPlugin extends Plugin {
 
 #### Step 5. Bootstrap the todo plugin
 
- Create `./packages/todo/src/index.js` file
+Add the hapijs register function in the `./packages/todo/src/index.js` file:
 
-Inside it we import the service and router files and add the hapijs register function:
+Inside the register function we're instanciating the ToDoPlugin class and register it with the hapi server.
 
 ```js
 export async function register(server, options, next) {
