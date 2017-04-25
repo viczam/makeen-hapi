@@ -274,8 +274,8 @@ The `Plugin` class is a central concept arround makeen plugins development.
 
 The plugin can create a full CRUD service container and REST routes for you and also allow you to create and add custom service containers and routes. All this is being done by overidding the the `boot` method:
 
-The bellow example will create a full fledged hapijs plugin containing BooksRepository service container and full
-REST CRUD routes.
+The bellow example will create a hapijs plugin containing BooksRepository service container and complete
+REST CRUD routes:
 
 ```js
 import { Plugin } from 'makeen-core';
@@ -285,8 +285,9 @@ class BooksPlugin extends Plugin {
   }
 }
 ```
+It only took 6 lines of code and now you have a hapi plugin with CRUD REST endpoints and a CRUD db service container.
 
-We can also create a plugin with custom service container and CRUD REST routes:
+What if you want some custom service container and custom REST routes that go along with it ? for this we can instantiate the custom service container and CRUD REST router directly and pass them to the `createResources` method:
 
 ```js
 import { Plugin } from 'makeen-core';
