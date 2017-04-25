@@ -128,7 +128,6 @@ describe('plugin exposes CRUD REST endpoints', () => {
       },
     });
 
-    console.log('update result', response.result);
     expect(response).toBeDefined();
     expect(response.statusCode).toBe(200);
     expect(response.result.name).toBe(updatedName);
