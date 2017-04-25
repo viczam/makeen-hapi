@@ -1,0 +1,132 @@
+{
+  "server": {
+    "app": {
+      "$filter": "env",
+      "development": {
+        "client": "http://localhost:3000",
+        "api": "http://localhost:3003",
+        "isDevelopment": true
+      },
+      "production": {
+        "client": "http://localhost:3000",
+        "api": "http://localhost:80",
+        "isDevelopment": false
+      }
+    },
+    "useDomains": false
+  },
+  "connections": {
+    "$filter": "env",
+    "$default": [{
+      "port": 3003,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }],
+    "development": [{
+      "port": 3001,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }],
+    "testing": [{
+      "port": 3002,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }],
+    "production": [{
+      "port": 80,
+      "labels": ["api"],
+      "routes": {
+        "cors": true
+      }
+    }]
+  },
+  "registrations": {
+    "$filter": "env",
+    "$base": [{
+      "plugin": {
+        "register": "good",
+        "options": {
+          "ops": {
+            "interval": 30000
+          },
+          "reporters": {
+            "console": [{
+              "module": "good-squeeze",
+              "name": "Squeeze",
+              "args": [{ "log": "*", "request": "*", "response": "*", "error": "*", "ops": "*" }]
+            }, {
+              "module": "good-console"
+            }, "stdout"],
+            "file": [{
+              "module": "good-squeeze",
+              "name": "Squeeze",
+              "args": [{ "error": "*" }]
+            }, {
+              "module": "good-squeeze",
+              "name": "SafeJson"
+            }, {
+              "module": "good-file",
+              "args": ["./logs/errors"]
+            }]
+          }
+        }
+      }
+    }, {
+      "plugin": {
+        "register": "../../makeen-db",
+        "options": {
+          "mongoDb" : {
+            "db": "makeen-core-e2e-tests",
+            "port": 27017,
+            "host": "127.0.0.1"
+          }
+        }
+      }
+    }, {
+      "plugin": {
+        "register": "../../makeen-core"
+      }
+    }, {
+      "plugin": {
+        "register": "../../makeen-storage",
+        "options": {
+          "uploadDir": "./uploads",
+          "bewitCredentials": {
+            "key": "werxhqb98rpaxn39848xrunpaw3489ruxnpa98w4rxn"
+          }
+        }
+      }
+    }, {
+      "plugin": {
+        "register": "../../makeen-mailer",
+        "options": {
+          "saveToDisk": true,
+          "emailsDir": "./makeen-mailer/emails",
+          "views": {
+            "relativeTo": "./makeen-mailer/src/views"
+          }
+        }
+      }
+    }, {
+      "plugin": {
+        "register": "../../makeen-user",
+        "options": {
+          "jwt": {
+            "key": "I83At3WR1FaPTVoObwDWtXP19JucJWBmLLvT3K7XczEIceLzcrR1OyARV1Hs5z1"
+          },
+          "socialPlatforms": {
+          }
+        }
+      }
+    }],
+    "$default": [],
+    "development": [],
+    "production": []
+  }
+}
