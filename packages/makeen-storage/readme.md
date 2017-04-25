@@ -26,3 +26,6 @@ Once loaded the plugin will expose 4 REST endpoints for uploading, downloading, 
 
 On the backend the server also exposes the File and FileRepository octobus service containers. FileRepository service will
 export the CRUD database functionality while the File service container will provide the storage functionality for upload, download, signing and deleting files.
+
+
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install.

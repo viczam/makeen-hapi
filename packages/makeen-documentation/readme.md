@@ -14,3 +14,6 @@ Once launched documentation will be available at http://localhost:3001/documenta
 
 #### Installation
 `npm install makeen-documentation`
+
+
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install.
