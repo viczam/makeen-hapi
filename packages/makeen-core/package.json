@@ -8,7 +8,10 @@
     "url": "https://github.com/makeen-project/makeen/tree/develop/packages/core"
   },
   "scripts": {
-    "test": "jest --silent=false --colors"
+    "test": "jest --silent=true --color  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
+    "test:watch": "jest --watch --silent=true --color  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
+    "coverage": "jest --silent=false --colors --coverage  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
+    "coverage:watch": "jest --silent=false --colors --coverage  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$"
   },
   "keywords": [
     "makeen",

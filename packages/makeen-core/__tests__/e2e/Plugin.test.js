@@ -1,17 +1,13 @@
 import { CRUDServiceContainer } from 'octobus-crud';
 import Joi from 'joi';
 import { MongoResourceRouter } from 'makeen-router';
-import Confidence from 'confidence';
 import Promise from 'bluebird';
 import { omit } from 'lodash';
 
-import createServer from '../src/libs/createServer';
-import Plugin from '../src/libs/Plugin';
-import serverManifest from './serverManifest.test.json';
+import { createServer, stopServer } from '../helpers/createServer';
+import Plugin from '../../src/libs/Plugin';
 
-const { expect, test, beforeAll, describe } = window;
-
-window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
+const { expect, test, beforeAll, afterAll, describe } = window;
 
 let hapiServer;
 const testItemName = `TestItem${Math.random()}`;
@@ -63,8 +59,7 @@ class TestPlugin extends Plugin {
 
 beforeAll(async () => {
   const testPlugin = new TestPlugin({});
-  const store = new Confidence.Store(serverManifest);
-  hapiServer = await createServer(store);
+  hapiServer = await createServer();
 
   return new Promise((resolve, reject) => {
     hapiServer.register([testPlugin], {}, err => {
@@ -75,6 +70,12 @@ beforeAll(async () => {
       return resolve();
     });
   });
+});
+
+afterAll(async () => {
+  const result = await stopServer();
+
+  return result;
 });
 
 describe('should create Plugin succesfully', () => {
