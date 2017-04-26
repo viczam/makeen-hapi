@@ -16,7 +16,8 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]
 	docker push ${DOCKERHUB_REPO}:latest
 fi
 
-az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
-az account set --subscription ${AZURE_SUBSCRIPTION}
+#az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
+#az account set --subscription ${AZURE_SUBSCRIPTION}
 
 scp -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/
+ssh -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net docker-compose -f docker-deploy.yml -p makeen
