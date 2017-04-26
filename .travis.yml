@@ -48,6 +48,7 @@ before_deploy:
    - source ci-scripts/helper-functions.sh
    - mkdir -p ~/.ssh/
    - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ${TRAVIS_BUILD_DIR}/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
+   - chmod 600 ~/.ssh/id_rsa
    - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
    - echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
    - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
