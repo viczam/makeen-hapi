@@ -20,7 +20,7 @@ get_fulldockertag () {
 get_azureenvironment () {
 	if [[ "$TRAVIS_BRANCH" == "master" ]] 
 	then 
-		echo makeen-demo
+		echo makeen-master
 	elif [[ "$TRAVIS_BRANCH" == "stable" ]]
 	then 
 		echo makeen-stable
@@ -28,7 +28,8 @@ get_azureenvironment () {
 	then 
 		echo makeen-develop
 	else 
-		echo makeen-experimental
+		#echo makeen-experimental
+		echo makeen-master
 	fi
 }
 
