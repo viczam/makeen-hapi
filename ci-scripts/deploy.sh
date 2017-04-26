@@ -20,4 +20,4 @@ fi
 #az account set --subscription ${AZURE_SUBSCRIPTION}
 
 scp -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/
-ssh -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net docker-compose -f docker-deploy.yml -p makeen
+ssh -o "StrictHostKeyChecking no" makeen@$(get_azureenvironment).cloudapp.net "docker-compose -f docker-deploy.yml -p makeen"
