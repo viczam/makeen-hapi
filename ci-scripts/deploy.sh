@@ -19,4 +19,4 @@ fi
 az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
 az account set --subscription ${AZURE_SUBSCRIPTION}
 
-scp docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/
+scp -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/
