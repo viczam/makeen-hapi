@@ -22,5 +22,5 @@ fi
 
 echo "export MAKEEN_DOCKER_TAG=${get_fulldockertag}" >> deploy.env
 scp -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/
-scp -o "StrictHostKeyChecking no" docker-deploy.yml makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/deploy.env
+scp -o "StrictHostKeyChecking no" deploy.env makeen@$(get_azureenvironment).cloudapp.net:/home/makeen/deploy.env
 ssh -o "StrictHostKeyChecking no" makeen@$(get_azureenvironment).cloudapp.net 'source deploy.env; docker-compose -f docker-deploy.yml -p makeen up -d'
