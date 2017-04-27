@@ -39,9 +39,9 @@ install:
 script:
    - bash tests/curltests.sh
 
-#after_success
+#after_success:
 
-#after_failure
+#after_failure:
 
 before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
@@ -64,16 +64,7 @@ deploy:
       all_branches: true
          
 
-#after_deploy:
-   #- curl -L https://github.com/kubernetes-incubator/kompose/releases/download/v0.4.0/kompose-linux-amd64 -o kompose
-   #- chmod +x kompose
-   #- sudo az acs kubernetes install-cli
-   #- az acs kubernetes get-credentials --resource-group=makeen --name=$(get_azureenvironment)
-   #- export MAKEEN_DOCKER_TAG=$(get_fulldockertag)
-   #- ./kompose --file docker-deploy.yml down || true
-   #- ./kompose --file docker-deploy.yml up
-   #- kubectl get pods,svc,deployments
-   #- az acs show --resource-group=makeen --name=$(get_azureenvironment)
-   #- kubectl describe services makeen
+after_deploy:
+   - shred ~/.ssh/id_rsa
 
-#after_script
+#after_script:
