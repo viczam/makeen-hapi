@@ -28,8 +28,7 @@ get_azureenvironment () {
 	then 
 		echo makeen-develop
 	else 
-		#echo makeen-experimental
-		echo makeen-master
+		echo makeen-experimental
 	fi
 }
 
