@@ -39,13 +39,23 @@ install:
 script:
    - bash tests/curltests.sh
 
-#after_success
+#after_success:
 
-#after_failure
+#after_failure:
 
 before_deploy:
    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}
    - source ci-scripts/helper-functions.sh
+   - mkdir -p ~/.ssh/
+   - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ${TRAVIS_BUILD_DIR}/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
+   - chmod 600 ~/.ssh/id_rsa
+   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+   - echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+   - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+   - sudo apt-get install apt-transport-https
+   - sudo apt-get update && sudo apt-get install azure-cli
+   #- az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
+   #- az account set --subscription ${AZURE_SUBSCRIPTION}
     
 deploy:
    provider: script
@@ -55,24 +65,6 @@ deploy:
          
 
 after_deploy:
-   - mkdir ~/.ssh/
-   - openssl aes-256-cbc -K $encrypted_456ce9f5aede_key -iv $encrypted_456ce9f5aede_iv -in ${TRAVIS_BUILD_DIR}/secrets/makeen.key.enc -out ~/.ssh/id_rsa -d
-   - curl -L https://github.com/kubernetes-incubator/kompose/releases/download/v0.4.0/kompose-linux-amd64 -o kompose
-   - chmod +x kompose
-   - sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
-   - echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/azure-cli/ wheezy main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
-   - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
-   - sudo apt-get install apt-transport-https
-   - sudo apt-get update && sudo apt-get install azure-cli
-   - az login -u ${AZURE_USER} -p ${AZURE_PASSWORD}
-   - az account set --subscription ${AZURE_SUBSCRIPTION}
-   - sudo az acs kubernetes install-cli
-   - az acs kubernetes get-credentials --resource-group=makeen --name=$(get_azureenvironment)
-   - export MAKEEN_DOCKER_TAG=$(get_fulldockertag)
-   - ./kompose --file docker-deploy.yml down || true
-   - ./kompose --file docker-deploy.yml up
-   - kubectl get pods,svc,deployments
-   - az acs show --resource-group=makeen --name=$(get_azureenvironment)
-   - kubectl describe services makeen
+   - shred ~/.ssh/id_rsa
 
-#after_script
+#after_script:
