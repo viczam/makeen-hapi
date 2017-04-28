@@ -1,35 +1,40 @@
-import path from 'path';
-import Joi from 'joi';
-import Inert from 'inert';
-import Vision from 'vision';
+import { Plugin } from 'makeen-core';
 import H2O2 from 'h2o2';
-import HapiReactViews from 'hapi-react-views';
-import pkg from '../package.json';
+import next from 'next';
 import MainRouter from './routers/Main';
-import pluginOptionsSchema from './schemas/pluginOptions';
+import schema from './schemas/pluginOptions';
 
-export async function register(server, options, next) {
-  try {
-    const pluginOptions = Joi.attempt(options, pluginOptionsSchema);
-
-    await server.register([Inert, Vision, H2O2]);
-
-    server.views({
-      engines: {
-        jsx: HapiReactViews,
-      },
-      relativeTo: __dirname,
-      path: path.resolve(pluginOptions.viewsDir),
+class WebPlugin extends Plugin {
+  constructor() {
+    super({
+      schema,
+      name: 'Web',
+      plugins: [H2O2],
+      autoCreateServiceBus: false,
+      dependencies: [],
     });
 
-    new MainRouter(pluginOptions).mount(server);
-    next();
-  } catch (err) {
-    next(err);
+    this.register.attributes.pkg.name = 'makeen-web';
+  }
+
+  async boot(server, options) {
+    const isDev = typeof options.isDev !== 'undefined' ||
+      process.env.NODE_ENV === 'development';
+
+    this.app = next({
+      dev: isDev,
+      dir: options.appDir,
+    });
+
+    await this.app.prepare();
+
+    this.mountRouters([
+      new MainRouter({
+        ...(this.options || {}),
+        app: this.app,
+      }),
+    ]);
   }
 }
 
-register.attributes = {
-  pkg,
-  dependencies: [],
-};
+export const { register } = new WebPlugin();

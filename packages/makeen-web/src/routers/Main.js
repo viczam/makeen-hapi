@@ -1,28 +1,17 @@
 import { Router } from 'makeen-router';
 
 class MainRouter extends Router {
-  constructor(
-    {
-      assetsPath,
-    },
-    config = {},
-  ) {
+  constructor({ assetsPath, app }, config = {}) {
     super({
       namespace: 'WebMain',
       basePath: '/',
       ...config,
     });
 
-    this.addRoute('assets', {
-      path: '/assets/{path*}',
-      method: 'GET',
-      handler: {
-        directory: {
-          path: assetsPath,
-          index: false,
-        },
-      },
-    });
+    const nextHandler = ({ raw, url }, reply) =>
+      app.getRequestHandler()(raw.req, raw.res, url).then(() => {
+        reply.close(false);
+      });
 
     this.addRoute('api', {
       path: '/api/{path*}',
@@ -41,11 +30,12 @@ class MainRouter extends Router {
       },
     });
 
-    this.addRoute('home', {
-      path: '/{path*}',
+    this.addRoute('next', {
+      path: '/{p*}',
       method: 'GET',
-      handler: {
-        view: 'Home',
+      handler: nextHandler,
+      config: {
+        auth: false,
       },
     });
   }

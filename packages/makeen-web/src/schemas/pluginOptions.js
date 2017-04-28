@@ -1,6 +1,7 @@
 import Joi from 'joi';
+import path from 'path';
 
 export default {
-  assetsPath: Joi.string().required(),
-  viewsDir: Joi.string().required(),
+  appDir: Joi.string().default(path.resolve(__dirname, '../../app')),
+  isDev: Joi.boolean(),
 };
