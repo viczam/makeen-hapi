@@ -1,6 +1,6 @@
 {
   "name": "makeen-web",
-  "version": "0.6.0",
+  "version": "0.5.3",
   "description": "",
   "main": "build/index.js",
   "author": "Victor Zamfir <victor@makeen.io>",
