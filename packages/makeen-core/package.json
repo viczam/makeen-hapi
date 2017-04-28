@@ -1,6 +1,6 @@
 {
   "name": "makeen-core",
-  "version": "0.5.16",
+  "version": "0.5.17",
   "description": "Makeen core plugin",
   "main": "build/index.js",
   "repository": {
@@ -27,7 +27,7 @@
     "joi": "10.2.2",
     "lodash": "^4.11.1",
     "makeen-db": "^0.4.1",
-    "makeen-router": "^0.5.2",
+    "makeen-router": "^0.5.3",
     "mongodb": "2.2.24",
     "mongodb-extended-json": "1.9.0",
     "octobus-crud": "0.5.0",
