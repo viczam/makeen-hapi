@@ -18,8 +18,9 @@ class WebPlugin extends Plugin {
   }
 
   async boot(server, options) {
-    const isDev = typeof options.isDev !== 'undefined' ||
-      process.env.NODE_ENV === 'development';
+    const isDev = typeof options.isDev !== 'undefined'
+      ? options.isDev
+      : process.env.NODE_ENV === 'development';
 
     this.app = next({
       dev: isDev,

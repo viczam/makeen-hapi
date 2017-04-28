@@ -15,7 +15,8 @@
     "clean-modules": "rm -rf node_modules/ && rm -rf packages/*/node_modules && rm -rf packages/*/build",
     "clean-setup": "npm run clean-modules && yarn",
     "lint": "eslint .",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "publish-packages": "npm run build && lerna publish"
   },
   "repository": {
     "type": "git",
