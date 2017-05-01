@@ -279,9 +279,13 @@ REST CRUD routes:
 
 ```js
 import { Plugin } from 'makeen-core';
+import bookSchema from '../schemas/item';
+
 class BooksPlugin extends Plugin {
   boot() {
-    this.createResources('Books', {});
+    this.createResources('Books', {
+      schena: bookSchema,
+    });
   }
 }
 ```

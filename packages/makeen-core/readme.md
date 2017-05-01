@@ -23,3 +23,5 @@ A `ServiceBus` is concerned with creating, managing and invoking published servi
 
 #### Installation
 `npm install makeen-core`
+
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install.
