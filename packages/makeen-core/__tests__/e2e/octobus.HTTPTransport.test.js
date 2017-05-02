@@ -1,7 +1,5 @@
 import HTTPTransport from '../../src/octobus/HTTPTransport';
 
-const { expect, test } = window;
-
 const _jest = jest; // eslint-disable-line
 
 _jest.mock('axios', () => ({

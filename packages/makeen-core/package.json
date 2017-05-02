@@ -8,10 +8,7 @@
     "url": "https://github.com/makeen-project/makeen/tree/develop/packages/core"
   },
   "scripts": {
-    "test": "jest --silent=true --color  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
-    "test:watch": "jest --watch --silent=true --color  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
-    "coverage": "jest --silent=false --colors --coverage  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$",
-    "coverage:watch": "jest --silent=false --colors --coverage  --collectCoverageFrom=src/** --runInBand --testPathPattern=/__tests__/.*\\.test\\.js$"
+    "test": "jest --runInBand --silent"
   },
   "keywords": [
     "makeen",
@@ -45,5 +42,9 @@
   "devDependencies": {
     "confidence": "^3.0.2",
     "jest": "^19.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/e2e/.*|(\\.|/)(test|spec))\\.js?$"
   }
 }

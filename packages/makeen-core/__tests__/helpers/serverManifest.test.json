@@ -92,38 +92,6 @@
       "plugin": {
         "register": "../../makeen-core"
       }
-    }, {
-      "plugin": {
-        "register": "../../makeen-storage",
-        "options": {
-          "uploadDir": "./uploads",
-          "bewitCredentials": {
-            "key": "werxhqb98rpaxn39848xrunpaw3489ruxnpa98w4rxn"
-          }
-        }
-      }
-    }, {
-      "plugin": {
-        "register": "../../makeen-mailer",
-        "options": {
-          "saveToDisk": true,
-          "emailsDir": "./makeen-mailer/emails",
-          "views": {
-            "relativeTo": "./makeen-mailer/src/views"
-          }
-        }
-      }
-    }, {
-      "plugin": {
-        "register": "../../makeen-user",
-        "options": {
-          "jwt": {
-            "key": "I83At3WR1FaPTVoObwDWtXP19JucJWBmLLvT3K7XczEIceLzcrR1OyARV1Hs5z1"
-          },
-          "socialPlatforms": {
-          }
-        }
-      }
     }],
     "$default": [],
     "development": [],

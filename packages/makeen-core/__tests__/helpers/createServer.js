@@ -3,7 +3,7 @@ import { set, get } from 'lodash';
 import doCreateServer from '../../src/libs/createServer';
 import serverManifest from './serverManifest.test.json';
 
-window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
+global.jasmine.DEFAULT_TIMEOUT_INTERVAL = 500000;
 
 let hapiServer;
 
@@ -12,8 +12,7 @@ export const stopServer = async () => {
     return null;
   }
 
-  const result = await hapiServer.stop();
-  return result;
+  return hapiServer.stop();
 };
 
 export const createServer = async (options = { loadOnly: [] }) => {

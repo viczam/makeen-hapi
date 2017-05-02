@@ -1,13 +1,8 @@
 import { CRUDServiceContainer } from 'octobus-crud';
 import Joi from 'joi';
 import { MongoResourceRouter } from 'makeen-router';
-import Promise from 'bluebird';
-import { omit } from 'lodash';
-
 import { createServer, stopServer } from '../helpers/createServer';
 import Plugin from '../../src/libs/Plugin';
-
-const { expect, test, beforeAll, afterAll, describe } = window;
 
 let hapiServer;
 const testItemName = `TestItem${Math.random()}`;
@@ -61,22 +56,10 @@ beforeAll(async () => {
   const testPlugin = new TestPlugin({});
   hapiServer = await createServer();
 
-  return new Promise((resolve, reject) => {
-    hapiServer.register([testPlugin], {}, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
+  return hapiServer.register([testPlugin]);
 });
 
-afterAll(async () => {
-  const result = await stopServer();
-
-  return result;
-});
+afterAll(stopServer);
 
 describe('should create Plugin succesfully', () => {
   test('should create Plugin succesfully', () => {
@@ -151,95 +134,5 @@ describe('plugin exposes CRUD REST endpoints', () => {
     expect(response).toBeDefined();
     expect(response.statusCode).toBe(200);
     expect(response.result.name).toBe(`${testItemName}_updated`);
-  });
-});
-
-describe('should provide a ServiceContainer with CRUD methods', () => {
-  test('should CREATE test item', async () => {
-    const { TestPluginRepository } = hapiServer.plugins.testPlugin;
-    const response = await TestPluginRepository.createOne({
-      name: `${testItemName}_service`,
-    });
-
-    expect(response).toBeDefined();
-    expect(response.name).toBe(`${testItemName}_service`);
-  });
-
-  test('should READ test item', async () => {
-    const { TestPluginRepository } = hapiServer.plugins.testPlugin;
-    const response = await TestPluginRepository.findOne({
-      query: {
-        name: `${testItemName}_service`,
-      },
-    });
-
-    expect(response).toBeDefined();
-    expect(response.name).toBe(`${testItemName}_service`);
-  });
-
-  test('should PARTIALLY UPDATE test item', async () => {
-    const { TestPluginRepository } = hapiServer.plugins.testPlugin;
-    await TestPluginRepository.updateOne({
-      query: {
-        name: `${testItemName}_service`,
-      },
-      update: {
-        $set: {
-          name: `${testItemName}_service_updated`,
-        },
-      },
-    });
-
-    const response = await TestPluginRepository.findOne({
-      query: {
-        name: `${testItemName}_service_updated`,
-      },
-    });
-
-    expect(response).toBeDefined();
-  });
-
-  test('should FULLY UPDATE a.k.a. REPLACE test item', async () => {
-    const { TestPluginRepository } = hapiServer.plugins.testPlugin;
-    const itemToBeReplaced = await TestPluginRepository.findOne({
-      query: {
-        name: `${testItemName}_service_updated`,
-      },
-    });
-
-    await TestPluginRepository.replaceOne({
-      ...omit(itemToBeReplaced, 'name'),
-      name: `${testItemName}_service_updated_replaced`,
-    });
-
-    const response = await TestPluginRepository.findOne({
-      query: {
-        _id: itemToBeReplaced._id,
-      },
-    });
-
-    expect(response).toBeDefined();
-    expect(response.name).toBe(`${testItemName}_service_updated_replaced`);
-  });
-
-  test('should DELETE test item', async () => {
-    const { TestPluginRepository } = hapiServer.plugins.testPlugin;
-    const itemToBeRemoved = await TestPluginRepository.findOne({
-      query: {
-        name: `${testItemName}_service_updated_replaced`,
-      },
-    });
-
-    await TestPluginRepository.deleteOne({
-      query: itemToBeRemoved,
-    });
-
-    const response = await TestPluginRepository.findOne({
-      query: {
-        _id: itemToBeRemoved._id,
-      },
-    });
-
-    expect(response).toBeNull();
   });
 });
