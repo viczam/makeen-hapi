@@ -15,17 +15,17 @@ const testSchema = {
   _id: Joi.object(),
 };
 
-// test ServiceContaier class with CRUD db operations
-class TestRepositoryService extends CRUDServiceContainer {
-  constructor({ store }) {
-    super(store, testSchema);
-  }
-}
+// test Plugin based on service and router
+class TestPlugin extends Plugin {
+  async boot(/* server */) {
+    // test ServiceContaier class with CRUD db operations
+    const TestPluginRepository = new CRUDServiceContainer(
+      this.createStore({ collectionName: 'TestRepository' }),
+      testSchema,
+    );
 
-// test Router
-class TestRouter extends MongoResourceRouter {
-  constructor(TestRepository) {
-    super(TestRepository, {
+    // test router
+    const testRouter = new MongoResourceRouter(TestPluginRepository, {
       namespace: 'TestPlugin',
       basePath: '/test/plugin',
       entitySchema: testSchema,
@@ -33,17 +33,6 @@ class TestRouter extends MongoResourceRouter {
         auth: false,
       },
     });
-  }
-}
-
-// test Plugin based on service and router
-class TestPlugin extends Plugin {
-  async boot(/* server */) {
-    const TestPluginRepository = new TestRepositoryService({
-      store: this.createStore({ collectionName: 'TestRepository' }),
-    });
-
-    const testRouter = new TestRouter(TestPluginRepository);
 
     this.createResource('TestPlugin', {
       repository: TestPluginRepository,
@@ -53,7 +42,7 @@ class TestPlugin extends Plugin {
 }
 
 beforeAll(async () => {
-  const testPlugin = new TestPlugin({});
+  const testPlugin = new TestPlugin();
   hapiServer = await createServer();
 
   return hapiServer.register([testPlugin]);
