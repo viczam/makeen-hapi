@@ -49,19 +49,6 @@ Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapi
 - `git clone git@github.com:makeen-project/boilerplate.git`
 - `npm install`
 
-Running `npm run start` will start the following servers:
-- development server - http://localhost:3001
-- client server - http://localhost:3004
-- web-app server - http://localhost:3000
-
-Running the API
-- API documentation will be available on- http://localhost:3001/documentation
-
-Environment variables that override default mongodb uri 127.0.0.1:
- - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://{ MONGO_URI }
- - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST={ MONGO_HOST_NAME }
-
-
 From here on using a makeen plugin will require first installing it by way of npm:
 - `npm install makeen-core`
 - `npm install makeen-router`
@@ -284,7 +271,7 @@ import bookSchema from '../schemas/item';
 class BooksPlugin extends Plugin {
   boot() {
     this.createResources('Books', {
-      schena: bookSchema,
+      schema: bookSchema,
     });
   }
 }
