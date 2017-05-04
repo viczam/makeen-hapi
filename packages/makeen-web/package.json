@@ -1,6 +1,6 @@
 {
   "name": "makeen-web",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "",
   "main": "build/index.js",
   "author": "Victor Zamfir <victor@makeen.io>",
@@ -8,8 +8,8 @@
   "dependencies": {
     "h2o2": "5.4.0",
     "joi": "10.4.1",
-    "makeen-core": "^0.5.17",
-    "makeen-router": "^0.5.3",
+    "makeen-core": "^0.5.20",
+    "makeen-router": "^0.5.7",
     "next": "2.2.0"
   }
 }
