@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import Joi from 'joi';
 import Boom from 'boom';
-import pick from 'lodash/pick';
-import omit from 'lodash/omit';
 import trimEnd from 'lodash/trimEnd';
 import trimStart from 'lodash/trimStart';
 import get from 'lodash/get';
@@ -125,19 +123,19 @@ class Router {
   toArray(args) {
     const routes = this.getRoutes();
     const { only, without } = {
-      ...(args || {}),
       only: [],
       without: [],
+      ...(args || {}),
     };
 
     let ids = Object.keys(routes);
 
     if (only.length) {
-      ids = pick(ids, only);
+      ids = ids.filter(id => only.includes(id));
     }
 
     if (without.length) {
-      ids = omit(ids, without);
+      ids = ids.filter(id => !without.includes(id));
     }
 
     return ids.reduce((acc, id) => [...acc, routes[id]], []);

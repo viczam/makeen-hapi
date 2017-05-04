@@ -18,16 +18,20 @@ class WebPlugin extends Plugin {
   }
 
   async boot(server, options) {
-    const isDev = typeof options.isDev !== 'undefined'
-      ? options.isDev
-      : process.env.NODE_ENV === 'development';
+    if (options.app) {
+      this.app = options.app;
+    } else {
+      const isDev = typeof options.isDev !== 'undefined'
+        ? options.isDev
+        : process.env.NODE_ENV === 'development';
 
-    this.app = next({
-      dev: isDev,
-      dir: options.appDir,
-    });
+      this.app = next({
+        dev: isDev,
+        dir: options.appDir,
+      });
 
-    await this.app.prepare();
+      await this.app.prepare();
+    }
 
     this.mountRouters([
       new MainRouter({

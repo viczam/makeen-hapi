@@ -5,11 +5,10 @@ import schema from './schemas/pluginOptions';
 import browseEmailsRoute from './routes/browseEmails';
 import MailService from './services/Mail';
 
-class MailerPlugin extends Plugin {
+class Mailer extends Plugin {
   constructor() {
     super({
       schema,
-      name: 'Mailer',
       plugins: [Inert, Vision],
     });
 
@@ -64,4 +63,4 @@ class MailerPlugin extends Plugin {
   }
 }
 
-export const { register } = new MailerPlugin();
+export const { register } = new Mailer();

@@ -80,7 +80,14 @@ class Plugin {
   }
 
   createResourceRouter(repository, options) {
-    return new MongoResourceRouter(repository, options);
+    return new MongoResourceRouter(repository, {
+      ...options,
+      entitySchema: omit(options.entitySchema, [
+        '_id',
+        'createdAt',
+        'updatedAt',
+      ]),
+    });
   }
 
   createResource(name, options = {}) {
@@ -93,7 +100,7 @@ class Plugin {
       this.createResourceRouter(repository, {
         basePath: `/${kebabCase(name)}s`,
         namespace: name,
-        entitySchema: omit(schema, ['_id']),
+        entitySchema: schema,
       });
 
     this.server.expose(`${name}Repository`, repository);
