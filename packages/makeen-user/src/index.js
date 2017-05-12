@@ -24,9 +24,64 @@ class UserPlugin extends Plugin {
     this.register.attributes.pkg.name = 'makeen-user';
   }
 
-  async boot(server, options) {
-    const { userSchema, accountSchema } = options;
+  setupServices({ jwt, userSchema, accountSchema }) {
+    return this.registerServices({
+      User: new UserService({
+        jwtConfig: jwt,
+      }),
+      UserRepository: new UserRepositoryService({
+        store: this.server.methods.createStore({ collectionName: 'User' }),
+        userSchema,
+      }),
+      Account: new AccountService(),
+      AccountRepository: new AccountRepositoryService({
+        store: this.server.methods.createStore({ collectionName: 'Account' }),
+        accountSchema,
+      }),
+      UserLoginRepository: new UserLoginRepositoryService({
+        store: this.server.methods.createStore({ collectionName: 'UserLogin' }),
+      }),
+    });
+  }
 
+  setupAuthStrategy({ jwt, User }) {
+    this.server.auth.strategy('jwt', 'jwt', {
+      key: jwt.key,
+      validateFunc: User.validateJWT,
+      verifyOptions: {
+        algorithms: ['HS256'],
+      },
+    });
+
+    this.server.auth.default('jwt');
+  }
+
+  setupRouters({
+    User,
+    UserRepository,
+    UserLoginRepository,
+    userSchema,
+    Account,
+  }) {
+    return this.mountRouters([
+      new UsersRouter(
+        {
+          User,
+          UserLoginRepository,
+          UserRepository,
+        },
+        {
+          entitySchema: userSchema,
+        },
+      ),
+      new AccountRouter({
+        User,
+        Account,
+      }),
+    ]);
+  }
+
+  async boot(server, options) {
     if (options.socialPlatforms.facebook) {
       server.auth.strategy('facebook', 'bell', {
         provider: 'facebook',
@@ -55,33 +110,12 @@ class UserPlugin extends Plugin {
       Account,
       AccountRepository,
       UserLoginRepository,
-    } = this.registerServices({
-      User: new UserService({
-        jwtConfig: options.jwt,
-      }),
-      UserRepository: new UserRepositoryService({
-        store: server.methods.createStore({ collectionName: 'User' }),
-        userSchema,
-      }),
-      Account: new AccountService(),
-      AccountRepository: new AccountRepositoryService({
-        store: server.methods.createStore({ collectionName: 'Account' }),
-        accountSchema,
-      }),
-      UserLoginRepository: new UserLoginRepositoryService({
-        store: server.methods.createStore({ collectionName: 'UserLogin' }),
-      }),
-    });
+    } = this.setupServices(options);
 
-    server.auth.strategy('jwt', 'jwt', {
-      key: options.jwt.key,
-      validateFunc: User.validateJWT,
-      verifyOptions: {
-        algorithms: ['HS256'],
-      },
+    this.setupAuthStrategy({
+      ...options,
+      User,
     });
-
-    server.auth.default('jwt');
 
     server.bind({
       UserRepository,
@@ -97,18 +131,13 @@ class UserPlugin extends Plugin {
     server.expose('Account', Account);
     server.expose('AccountRepository', AccountRepository);
 
-    this.mountRouters([
-      new UsersRouter({
-        User,
-        UserLoginRepository,
-        UserRepository,
-        userSchema,
-      }),
-      new AccountRouter({
-        User,
-        Account,
-      }),
-    ]);
+    this.setupRouters({
+      ...options,
+      User,
+      UserRepository,
+      UserLoginRepository,
+      Account,
+    });
   }
 }
 

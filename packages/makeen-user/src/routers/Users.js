@@ -5,21 +5,14 @@ import pick from 'lodash/pick';
 import { extractProfileInfo } from '../lib/helpers';
 
 class UsersRouter extends MongoResourceRouter {
-  constructor(
-    {
-      User,
-      UserLoginRepository,
-      UserRepository,
-      userSchema,
-    },
-    config = {},
-  ) {
+  constructor({ User, UserLoginRepository, UserRepository }, config = {}) {
     super(UserRepository, {
       namespace: 'Users',
       basePath: '/users',
-      entitySchema: userSchema,
       ...config,
     });
+
+    const { userSchema } = config;
 
     this.User = User;
     this.UserLoginRepository = UserLoginRepository;
