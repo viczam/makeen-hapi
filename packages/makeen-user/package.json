@@ -1,6 +1,6 @@
 {
   "name": "makeen-user",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "User system",
   "main": "build/index.js",
   "scripts": {
