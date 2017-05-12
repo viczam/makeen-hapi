@@ -11,7 +11,7 @@ import UserLoginRepositoryService from './services/UserLoginRepository';
 import AccountRouter from './routers/Account';
 import UsersRouter from './routers/Users';
 
-class UserPlugin extends Plugin {
+export class UserPlugin extends Plugin {
   constructor() {
     super({
       schema,
