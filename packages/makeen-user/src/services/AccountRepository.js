@@ -1,8 +1,7 @@
 import { CRUDServiceContainer } from 'octobus-crud';
-import accountSchema from '../schemas/account';
 
 class AccountRepository extends CRUDServiceContainer {
-  constructor({ store }) {
+  constructor({ store, accountSchema }) {
     super(store, accountSchema);
   }
 }

@@ -25,6 +25,8 @@ class UserPlugin extends Plugin {
   }
 
   async boot(server, options) {
+    const { userSchema, accountSchema } = options;
+
     if (options.socialPlatforms.facebook) {
       server.auth.strategy('facebook', 'bell', {
         provider: 'facebook',
@@ -59,10 +61,12 @@ class UserPlugin extends Plugin {
       }),
       UserRepository: new UserRepositoryService({
         store: server.methods.createStore({ collectionName: 'User' }),
+        userSchema,
       }),
       Account: new AccountService(),
       AccountRepository: new AccountRepositoryService({
         store: server.methods.createStore({ collectionName: 'Account' }),
+        accountSchema,
       }),
       UserLoginRepository: new UserLoginRepositoryService({
         store: server.methods.createStore({ collectionName: 'UserLogin' }),
@@ -98,6 +102,7 @@ class UserPlugin extends Plugin {
         User,
         UserLoginRepository,
         UserRepository,
+        userSchema,
       }),
       new AccountRouter({
         User,

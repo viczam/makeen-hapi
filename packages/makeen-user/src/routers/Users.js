@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { ObjectID as objectId } from 'mongodb';
 import pick from 'lodash/pick';
 import { extractProfileInfo } from '../lib/helpers';
-import userSchema from '../schemas/user';
 
 class UsersRouter extends MongoResourceRouter {
   constructor(
@@ -11,6 +10,7 @@ class UsersRouter extends MongoResourceRouter {
       User,
       UserLoginRepository,
       UserRepository,
+      userSchema,
     },
     config = {},
   ) {
@@ -39,15 +39,25 @@ class UsersRouter extends MongoResourceRouter {
         scope: 'admin',
       };
     });
+
+    this.routes.login.config.validate.payload = pick(userSchema, [
+      'username',
+      'password',
+    ]);
+
+    this.routes.signup.config.validate.payload = pick(userSchema, [
+      'name',
+      'username',
+      'email',
+      'password',
+    ]);
   }
 
   @route.post({
     path: '/login',
     config: {
       auth: false,
-      validate: {
-        payload: pick(userSchema, ['username', 'password']),
-      },
+      validate: {},
       description: 'User login',
     },
   })
@@ -83,11 +93,7 @@ class UsersRouter extends MongoResourceRouter {
     path: '/signup',
     config: {
       auth: false,
-      validate: {
-        payload: {
-          ...pick(userSchema, ['name', 'username', 'email', 'password']),
-        },
-      },
+      validate: {},
       description: 'Register a new user',
     },
   })

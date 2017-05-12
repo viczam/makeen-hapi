@@ -1,4 +1,6 @@
 import Joi from 'joi';
+import userSchema from './user';
+import accountSchema from './account';
 
 export default {
   jwt: Joi.object().keys({
@@ -22,4 +24,6 @@ export default {
       }),
     })
     .required(),
+  userSchema: Joi.object().default(userSchema),
+  accountSchema: Joi.object().default(accountSchema),
 };

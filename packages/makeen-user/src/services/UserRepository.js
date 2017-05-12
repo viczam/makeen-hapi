@@ -1,6 +1,5 @@
 import { CRUDServiceContainer } from 'octobus-crud';
 import bcrypt from 'bcryptjs';
-import userSchema from '../schemas/user';
 
 class UserRepository extends CRUDServiceContainer {
   static hashPassword({ password, salt }) {
@@ -15,7 +14,7 @@ class UserRepository extends CRUDServiceContainer {
     });
   }
 
-  constructor({ store }) {
+  constructor({ store, userSchema }) {
     super(store, userSchema);
   }
 
