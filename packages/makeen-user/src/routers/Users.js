@@ -12,7 +12,7 @@ class UsersRouter extends MongoResourceRouter {
       ...config,
     });
 
-    const { userSchema } = config;
+    const { entitySchema } = config;
 
     this.User = User;
     this.UserLoginRepository = UserLoginRepository;
@@ -33,12 +33,12 @@ class UsersRouter extends MongoResourceRouter {
       };
     });
 
-    this.routes.login.config.validate.payload = pick(userSchema, [
+    this.routes.login.config.validate.payload = pick(entitySchema, [
       'username',
       'password',
     ]);
 
-    this.routes.signup.config.validate.payload = pick(userSchema, [
+    this.routes.signup.config.validate.payload = pick(entitySchema, [
       'name',
       'username',
       'email',
