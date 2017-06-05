@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">routers/MongoResourceRouter.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/makeen-project/makeen" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/MongoResourceRouter.js~MongoResourceRouter.html">MongoResourceRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Octobus.js~OctobusRouter.html">OctobusRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Router.js~Router.html">Router</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">routers/MongoResourceRouter.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Joi from &apos;joi&apos;;
+import Boom from &apos;boom&apos;;
+import pick from &apos;lodash/pick&apos;;
+import Router from &apos;./Router&apos;;
+import { toBSON, idValidator, idToQuery } from &apos;../libs/mongo-helpers&apos;;
+import { route } from &apos;../libs/decorators&apos;;
+
+/** makeen-router class which exposes a full-CRUD RESTfull API */
+class MongoResourceRouter extends Router {
+  static applyContextToRoute = (routeId, generateContext) =&gt;
+    (request, reply) =&gt; {
+      const context = generateContext(request);
+
+      switch (routeId) {
+        case &apos;count&apos;:
+        case &apos;deleteOne&apos;:
+        case &apos;deleteOneById&apos;:
+        case &apos;findById&apos;:
+        case &apos;findOne&apos;:
+          Object.assign(request.pre.query, context);
+          break;
+        case &apos;createOne&apos;:
+          Object.assign(request.pre.payload, context);
+          break;
+        case &apos;findMany&apos;:
+          Object.assign(request.pre.queryParams.query, context);
+          break;
+        case &apos;replaceOne&apos;:
+        case &apos;updateOne&apos;:
+          Object.assign(request.pre.query, context);
+          Object.assign(request.pre.payload, context);
+          break;
+        default:
+      }
+
+      reply();
+    };
+
+  /**
+   * Create a new MongoResourceRouter instance
+   *@param {object} Repository - repository service used to perform all data related operations
+   *@param {object} config - configuration options which can have the following fields:
+   * entitySchema - joi schema of the corespoding data entity
+   */
+  constructor(Repository, config) {
+    super(
+      Joi.attempt(
+        config,
+        Joi.object()
+          .keys({
+            entitySchema: Joi.object(),
+          })
+          .unknown(),
+      ),
+    );
+
+    this.Repository = Repository;
+
+    this.addRoute(&apos;deleteOneById&apos;, {
+      path: &apos;/{id}&apos;,
+      method: &apos;DELETE&apos;,
+      handler: this.deleteOne,
+      config: {
+        validate: {
+          params: {
+            id: idValidator,
+          },
+        },
+        description: &apos;Delete an entity by id&apos;,
+        pre: [
+          {
+            method: (request, reply) =&gt; reply(idToQuery(request.params.id)),
+            assign: &apos;query&apos;,
+          },
+        ],
+      },
+    });
+
+    this.routes.createOne.config.validate.payload = this.config.entitySchema;
+    this.routes.replaceOne.config.validate.payload = this.config.entitySchema;
+  }
+
+  @route.get({
+    path: &apos;/count&apos;,
+    config: {
+      validate: {
+        query: {
+          query: Joi.object().default({}),
+        },
+      },
+      description: &apos;Count entities&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.query.query)),
+          assign: &apos;query&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP handler: counts entities
+   */
+  count(request) {
+    const { query } = request.pre;
+    return this.Repository.count({ query });
+  }
+
+  @route.post({
+    path: &apos;/&apos;,
+    config: {
+      validate: {},
+      description: &apos;Create a new entity&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.payload)),
+          assign: &apos;payload&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Handler: creates one entity
+   */
+  createOne(request) {
+    const { payload } = request.pre;
+    return this.Repository.createOne(payload);
+  }
+
+  @route.delete({
+    path: &apos;/deleteOne&apos;,
+    config: {
+      validate: {
+        payload: {
+          query: Joi.object().required(),
+        },
+      },
+      description: &apos;Delete an entity&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.query.query)),
+          assign: &apos;query&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Handler: deletes one entity
+   */
+  deleteOne(request) {
+    const { query } = request.pre;
+    return this.Repository.deleteOne({ query });
+  }
+
+  @route.get({
+    path: &apos;/{id}&apos;,
+    config: {
+      validate: {
+        params: {
+          id: idValidator,
+        },
+      },
+      description: &apos;Find an entity by id&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(idToQuery(request.params.id)),
+          assign: &apos;query&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Hanlder: finds one entity by id
+   */
+  async findById(request) {
+    const { query } = request.pre;
+    const entity = await this.Repository.findOne({ query });
+
+    if (!entity) {
+      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);
+    }
+
+    return entity;
+  }
+
+  @route.get({
+    path: &apos;/&apos;,
+    config: {
+      validate: {
+        query: {
+          query: Joi.object().default({}),
+          offset: Joi.number(),
+          limit: Joi.number(),
+          orderBy: Joi.object().default({}),
+          fields: Joi.object().default({}),
+        },
+      },
+      description: &apos;Find entities&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.query.query)),
+          assign: &apos;query&apos;,
+        },
+        {
+          method: (request, reply) =&gt; {
+            const params = pick(request.query, [&apos;fields&apos;, &apos;orderBy&apos;]);
+            params.query = request.pre.query;
+
+            if (request.query.offset !== undefined) {
+              params.skip = parseInt(request.query.offset, 10);
+            }
+
+            if (request.query.limit !== undefined) {
+              params.limit = parseInt(request.query.limit, 10);
+            }
+
+            reply(params);
+          },
+          assign: &apos;queryParams&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Handler: finds entities
+   */
+  findMany(request) {
+    const { queryParams } = request.pre;
+    return this.Repository.findMany(queryParams).then(c =&gt; c.toArray());
+  }
+
+  @route.get({
+    path: &apos;/findOne&apos;,
+    config: {
+      validate: {
+        query: {
+          query: Joi.object().default({}),
+        },
+      },
+      description: &apos;Find one entity&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.query.query)),
+          assign: &apos;query&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Handler: finds single entity
+   */
+  async findOne(request) {
+    const { query } = request.pre;
+    const entity = await this.Repository.findOne({ query });
+
+    if (!entity) {
+      throw Boom.notFound(&apos;Unable to find entity.&apos;);
+    }
+
+    return entity;
+  }
+
+  @route.put({
+    path: &apos;/{id}&apos;,
+    method: &apos;PUT&apos;,
+    config: {
+      validate: {
+        params: {
+          id: idValidator,
+        },
+      },
+      description: &apos;Replace an entity&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(idToQuery(request.params.id)),
+          assign: &apos;query&apos;,
+        },
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.payload)),
+          assign: &apos;payload&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Request: performs full entity replace
+   */
+  async replaceOne(request) {
+    const { query, payload } = request.pre;
+    const entity = await this.Repository.findOne({ query });
+
+    if (!entity) {
+      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);
+    }
+
+    return this.Repository.replaceOne({
+      ...entity,
+      ...payload,
+    });
+  }
+
+  @route.patch({
+    path: &apos;/{id}&apos;,
+    config: {
+      validate: {
+        params: {
+          id: idValidator,
+        },
+      },
+      description: &apos;Update an entity&apos;,
+      pre: [
+        {
+          method: (request, reply) =&gt; reply(idToQuery(request.params.id)),
+          assign: &apos;query&apos;,
+        },
+        {
+          method: (request, reply) =&gt; reply(toBSON(request.payload)),
+          assign: &apos;payload&apos;,
+        },
+      ],
+    },
+  })
+  /**
+   * HTTP Handler: performs partial entity update
+   */
+  async updateOne(request) {
+    const { query, payload } = request.pre;
+    const entity = await this.Repository.findOne({ query });
+
+    if (!entity) {
+      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);
+    }
+
+    try {
+      await this.Repository.validate({
+        ...entity,
+        ...payload,
+      });
+    } catch (err) {
+      if (err.isJoi) {
+        throw Boom.badRequest(err.details[0].message);
+      }
+
+      throw err;
+    }
+
+    return this.Repository.updateOne({
+      query,
+      update: {
+        $set: payload,
+      },
+    });
+  }
+  /**
+   *
+   * @param {object} options - options passed to method
+   * @param {array} routes - array of routes for which to apply context
+   * @param {generateContext} options.generateContext - function that will generated the context to be applied
+   */
+  applyContext({ routes, generateContext }) {
+    (routes || Object.keys(this.routes)).forEach(routeId =&gt; {
+      this.routes[routeId].config.pre.push({
+        method: this.constructor.applyContextToRoute(routeId, generateContext),
+      });
+    });
+  }
+}
+
+export default MongoResourceRouter;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

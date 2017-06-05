@@ -1,0 +1,44 @@
+{
+  "coverage": "36.66%",
+  "expectCount": 30,
+  "actualCount": 11,
+  "files": {
+    "routers/MongoResourceRouter.js": {
+      "expectCount": 13,
+      "actualCount": 11,
+      "undocumentLines": [
+        57,
+        10
+      ]
+    },
+    "routers/Octobus.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        9,
+        10,
+        32
+      ]
+    },
+    "routers/Router.js": {
+      "expectCount": 14,
+      "actualCount": 0,
+      "undocumentLines": [
+        8,
+        69,
+        111,
+        104,
+        57,
+        37,
+        119,
+        43,
+        9,
+        160,
+        39,
+        56,
+        123,
+        144
+      ]
+    }
+  }
+}

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/makeen-project/makeen" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/MongoResourceRouter.js~MongoResourceRouter.html">MongoResourceRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Octobus.js~OctobusRouter.html">OctobusRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Router.js~Router.html">Router</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="makeen">Makeen</h1>
+<p>A back-end development platform for rapid application development that is battle tested production ready.</p>
+<p>Makeen promotes a pluggable architecture that allows you to use a broad range of pre-developed plugins which
+provide all the functionality a modern application might need: user,  storage, mailing, database, REST API, documentation,
+backend performance monitoring, CLI and cloud (AW &amp; Azure) virtual instances mangement.</p>
+<p>The majority of makeen plugins are hosted in the current mono-repository.</p>
+<hr>
+<h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#demo">Demo</a></li>
+<li><a href="#makeen-plugins">Makeen Plugins</a><ul>
+<li><a href="https://github.com/makeen-project/octobus">Octobus</a></li>
+<li><a href="packages/makeen-router">Makeen Router</a></li>
+<li><a href="packages/makeen-core">Makeen Core</a></li>
+<li><a href="packages/makeen-mailer">Makeen Mailer</a></li>
+<li><a href="packages/makeen-user">Makeen User</a></li>
+<li><a href="packages/makeen-storage">Makeen Storage</a></li>
+<li><a href="packages/makeen-monitoring">Makeen Monitoring</a></li>
+<li><a href="packages/makeen-documentation">Makeen Documentation</a></li>
+<li><a href="https://github.com/makeen-project/makeen-vm">Makeen Virtual Machines</a></li>
+</ul>
+</li>
+<li><a href="#build-and-deployment">Build and Deployment</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#credits">Credits</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#get-in-touch">Get in Touch</a></li>
+</ul>
+<hr>
+<h2 id="installation">Installation</h2>
+<p>Before ramping up makeen the following requirements must be met:</p>
+<ul>
+<li>Node v6 or higher version</li>
+<li>mongodb connection</li>
+</ul>
+<p>Because Makeen is a collection of plugins you will need a <a href="https://hapijs.com/">Hapi.js</a> server to load and run them. To speed things up Makeen is providing the server component in the shape of a <a href="https://github.com/makeen-project/boilerplate">boilerplate</a> which you can clone and install:</p>
+<ul>
+<li><code>git clone git@github.com:makeen-project/boilerplate.git</code></li>
+<li><code>npm install</code></li>
+</ul>
+<p>Running <code>npm run start</code> will start the following servers:</p>
+<ul>
+<li>development server - <a href="http://localhost:3001">http://localhost:3001</a></li>
+<li>client server - <a href="http://localhost:3004">http://localhost:3004</a></li>
+<li>web-app server - <a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+<p>Running the API</p>
+<ul>
+<li>API documentation will be available on- <a href="http://localhost:3001/documentation">http://localhost:3001/documentation</a></li>
+</ul>
+<p>Environment variables that override default mongodb uri 127.0.0.1:</p>
+<ul>
+<li>MAKEEN_ENV_SERVER_CACHE_URI=mongodb://{ MONGO_URI }</li>
+<li>MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST={ MONGO_HOST_NAME }</li>
+</ul>
+<p>From here on using a makeen plugin will require first installing it by way of npm:</p>
+<ul>
+<li><code>npm install makeen-core</code></li>
+<li><code>npm install makeen-router</code></li>
+<li><code>npm install makeen-documentation</code></li>
+<li><code>npm install makeen-mailer</code></li>
+<li><code>npm install makeen-storage</code></li>
+<li><code>npm install makeen-monitoring</code></li>
+<li><code>npm install makeen-vm</code></li>
+</ul>
+<p>And load them whereve needed, be it inside a hapijs plugin or anywhere else server-side.</p>
+<h2 id="usage">Usage</h2>
+<p>The <a href="https://github.com/makeen-project/boilerplate">Makeen boilerplate</a> is delivered as a feature-rich extensible backend <a href="https://hapijs.com">hapi.js</a> server.</p>
+<p>Architecture being modular you can write a new plugin and plug it into the server easily.</p>
+<p>We will cover the plugin creation part in the <a href="#demo">Demo</a> section but all you need to know is that a <a href="https://hapijs.com">hapi.js</a> plugin is composed of <code>package.json</code> and <code>index.js</code> files with a register function and the rest is javascript logic.</p>
+<p>Makeen as a whole is based on a few key <strong>concepts and principles</strong> which we&apos;ll discuss:</p>
+<ul>
+<li>modular message driven arhitecture by way of <a href="https://github.com/makeen-project/octobus">Octobus.js</a></li>
+<li>CRUD database operations on the fly</li>
+<li>CRUD REST API endpoints on the fly</li>
+</ul>
+<h4 id="modular-message-driven-architecture-by-way-of-octobus-js-https-github-com-makeen-project-octobus-">Modular message driven architecture by way of <a href="https://github.com/makeen-project/octobus">Octobus.js</a></h4>
+<p>Octobus.js is a library which promotes decoupling application logic into isolated modules and enabling cross-module interaction through a message driven approach.</p>
+<p>As a basic example let&apos;s consider we have a monolithic block of code which implements math logic and currency logic and has the following two functions:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// Math logic
+const multiply(a, b) =&gt; {
+  return a * b;
+};
+
+// Currency logic
+const convertEuroToUsd =&gt; (euro) {
+  const euroToUsdRate = 1.3;
+
+  return multiply(euro, euroToUsdRate);
+};</code>
+</code></pre>
+<p>The above logic can be decoupled into Octobus services as following:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const serviceBus = new ServiceBus();
+
+serviceBus.subscribe(&apos;math.multiply&apos;, ({ message }) =&gt; {
+  const { a, b } = message.data;
+
+  return a * b;
+});
+
+serviceBus.subscribe(&apos;currency.convertEuroToUsd&apos;, ({ message, send }) =&gt; {
+  const euroToUsdRate = 1.3;
+  const {euro } = message.data;
+
+  return send(&apos;math.currency&apos;, { a: euro, b: euroToUsdRate });
+});</code>
+</code></pre>
+<p>As you can see above implementation allows services to reside in different locations and removes hard dependency by relying on the dispatch function to execute all external actions.</p>
+<p>This is just the tip of the iceberg but enough to give you a taste of the power and simplicity <a href="https://github.com/makeen-project/octobus">Octobus.js</a> brings.</p>
+<h3 id="crud-database-operations-on-the-fly">CRUD database operations on the fly</h3>
+<p>Another important aspect when building backend logic is database access so you&apos;ll need to build logic that
+connects to a database and performs both CRUD operations such as reading,creating,updating,deleting items and
+custom operations.</p>
+<p>The CRUD oparations bit can get huge and out of control if not centralized in a single common set of actions available for a mulltiple range of entities.</p>
+<p><a href="https://github.com/makeen-project/octobus-crud">Octobus-CRUD</a> comes to the rescue and does just that.</p>
+<p>The CRUD generator requires an entity schema and an <a href="https://github.com/makeen-project/mongodb-store">Octobus-mongodb-store</a>:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const bookSchema = {
+  title: Joi.string(),
+  author: Joi.string(),
+  description: Joi.string(),
+  tableOfContents: Joi.array().items(
+    Joi.object().keys({
+      title: Joi.string(),
+      page: Joi.string(),
+    }),
+  ),
+  releaseDate: Joi.string(),
+};</code>
+</code></pre>
+<p>We&apos;re using Mongo so for the store we&apos;re going with <a href="https://github.com/makeen-project/mongodb-store">Octobus-mongodb-store</a>
+Makeen server exposes a server method that does just that:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const { creteStore } = server.methods;
+const store = createStore({ collectionName: &apos;TodoItem&apos; })</code>
+</code></pre>
+<p>At this point we have both <code>schema</code> and <code>store</code> so whe can go ahead and generate the Octobus CRUD service:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">import { CRUDServiceContainer } from &apos;octobus-crud&apos;;
+import bookSchema from &apos;../schemas/item&apos;;
+
+// this class will expose all store methods
+class BooksOctobusService extends CRUDServiceContainer {
+  constructor({ store }) {
+    super(store, bookSchema);
+  }
+}
+
+const booksServiceBus = server.methods.createServiceBus(&apos;books&apos;);
+
+const BooksRepository = serviceBus.register(
+  new BooksOctobusService({ store }),
+);</code>
+</code></pre>
+<p>With just a few lines of code we&apos;ve created the BooksRepository object which exposes <strong>full CRUD database operations</strong> and
+can be used as following:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const book = await BooksRepository.findOne({
+  query: {
+    name: &apos;Surely Youre Joking, Mr. Feynman!&apos;,
+    author: &apos;Richard P. Feynman&apos;,
+    },
+  });</code>
+</code></pre>
+<p>or</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const book = await dispatch(&apos;BooksRepository.find&apos;, {
+  query: {
+    name: &apos;Surely Youre Joking, Mr. Feynman!&apos;,
+    author: &apos;Richard P. Feynman&apos;,
+    },
+  });</code>
+</code></pre>
+<p>Voila! using the serviceBus or dispatch method you can trigger BooksRepository related logic from different locations
+of the application without the need of importing or hard-requiring it.</p>
+<h4 id="crud-rest-api-endpoints-on-the-fly">CRUD REST API endpoints on the fly</h4>
+<p>Now that we&apos;ve seen the power of octobus.js and the easy way of creating CRUD storage octobus services the last
+required piece of functionality would be a set of REST API endpoints that would expose all this functionality.</p>
+<p>This is easily accomplished using <a href="packages/makeen-router">makeen-router</a> and it&apos;s exported class MongoResourceRouter</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">class BooksRouter extends MongoResourceRouter {
+  constructor(Repository, config = {}) {
+    super(Repository, {
+      namespace: &apos;BooksOctobusService&apos;,
+      basePath: &apos;/books&apos;,
+      entitySchema: bookSchema,
+      ...config,
+    });
+  }
+}
+
+const BooksRouter = new BooksRouter(BooksRepository);
+BooksRouter.mount(server);</code>
+</code></pre>
+<p>That&apos;s it! we now have a full range of CRUD endpoints operating from HTTP request down to the db level.</p>
+<p>If we want to add new custom endpoints this is accomplished by adding new methods to the BooksRouter class and decorating it with the @route decorator:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">class BooksRouter extends MongoResourceRouter {
+  constructor(Repository, config = {}) {
+    super(Repository, {
+      namespace: &apos;BooksOctobusService&apos;,
+      basePath: &apos;/books&apos;,
+      entitySchema: bookSchema,
+      ...config,
+    });
+  }
+
+  @route({
+    path: &apos;custom-endpoint-example&apos;,
+    method: &apos;GET&apos;,
+    config: {
+      description: &apos;Example on how to create a new custom endpoint by using the @route decorator&apos;,
+    },
+  })
+  customEndpointExample(request) {
+    return this.Repository.findOne({ query: {} });
+  }
+}
+
+const BooksRouter = new BooksRouter(BooksRepository);
+BooksRouter.mount(server);</code>
+</code></pre>
+<hr>
+<h2 id="demo">Demo</h2>
+<p>Makeen is delivered as a feature-rich extensible backend hapi.js server.</p>
+<p>Architecture being modular you can write a hapi.js plugin and plug it into the server easily.</p>
+<p>In order to see it in action we&apos;ll build a ToDo plugin which will provide backend todo task management logic.</p>
+<h4 id="step-1-create-the-plugin-package-structure-">Step 1. Create the plugin package structure:</h4>
+<pre><code class="lang-js"><code class="source-code prettyprint">&gt; ./packages
+&gt;    todo/
+&gt;     src/
+&gt;       routers/
+&gt;         Items.js
+&gt;         Lists.js
+&gt;       schemas/
+&gt;         Item.js
+&gt;         List.js
+&gt;       services/
+&gt;         ItemRepository.js
+&gt;         ListRepository.js
+&gt;       index.js
+&gt;     package.json</code>
+</code></pre>
+<h4 id="step-2-define-todo-package-main-entities-and-their-data-schema">Step 2. Define todo package main entities and their data schema</h4>
+<p>We will be working with items and item lists thus we have Item and List entities.</p>
+<p>Item schema will be:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">_id: Joi.object(),
+accountId: Joi.object().required(),
+listId: Joi.object().required(),
+assignedTo: Joi.object().allow(null),
+
+title: Joi.string().trim().required(),
+description: Joi.string().allow(null),
+isChecked: Joi.boolean().default(false),
+
+createdBy: Joi.object(),
+startDate: Joi.date(),
+dueDate: Joi.date(),
+createdAt: Joi.date(),
+updatedAt: Joi.date(),</code>
+</code></pre>
+<p>  List schema will be:</p>
+<p>```js _id: Joi.object(),
+accountId: Joi.object().required(),
+name: Joi.string().required(),
+createdBy: Joi.object(),
+createdAt: Joi.date(),
+updatedAt: Joi.date(),</p>
+<pre><code><code class="source-code prettyprint">
+
+#### Step 3. Create octobus based services for Item and List
+
+  Create `./packages/todo/src/services/ItemRepository.js` file
+  We will be using a octobus-crud package in order to generate a full fledged database integrated CRUD set of actions:
+
+```js
+    import { CRUDServiceContainer } from &apos;octobus-crud&apos;;
+    import itemSchema from &apos;../schemas/item&apos;;
+
+    class ItemRepository extends CRUDServiceContainer {
+      constructor({ store }) {
+        super(store, itemSchema);
+      }
+    }
+
+    export default ItemRepository;</code>
+</code></pre><p>The CRUDServiceContainer class takes in a store and the entity schema and will create an object with: create, read, update and delete methods</p>
+<p>Create <code>./packages/todo/src/services/ListRepository.js</code> file</p>
+<p>Same as with the Item service we will generate the List service but because the List entity references and logically owns Items
+we will need to overwrite the delete method such that it removes all child Item entities.</p>
+<p>custom method deleteOne will be:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">      async deleteOne(params) {
+        const ItemRepository = this.extract(&apos;ItemRepository&apos;);
+        const { query } = params;
+        const list = await this.findOne({ query });
+        const result = await CRUDServiceContainer.prototype.deleteOne.call(this, params);
+
+        await Promise.all([
+          ItemRepository.deleteMany({
+            query: {
+              listId: list._id,
+            },
+          }),
+        ]);
+
+        return result;
+      }</code>
+</code></pre>
+<p>The custom deleteOne method first removes the queries List and next it removes all Item entties that are referencing this list.</p>
+<p>At this point we have created Item and List octobus services with all CRUD methods.</p>
+<p>The next step will be to create HTTP endpoints for all of this methods such that they are accesible to the rest of the world through HTTP requests.</p>
+<h4 id="step-4-create-http-endpoints-for-item-and-list-crud-operations">Step 4. Create HTTP endpoints for Item and List CRUD operations</h4>
+<p>For this we will be using the <a href="packages/makeen-router">makeen-router</a> package which takes in a generated octobus CRUD repository and builds all the CRUD endpoints
+based on it:</p>
+<p>Makeen-core provides Router and MongoResourceRouter classes;
+By extending the Router class you can define hapijs routes as class methods as following:</p>
+<pre><code><code class="source-code prettyprint">class TestRouter extends Router {
+  constructor() {
+    super({ basePath: &apos;test-router&apos; });
+  }
+
+  @route({
+    method: &apos;GET&apos;,
+    path: &apos;/test/route&apos;,
+  })
+  testRoute() {
+    ...
+  }
+}
+
+const testRouter = new TestRouter();
+testRouter.mount(server);</code>
+</code></pre><p>By extending the MongoResourceRouter class you can define a full set of CRUD routes, all you need to do is provide
+a octboud CRUD repository:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">class CRUDTestRouter extends MongoResourceRouter {
+  constructor(Repository, config) {
+    super(Repository, {
+      namespace: &apos;TestRouter&apos;,
+      basePath: &apos;/test/router&apos;,
+      entitySchema: joiSchema,
+    });
+  }
+}
+
+const crudTestRouter = new CRUDTestRouter();
+crudTestRouter.mount(server);</code>
+</code></pre>
+<p>That&apos;s it! by mounting the newly created CRUDTestRouter class instance to the server we now have a complete CRUD API available.</p>
+<p>So let&apos;s see how this would look for the Item and List entities:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">class ItemsRouter extends MongoResourceRouter {
+  constructor(ItemRepository, config = {}) {
+    super(ItemRepository, {
+      namespace: &apos;TodoItems&apos;,
+      basePath: &apos;/lists/{listId}/items&apos;,
+      entitySchema: omit(itemSchema, [
+        &apos;_id&apos;, &apos;accountId&apos;, &apos;listId&apos;, &apos;createdBy&apos;, &apos;createdAt&apos;, &apos;updatedAt&apos;,
+      ]),
+      ...config,
+    });
+  }</code>
+</code></pre>
+<pre><code class="lang-js"><code class="source-code prettyprint">class ListsRouter extends MongoResourceRouter {
+  constructor(ListRepository, config = {}) {
+    super(ListRepository, {
+      namespace: &apos;TodoLists&apos;,
+      basePath: &apos;/lists&apos;,
+      entitySchema: omit(listSchema, [
+        &apos;_id&apos;, &apos;createdBy&apos;, &apos;createdAt&apos;, &apos;updatedAt&apos;, &apos;accountId&apos;,
+      ]),
+      ...config,
+    });
+  }
+
+  @route.get({
+    path: &apos;find-with-stats&apos;,
+    method: &apos;GET&apos;,
+    config: {
+      description: &apos;Find lists with stats and items&apos;,
+    },
+  })
+  findWithStats(request) {
+    const accountId = objectId(request.auth.credentials.accountId);
+
+    return this.ListRepository.findManyWithStats({
+      query: { accountId },
+    });
+  }
+}</code>
+</code></pre>
+<p>Above you can see another <a href="packages/makeen-router">makeen-router</a> feature, the @route function decorator which takes in metadata and transforms
+a simple function into a hapi HTTP endpoint, in above case we&apos;ve used it to create a custom endpoint.</p>
+<p>And finally, once we have Octbus CRUD repositories and <a href="packages/makeen-router">makeen-router</a> CRUD routers we need to assemble all this and
+bootstrap it in the plugin index.js file.</p>
+<h4 id="step-5-bootstrap-the-todo-plugin">Step 5. Bootstrap the todo plugin</h4>
+<p> Create <code>./packages/todo/src/index.js</code> file</p>
+<p>Inside it we import the service and router files and add the hapijs register function</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">import ItemRepositoryService from &apos;./services/ItemRepository&apos;;
+import ListRepositoryService from &apos;./services/ListRepository&apos;;
+import ItemsRouter from &apos;./routers/Items&apos;;
+import ListsRouter from &apos;./routers/Lists&apos;;</code>
+</code></pre>
+<pre><code class="lang-js"><code class="source-code prettyprint">export async function register(server, options, next) {
+  try {
+    // create octobus service bus
+    const serviceBus = server.methods.createServiceBus(&apos;todo&apos;);
+
+    // register item service container
+    const ItemRepository = serviceBus.register(
+      new ItemRepositoryService({
+        // pass in data store
+        store: server.methods.createStore({ collectionName: &apos;TodoItem&apos; }),
+      }),
+    );
+
+    // register list service container
+    const ListRepository = serviceBus.register(
+      new ListRepositoryService({
+        store: server.methods.createStore({ collectionName: &apos;TodoList&apos; }),
+      }),
+    );
+
+    // instantiate makeen-router Router classes and mount them on the server
+    (new ItemsRouter(ItemRepository)).mount(server);
+    (new ListsRouter(ListRepository)).mount(server);
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+}</code>
+</code></pre>
+<hr>
+<h2 id="makeen-plugins">Makeen Plugins</h2>
+<p>Makeen forms an echosistem of hapijs plugins that combined togheter can provide a full-range of
+functionalities required from a full stack profesional web application:</p>
+<ul>
+<li><a href="https://github.com/makeen-project/octobus">Octobus</a></li>
+<li><a href="packages/makeen-router">Makeen Router</a></li>
+<li><a href="packages/makeen-core">Makeen Core</a></li>
+<li><a href="packages/makeen-mailer">Makeen Mailer</a></li>
+<li><a href="packages/makeen-user">Makeen User</a></li>
+<li><a href="packages/makeen-storage">Makeen Storage</a></li>
+<li><a href="packages/makeen-monitoring">Makeen Monitoring</a></li>
+<li><a href="packages/makeen-documentation">Makeen Documentation</a></li>
+<li><a href="https://github.com/makeen-project/makeen-vm">Makeen Virtual Machines</a></li>
+</ul>
+<hr>
+<h2 id="build-and-deployment">Build and Deployment</h2>
+<p>Lorem ipsum dolor sit amet, an civibus partiendo interpretaris sed, paulo mucius ut vim. In diceret propriae reformidans est, et nec fabellas deserunt quaestio, ut agam laudem reprehendunt vix. Usu ex veritus accusamus. Duo an choro voluptaria, diceret graecis vivendo ex has.</p>
+<hr>
+<h2 id="contributing">Contributing</h2>
+<p>You can contribute by:</p>
+<ul>
+<li>creating a github issue</li>
+<li>creating a github pull request</li>
+<li><a href="#get-in-touch">getting in touch</a></li>
+</ul>
+<hr>
+<h2 id="credits">Credits</h2>
+<p>Meet the swiss-army team behind Makeen:</p>
+<ul>
+<li><a href="https://github.com/abdulmasri">Abdul Masri</a></li>
+<li><a href="https://github.com/Ameerplus">Ameer Al Sayyed</a></li>
+<li><a href="https://github.com/catarizea">Catalin Rizea</a></li>
+<li><a href="https://github.com/danmo">Dan Ochiana</a></li>
+<li><a href="https://github.com/neekz0r">Nick Burke</a></li>
+<li><a href="https://github.com/nicolasembleton">Nicolas Embleton</a></li>
+<li><a href="https://www.linkedin.com/in/olyasurits">Olya Surits</a></li>
+<li><a href="https://github.com/viczam">Victor Zamfir</a></li>
+</ul>
+<hr>
+<h2 id="license">License</h2>
+<p>Makeen is licensed under the <a href="LICENSE">MIT license</a>.</p>
+<hr>
+<h2 id="get-in-touch">Get in Touch</h2>
+<p>What are you waiting for ? let us know what you think on:</p>
+<ul>
+<li>StackOverflow</li>
+<li>Twitter</li>
+<li>Slack</li>
+<li><a href="https://www.reddit.com/r/makeen/">Reddit</a></li>
+</ul>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,1580 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "routers/MongoResourceRouter.js",
+    "content": "import Joi from 'joi';\nimport Boom from 'boom';\nimport pick from 'lodash/pick';\nimport Router from './Router';\nimport { toBSON, idValidator, idToQuery } from '../libs/mongo-helpers';\nimport { route } from '../libs/decorators';\n\n/** makeen-router class which exposes a full-CRUD RESTfull API */\nclass MongoResourceRouter extends Router {\n  static applyContextToRoute = (routeId, generateContext) =>\n    (request, reply) => {\n      const context = generateContext(request);\n\n      switch (routeId) {\n        case 'count':\n        case 'deleteOne':\n        case 'deleteOneById':\n        case 'findById':\n        case 'findOne':\n          Object.assign(request.pre.query, context);\n          break;\n        case 'createOne':\n          Object.assign(request.pre.payload, context);\n          break;\n        case 'findMany':\n          Object.assign(request.pre.queryParams.query, context);\n          break;\n        case 'replaceOne':\n        case 'updateOne':\n          Object.assign(request.pre.query, context);\n          Object.assign(request.pre.payload, context);\n          break;\n        default:\n      }\n\n      reply();\n    };\n\n  /**\n   * Create a new MongoResourceRouter instance\n   *@param {object} Repository - repository service used to perform all data related operations\n   *@param {object} config - configuration options which can have the following fields:\n   * entitySchema - joi schema of the corespoding data entity\n   */\n  constructor(Repository, config) {\n    super(\n      Joi.attempt(\n        config,\n        Joi.object()\n          .keys({\n            entitySchema: Joi.object(),\n          })\n          .unknown(),\n      ),\n    );\n\n    this.Repository = Repository;\n\n    this.addRoute('deleteOneById', {\n      path: '/{id}',\n      method: 'DELETE',\n      handler: this.deleteOne,\n      config: {\n        validate: {\n          params: {\n            id: idValidator,\n          },\n        },\n        description: 'Delete an entity by id',\n        pre: [\n          {\n            method: (request, reply) => reply(idToQuery(request.params.id)),\n            assign: 'query',\n          },\n        ],\n      },\n    });\n\n    this.routes.createOne.config.validate.payload = this.config.entitySchema;\n    this.routes.replaceOne.config.validate.payload = this.config.entitySchema;\n  }\n\n  @route.get({\n    path: '/count',\n    config: {\n      validate: {\n        query: {\n          query: Joi.object().default({}),\n        },\n      },\n      description: 'Count entities',\n      pre: [\n        {\n          method: (request, reply) => reply(toBSON(request.query.query)),\n          assign: 'query',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP handler: counts entities\n   */\n  count(request) {\n    const { query } = request.pre;\n    return this.Repository.count({ query });\n  }\n\n  @route.post({\n    path: '/',\n    config: {\n      validate: {},\n      description: 'Create a new entity',\n      pre: [\n        {\n          method: (request, reply) => reply(toBSON(request.payload)),\n          assign: 'payload',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Handler: creates one entity\n   */\n  createOne(request) {\n    const { payload } = request.pre;\n    return this.Repository.createOne(payload);\n  }\n\n  @route.delete({\n    path: '/deleteOne',\n    config: {\n      validate: {\n        payload: {\n          query: Joi.object().required(),\n        },\n      },\n      description: 'Delete an entity',\n      pre: [\n        {\n          method: (request, reply) => reply(toBSON(request.query.query)),\n          assign: 'query',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Handler: deletes one entity\n   */\n  deleteOne(request) {\n    const { query } = request.pre;\n    return this.Repository.deleteOne({ query });\n  }\n\n  @route.get({\n    path: '/{id}',\n    config: {\n      validate: {\n        params: {\n          id: idValidator,\n        },\n      },\n      description: 'Find an entity by id',\n      pre: [\n        {\n          method: (request, reply) => reply(idToQuery(request.params.id)),\n          assign: 'query',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Hanlder: finds one entity by id\n   */\n  async findById(request) {\n    const { query } = request.pre;\n    const entity = await this.Repository.findOne({ query });\n\n    if (!entity) {\n      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);\n    }\n\n    return entity;\n  }\n\n  @route.get({\n    path: '/',\n    config: {\n      validate: {\n        query: {\n          query: Joi.object().default({}),\n          offset: Joi.number(),\n          limit: Joi.number(),\n          orderBy: Joi.object().default({}),\n          fields: Joi.object().default({}),\n        },\n      },\n      description: 'Find entities',\n      pre: [\n        {\n          method: (request, reply) => reply(toBSON(request.query.query)),\n          assign: 'query',\n        },\n        {\n          method: (request, reply) => {\n            const params = pick(request.query, ['fields', 'orderBy']);\n            params.query = request.pre.query;\n\n            if (request.query.offset !== undefined) {\n              params.skip = parseInt(request.query.offset, 10);\n            }\n\n            if (request.query.limit !== undefined) {\n              params.limit = parseInt(request.query.limit, 10);\n            }\n\n            reply(params);\n          },\n          assign: 'queryParams',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Handler: finds entities\n   */\n  findMany(request) {\n    const { queryParams } = request.pre;\n    return this.Repository.findMany(queryParams).then(c => c.toArray());\n  }\n\n  @route.get({\n    path: '/findOne',\n    config: {\n      validate: {\n        query: {\n          query: Joi.object().default({}),\n        },\n      },\n      description: 'Find one entity',\n      pre: [\n        {\n          method: (request, reply) => reply(toBSON(request.query.query)),\n          assign: 'query',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Handler: finds single entity\n   */\n  async findOne(request) {\n    const { query } = request.pre;\n    const entity = await this.Repository.findOne({ query });\n\n    if (!entity) {\n      throw Boom.notFound('Unable to find entity.');\n    }\n\n    return entity;\n  }\n\n  @route.put({\n    path: '/{id}',\n    method: 'PUT',\n    config: {\n      validate: {\n        params: {\n          id: idValidator,\n        },\n      },\n      description: 'Replace an entity',\n      pre: [\n        {\n          method: (request, reply) => reply(idToQuery(request.params.id)),\n          assign: 'query',\n        },\n        {\n          method: (request, reply) => reply(toBSON(request.payload)),\n          assign: 'payload',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Request: performs full entity replace\n   */\n  async replaceOne(request) {\n    const { query, payload } = request.pre;\n    const entity = await this.Repository.findOne({ query });\n\n    if (!entity) {\n      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);\n    }\n\n    return this.Repository.replaceOne({\n      ...entity,\n      ...payload,\n    });\n  }\n\n  @route.patch({\n    path: '/{id}',\n    config: {\n      validate: {\n        params: {\n          id: idValidator,\n        },\n      },\n      description: 'Update an entity',\n      pre: [\n        {\n          method: (request, reply) => reply(idToQuery(request.params.id)),\n          assign: 'query',\n        },\n        {\n          method: (request, reply) => reply(toBSON(request.payload)),\n          assign: 'payload',\n        },\n      ],\n    },\n  })\n  /**\n   * HTTP Handler: performs partial entity update\n   */\n  async updateOne(request) {\n    const { query, payload } = request.pre;\n    const entity = await this.Repository.findOne({ query });\n\n    if (!entity) {\n      throw Boom.notFound(`Unable to find entity with id ${request.params.id}`);\n    }\n\n    try {\n      await this.Repository.validate({\n        ...entity,\n        ...payload,\n      });\n    } catch (err) {\n      if (err.isJoi) {\n        throw Boom.badRequest(err.details[0].message);\n      }\n\n      throw err;\n    }\n\n    return this.Repository.updateOne({\n      query,\n      update: {\n        $set: payload,\n      },\n    });\n  }\n  /**\n   *\n   * @param {object} options - options passed to method\n   * @param {array} routes - array of routes for which to apply context\n   * @param {generateContext} options.generateContext - function that will generated the context to be applied\n   */\n  applyContext({ routes, generateContext }) {\n    (routes || Object.keys(this.routes)).forEach(routeId => {\n      this.routes[routeId].config.pre.push({\n        method: this.constructor.applyContextToRoute(routeId, generateContext),\n      });\n    });\n  }\n}\n\nexport default MongoResourceRouter;\n",
+    "static": true,
+    "longname": "routers/MongoResourceRouter.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "class",
+    "name": "MongoResourceRouter",
+    "memberof": "routers/MongoResourceRouter.js",
+    "static": true,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "access": null,
+    "export": true,
+    "importPath": "makeen/routers/MongoResourceRouter.js",
+    "importStyle": "MongoResourceRouter",
+    "description": "makeen-router class which exposes a full-CRUD RESTfull API",
+    "lineNumber": 9,
+    "interface": false,
+    "extends": [
+      "routers/Router.js~Router"
+    ]
+  },
+  {
+    "__docId__": 2,
+    "kind": "member",
+    "name": "applyContextToRoute",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "static": true,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter.applyContextToRoute",
+    "access": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#constructor",
+    "access": null,
+    "description": "Create a new MongoResourceRouter instance",
+    "lineNumber": 45,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "Repository",
+        "description": "repository service used to perform all data related operations"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "config",
+        "description": "configuration options which can have the following fields:\nentitySchema - joi schema of the corespoding data entity"
+      }
+    ]
+  },
+  {
+    "__docId__": 4,
+    "kind": "member",
+    "name": "Repository",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#Repository",
+    "access": null,
+    "description": null,
+    "lineNumber": 57,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "method",
+    "name": "count",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#count",
+    "access": null,
+    "description": "HTTP handler: counts entities",
+    "lineNumber": 103,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/count',\n  config: {\n    validate: {\n      query: {\n        query: Joi.object().default({})\n      }\n    },\n    description: 'Count entities',\n    pre: [{\n      method: (request, reply) => reply(toBSON(request.query.query)),\n      assign: 'query'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 6,
+    "kind": "method",
+    "name": "createOne",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#createOne",
+    "access": null,
+    "description": "HTTP Handler: creates one entity",
+    "lineNumber": 124,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/',\n  config: {\n    validate: {},\n    description: 'Create a new entity',\n    pre: [{\n      method: (request, reply) => reply(toBSON(request.payload)),\n      assign: 'payload'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 7,
+    "kind": "method",
+    "name": "deleteOne",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#deleteOne",
+    "access": null,
+    "description": "HTTP Handler: deletes one entity",
+    "lineNumber": 149,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/deleteOne',\n  config: {\n    validate: {\n      payload: {\n        query: Joi.object().required()\n      }\n    },\n    description: 'Delete an entity',\n    pre: [{\n      method: (request, reply) => reply(toBSON(request.query.query)),\n      assign: 'query'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "name": "findById",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#findById",
+    "access": null,
+    "description": "HTTP Hanlder: finds one entity by id",
+    "lineNumber": 174,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/{id}',\n  config: {\n    validate: {\n      params: {\n        id: idValidator\n      }\n    },\n    description: 'Find an entity by id',\n    pre: [{\n      method: (request, reply) => reply(idToQuery(request.params.id)),\n      assign: 'query'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 9,
+    "kind": "method",
+    "name": "findMany",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#findMany",
+    "access": null,
+    "description": "HTTP Handler: finds entities",
+    "lineNumber": 226,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/',\n  config: {\n    validate: {\n      query: {\n        query: Joi.object().default({}),\n        offset: Joi.number(),\n        limit: Joi.number(),\n        orderBy: Joi.object().default({}),\n        fields: Joi.object().default({})\n      }\n    },\n    description: 'Find entities',\n    pre: [{\n      method: (request, reply) => reply(toBSON(request.query.query)),\n      assign: 'query'\n    }, {\n      method: (request, reply) => {\n        const params = pick(request.query, ['fields', 'orderBy']);\n        params.query = request.pre.query;\n\n        if (request.query.offset !== undefined) {\n          params.skip = parseInt(request.query.offset, 10);\n        }\n\n        if (request.query.limit !== undefined) {\n          params.limit = parseInt(request.query.limit, 10);\n        }\n\n        reply(params);\n      },\n      assign: 'queryParams'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "name": "findOne",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#findOne",
+    "access": null,
+    "description": "HTTP Handler: finds single entity",
+    "lineNumber": 251,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/findOne',\n  config: {\n    validate: {\n      query: {\n        query: Joi.object().default({})\n      }\n    },\n    description: 'Find one entity',\n    pre: [{\n      method: (request, reply) => reply(toBSON(request.query.query)),\n      assign: 'query'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
+    "name": "replaceOne",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#replaceOne",
+    "access": null,
+    "description": "HTTP Request: performs full entity replace",
+    "lineNumber": 287,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/{id}',\n  method: 'PUT',\n  config: {\n    validate: {\n      params: {\n        id: idValidator\n      }\n    },\n    description: 'Replace an entity',\n    pre: [{\n      method: (request, reply) => reply(idToQuery(request.params.id)),\n      assign: 'query'\n    }, {\n      method: (request, reply) => reply(toBSON(request.payload)),\n      assign: 'payload'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 12,
+    "kind": "method",
+    "name": "updateOne",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#updateOne",
+    "access": null,
+    "description": "HTTP Handler: performs partial entity update",
+    "lineNumber": 325,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/{id}',\n  config: {\n    validate: {\n      params: {\n        id: idValidator\n      }\n    },\n    description: 'Update an entity',\n    pre: [{\n      method: (request, reply) => reply(idToQuery(request.params.id)),\n      assign: 'query'\n    }, {\n      method: (request, reply) => reply(toBSON(request.payload)),\n      assign: 'payload'\n    }]\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 13,
+    "kind": "method",
+    "name": "applyContext",
+    "memberof": "routers/MongoResourceRouter.js~MongoResourceRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/MongoResourceRouter.js~MongoResourceRouter#applyContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 359,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options",
+        "description": "options passed to method"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "routes",
+        "description": "array of routes for which to apply context"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "generateContext"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.generateContext",
+        "description": "function that will generated the context to be applied"
+      }
+    ]
+  },
+  {
+    "__docId__": 14,
+    "kind": "file",
+    "name": "routers/Octobus.js",
+    "content": "/* eslint-disable class-methods-use-this */\nimport Joi from 'joi';\nimport { Message } from 'octobus.js';\nimport stream from 'stream';\nimport Router from './Router';\nimport { route } from '../libs/decorators';\nimport { toBSON } from '../libs/mongo-helpers';\n\nclass OctobusRouter extends Router {\n  constructor() {\n    super({\n      namespace: 'Demo',\n      basePath: '/',\n    });\n  }\n\n  @route.post({\n    path: '/rpc/{topic*}',\n    config: {\n      auth: {\n        strategy: 'jwt',\n        scope: 'admin',\n      },\n      validate: {\n        params: {\n          topic: Joi.string().required(),\n        },\n      },\n      description: 'Confirm account',\n    },\n  })\n  async rpc(request) {\n    const topic = request.params.topic.replace(/\\//g, '.');\n    const data = toBSON(request.payload);\n    const message = new Message({ topic, data });\n\n    let result = await request.messageBus.send(message);\n\n    if (result instanceof stream.Readable) {\n      result = await result.toArray();\n    }\n\n    return result;\n  }\n}\n\nexport default OctobusRouter;\n",
+    "static": true,
+    "longname": "routers/Octobus.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 15,
+    "kind": "class",
+    "name": "OctobusRouter",
+    "memberof": "routers/Octobus.js",
+    "static": true,
+    "longname": "routers/Octobus.js~OctobusRouter",
+    "access": null,
+    "export": true,
+    "importPath": "makeen/routers/Octobus.js",
+    "importStyle": "OctobusRouter",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "routers/Router.js~Router"
+    ]
+  },
+  {
+    "__docId__": 16,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "routers/Octobus.js~OctobusRouter",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Octobus.js~OctobusRouter#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 17,
+    "kind": "method",
+    "name": "rpc",
+    "memberof": "routers/Octobus.js~OctobusRouter",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "routers/Octobus.js~OctobusRouter#rpc",
+    "access": null,
+    "description": null,
+    "lineNumber": 32,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "decorators": [
+      {
+        "arguments": "({\n  path: '/rpc/{topic*}',\n  config: {\n    auth: {\n      strategy: 'jwt',\n      scope: 'admin'\n    },\n    validate: {\n      params: {\n        topic: Joi.string().required()\n      }\n    },\n    description: 'Confirm account'\n  }\n})"
+      }
+    ]
+  },
+  {
+    "__docId__": 18,
+    "kind": "file",
+    "name": "routers/Router.js",
+    "content": "/* eslint-disable no-restricted-syntax */\nimport Joi from 'joi';\nimport Boom from 'boom';\nimport trimEnd from 'lodash/trimEnd';\nimport trimStart from 'lodash/trimStart';\nimport get from 'lodash/get';\n\nclass Router {\n  static mergeRouteConfig(...configs) {\n    return configs.reduce(\n      (acc, config) => ({\n        ...acc,\n        ...config,\n        validate: ['query', 'params', 'payload'].reduce(\n          (validateAcc, type) => {\n            const validator = {\n              ...get(acc, `validate.${type}`, {}),\n              ...get(config, `validate.${type}`, {}),\n            };\n\n            if (Object.keys(validator).length) {\n              Object.assign(validateAcc, {\n                [type]: validator,\n              });\n            }\n\n            return validateAcc;\n          },\n          {},\n        ),\n        pre: [...get(acc, 'pre', []), ...get(config, 'pre', [])],\n      }),\n      {},\n    );\n  }\n\n  constructor(config) {\n    this.setConfig(config);\n    this.routes = {};\n    this.loadRoutes();\n  }\n\n  loadRoutes() {\n    for (const propr in this) {\n      if (typeof this[propr] === 'function' && this[propr].isRoute) {\n        const { definition } = this[propr];\n        const routeId = definition.id || propr;\n        this.addRoute(routeId, {\n          ...definition,\n          handler: this[propr].bind(this),\n        });\n      }\n    }\n  }\n\n  setConfig(config = {}) {\n    this.config = Joi.attempt(\n      config,\n      Joi.object()\n        .keys({\n          namespace: Joi.string().required(),\n          basePath: Joi.string().default(''),\n          baseRouteConfig: Joi.object().default({}),\n        })\n        .unknown(),\n    );\n  }\n\n  addRoute(id, routeConfig) {\n    const routes = this.getRoutes();\n\n    if (!id) {\n      throw new Error('Route id is required!');\n    }\n\n    if (routes[id]) {\n      throw new Error(`Route with id \"${id}\" already added!`);\n    }\n\n    const route = {\n      method: 'GET',\n      ...routeConfig,\n    };\n\n    this.routes[id] = {\n      ...route,\n      path: this.buildPath(route.path),\n      handler: typeof route.handler === 'function'\n        ? Router.wrapHandler(route.handler)\n        : route.handler,\n      config: this.constructor.mergeRouteConfig(\n        this.config.baseRouteConfig,\n        {\n          id: `${this.config.namespace}:${id}`,\n          tags: ['api'],\n        },\n        route.config,\n      ),\n    };\n\n    return this;\n  }\n\n  buildPath(suffix) {\n    return trimEnd(\n      `${trimEnd(this.config.basePath, '/')}/${trimStart(suffix, '/')}`,\n      '/',\n    );\n  }\n\n  addRoutes(routes) {\n    Object.keys(routes).forEach(routeId => {\n      this.addRoute(routeId, routes[routeId]);\n    });\n\n    return this;\n  }\n\n  getRoutes() {\n    return this.routes;\n  }\n\n  toArray(args) {\n    const routes = this.getRoutes();\n    const { only, without } = {\n      only: [],\n      without: [],\n      ...(args || {}),\n    };\n\n    let ids = Object.keys(routes);\n\n    if (only.length) {\n      ids = ids.filter(id => only.includes(id));\n    }\n\n    if (without.length) {\n      ids = ids.filter(id => !without.includes(id));\n    }\n\n    return ids.reduce((acc, id) => [...acc, routes[id]], []);\n  }\n\n  static wrapHandler(handler) {\n    // eslint-disable-next-line func-names\n    return async function (request, reply) {\n      try {\n        const response = await Promise.resolve(\n          handler.call(this, request, reply),\n        );\n        if (typeof response !== 'undefined') {\n          reply(response);\n        }\n      } catch (err) {\n        reply(Boom.wrap(err));\n      }\n    };\n  }\n\n  mount(server) {\n    server.route(this.toArray());\n  }\n}\n\nexport default Router;\n",
+    "static": true,
+    "longname": "routers/Router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 19,
+    "kind": "class",
+    "name": "Router",
+    "memberof": "routers/Router.js",
+    "static": true,
+    "longname": "routers/Router.js~Router",
+    "access": null,
+    "export": true,
+    "importPath": "makeen/routers/Router.js",
+    "importStyle": "Router",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false
+  },
+  {
+    "__docId__": 20,
+    "kind": "method",
+    "name": "mergeRouteConfig",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "routers/Router.js~Router.mergeRouteConfig",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "configs",
+        "types": [
+          "...*"
+        ],
+        "spread": true
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 37,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "config",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 22,
+    "kind": "member",
+    "name": "routes",
+    "memberof": "routers/Router.js~Router",
+    "static": false,
+    "longname": "routers/Router.js~Router#routes",
+    "access": null,
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{}"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "method",
+    "name": "loadRoutes",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#loadRoutes",
+    "access": null,
+    "description": null,
+    "lineNumber": 43,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 24,
+    "kind": "method",
+    "name": "setConfig",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#setConfig",
+    "access": null,
+    "description": null,
+    "lineNumber": 56,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "config",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ]
+  },
+  {
+    "__docId__": 25,
+    "kind": "member",
+    "name": "config",
+    "memberof": "routers/Router.js~Router",
+    "static": false,
+    "longname": "routers/Router.js~Router#config",
+    "access": null,
+    "description": null,
+    "lineNumber": 57,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 26,
+    "kind": "method",
+    "name": "addRoute",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#addRoute",
+    "access": null,
+    "description": null,
+    "lineNumber": 69,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "id",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "routeConfig",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "method",
+    "name": "buildPath",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#buildPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 104,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "suffix",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 28,
+    "kind": "method",
+    "name": "addRoutes",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#addRoutes",
+    "access": null,
+    "description": null,
+    "lineNumber": 111,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "routes",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "method",
+    "name": "getRoutes",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#getRoutes",
+    "access": null,
+    "description": null,
+    "lineNumber": 119,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "method",
+    "name": "toArray",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#toArray",
+    "access": null,
+    "description": null,
+    "lineNumber": 123,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "args",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 31,
+    "kind": "method",
+    "name": "wrapHandler",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "routers/Router.js~Router.wrapHandler",
+    "access": null,
+    "description": null,
+    "lineNumber": 144,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "handler",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "method",
+    "name": "mount",
+    "memberof": "routers/Router.js~Router",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "routers/Router.js~Router#mount",
+    "access": null,
+    "description": null,
+    "lineNumber": 160,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "server",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 49,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]

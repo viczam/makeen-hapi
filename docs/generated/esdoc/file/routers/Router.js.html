@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">routers/Router.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/makeen-project/makeen" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/MongoResourceRouter.js~MongoResourceRouter.html">MongoResourceRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Octobus.js~OctobusRouter.html">OctobusRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/routers/Router.js~Router.html">Router</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">routers/Router.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/* eslint-disable no-restricted-syntax */
+import Joi from &apos;joi&apos;;
+import Boom from &apos;boom&apos;;
+import trimEnd from &apos;lodash/trimEnd&apos;;
+import trimStart from &apos;lodash/trimStart&apos;;
+import get from &apos;lodash/get&apos;;
+
+class Router {
+  static mergeRouteConfig(...configs) {
+    return configs.reduce(
+      (acc, config) =&gt; ({
+        ...acc,
+        ...config,
+        validate: [&apos;query&apos;, &apos;params&apos;, &apos;payload&apos;].reduce(
+          (validateAcc, type) =&gt; {
+            const validator = {
+              ...get(acc, `validate.${type}`, {}),
+              ...get(config, `validate.${type}`, {}),
+            };
+
+            if (Object.keys(validator).length) {
+              Object.assign(validateAcc, {
+                [type]: validator,
+              });
+            }
+
+            return validateAcc;
+          },
+          {},
+        ),
+        pre: [...get(acc, &apos;pre&apos;, []), ...get(config, &apos;pre&apos;, [])],
+      }),
+      {},
+    );
+  }
+
+  constructor(config) {
+    this.setConfig(config);
+    this.routes = {};
+    this.loadRoutes();
+  }
+
+  loadRoutes() {
+    for (const propr in this) {
+      if (typeof this[propr] === &apos;function&apos; &amp;&amp; this[propr].isRoute) {
+        const { definition } = this[propr];
+        const routeId = definition.id || propr;
+        this.addRoute(routeId, {
+          ...definition,
+          handler: this[propr].bind(this),
+        });
+      }
+    }
+  }
+
+  setConfig(config = {}) {
+    this.config = Joi.attempt(
+      config,
+      Joi.object()
+        .keys({
+          namespace: Joi.string().required(),
+          basePath: Joi.string().default(&apos;&apos;),
+          baseRouteConfig: Joi.object().default({}),
+        })
+        .unknown(),
+    );
+  }
+
+  addRoute(id, routeConfig) {
+    const routes = this.getRoutes();
+
+    if (!id) {
+      throw new Error(&apos;Route id is required!&apos;);
+    }
+
+    if (routes[id]) {
+      throw new Error(`Route with id &quot;${id}&quot; already added!`);
+    }
+
+    const route = {
+      method: &apos;GET&apos;,
+      ...routeConfig,
+    };
+
+    this.routes[id] = {
+      ...route,
+      path: this.buildPath(route.path),
+      handler: typeof route.handler === &apos;function&apos;
+        ? Router.wrapHandler(route.handler)
+        : route.handler,
+      config: this.constructor.mergeRouteConfig(
+        this.config.baseRouteConfig,
+        {
+          id: `${this.config.namespace}:${id}`,
+          tags: [&apos;api&apos;],
+        },
+        route.config,
+      ),
+    };
+
+    return this;
+  }
+
+  buildPath(suffix) {
+    return trimEnd(
+      `${trimEnd(this.config.basePath, &apos;/&apos;)}/${trimStart(suffix, &apos;/&apos;)}`,
+      &apos;/&apos;,
+    );
+  }
+
+  addRoutes(routes) {
+    Object.keys(routes).forEach(routeId =&gt; {
+      this.addRoute(routeId, routes[routeId]);
+    });
+
+    return this;
+  }
+
+  getRoutes() {
+    return this.routes;
+  }
+
+  toArray(args) {
+    const routes = this.getRoutes();
+    const { only, without } = {
+      only: [],
+      without: [],
+      ...(args || {}),
+    };
+
+    let ids = Object.keys(routes);
+
+    if (only.length) {
+      ids = ids.filter(id =&gt; only.includes(id));
+    }
+
+    if (without.length) {
+      ids = ids.filter(id =&gt; !without.includes(id));
+    }
+
+    return ids.reduce((acc, id) =&gt; [...acc, routes[id]], []);
+  }
+
+  static wrapHandler(handler) {
+    // eslint-disable-next-line func-names
+    return async function (request, reply) {
+      try {
+        const response = await Promise.resolve(
+          handler.call(this, request, reply),
+        );
+        if (typeof response !== &apos;undefined&apos;) {
+          reply(response);
+        }
+      } catch (err) {
+        reply(Boom.wrap(err));
+      }
+    };
+  }
+
+  mount(server) {
+    server.route(this.toArray());
+  }
+}
+
+export default Router;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

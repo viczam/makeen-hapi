@@ -5,36 +5,47 @@ import Router from './Router';
 import { toBSON, idValidator, idToQuery } from '../libs/mongo-helpers';
 import { route } from '../libs/decorators';
 
+/** makeen-router class which exposes a full-CRUD RESTfull API */
 class MongoResourceRouter extends Router {
-  static applyContextToRoute = (routeId, generateContext) =>
-    (request, reply) => {
-      const context = generateContext(request);
+  static applyContextToRoute = (routeId, generateContext) => (
+    request,
+    reply,
+  ) => {
+    const context = generateContext(request);
 
-      switch (routeId) {
-        case 'count':
-        case 'deleteOne':
-        case 'deleteOneById':
-        case 'findById':
-        case 'findOne':
-          Object.assign(request.pre.query, context);
-          break;
-        case 'createOne':
-          Object.assign(request.pre.payload, context);
-          break;
-        case 'findMany':
-          Object.assign(request.pre.queryParams.query, context);
-          break;
-        case 'replaceOne':
-        case 'updateOne':
-          Object.assign(request.pre.query, context);
-          Object.assign(request.pre.payload, context);
-          break;
-        default:
-      }
+    switch (routeId) {
+      case 'count':
+      case 'deleteOne':
+      case 'deleteOneById':
+      case 'findById':
+      case 'findOne':
+        Object.assign(request.pre.query, context);
+        break;
+      case 'createOne':
+        Object.assign(request.pre.payload, context);
+        break;
+      case 'findMany':
+        Object.assign(request.pre.queryParams.query, context);
+        break;
+      case 'replaceOne':
+      case 'updateOne':
+        Object.assign(request.pre.query, context);
+        Object.assign(request.pre.payload, context);
+        break;
+      default:
+    }
 
-      reply();
-    };
+    reply();
+  };
 
+  /**
+   * Create a new MongoResourceRouter instance
+   *@param {object} Repository - repository service used to perform
+    all data related operations
+   *@param {object} config - configuration options which can have the
+    following fields:
+   * entitySchema - joi schema of the corespoding data entity
+   */
   constructor(Repository, config) {
     super(
       Joi.attempt(
@@ -73,6 +84,9 @@ class MongoResourceRouter extends Router {
     this.routes.replaceOne.config.validate.payload = this.config.entitySchema;
   }
 
+  /**
+   * HTTP handler: counts entities
+   */
   @route.get({
     path: '/count',
     config: {
@@ -95,6 +109,9 @@ class MongoResourceRouter extends Router {
     return this.Repository.count({ query });
   }
 
+  /**
+   * HTTP Handler: creates one entity
+   */
   @route.post({
     path: '/',
     config: {
@@ -113,6 +130,9 @@ class MongoResourceRouter extends Router {
     return this.Repository.createOne(payload);
   }
 
+  /**
+   * HTTP Handler: deletes one entity
+   */
   @route.delete({
     path: '/deleteOne',
     config: {
@@ -135,6 +155,9 @@ class MongoResourceRouter extends Router {
     return this.Repository.deleteOne({ query });
   }
 
+  /**
+   * HTTP Hanlder: finds one entity by id
+   */
   @route.get({
     path: '/{id}',
     config: {
@@ -163,6 +186,9 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
+  /**
+   * HTTP Handler: finds entities
+   */
   @route.get({
     path: '/',
     config: {
@@ -206,6 +232,9 @@ class MongoResourceRouter extends Router {
     return this.Repository.findMany(queryParams).then(c => c.toArray());
   }
 
+  /**
+   * HTTP Handler: finds single entity
+   */
   @route.get({
     path: '/findOne',
     config: {
@@ -234,6 +263,9 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
+  /**
+   * HTTP Request: performs full entity replace
+   */
   @route.put({
     path: '/{id}',
     method: 'PUT',
@@ -270,6 +302,9 @@ class MongoResourceRouter extends Router {
     });
   }
 
+  /**
+   * HTTP Handler: performs partial entity update
+   */
   @route.patch({
     path: '/{id}',
     config: {
@@ -319,7 +354,13 @@ class MongoResourceRouter extends Router {
       },
     });
   }
-
+  /**
+   *
+   * @param {object} options - options passed to method
+   * @param {array} routes - array of routes for which to apply context
+   * @param {generateContext} options.generateContext - function that will
+   *  generated the context to be applied
+   */
   applyContext({ routes, generateContext }) {
     (routes || Object.keys(this.routes)).forEach(routeId => {
       this.routes[routeId].config.pre.push({

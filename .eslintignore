@@ -4,3 +4,4 @@ packages/*/build/**
 packages/web-app/config/**
 packages/web-app/scripts/**
 packages/web-app/build/**
+docs/generated
