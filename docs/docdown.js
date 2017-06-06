@@ -3,6 +3,7 @@ import documentation from 'documentation';
 import publisher from 'esdoc/out/src/Publisher/publish';
 
 import ESDoc from 'esdoc/out/src/ESDoc';
+import { YUIDoc } from 'yuidocjs';
 
 import fs from 'fs';
 
@@ -56,3 +57,9 @@ ESDoc.generate(
   },
   publisher,
 );
+
+// YUIDoc
+new YUIDoc({
+  paths: [`${__dirname}/../packages/makeen-router/src/routers/`],
+  outdir: `${__dirname}/generated/yuidoc/`,
+}).run();

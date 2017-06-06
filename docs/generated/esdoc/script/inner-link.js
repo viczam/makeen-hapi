@@ -1,7 +1,7 @@
 // inner link(#foo) can not correctly scroll, because page has fixed header,
 // so, I manually scroll.
 (function() {
-  const matched = location.hash.match(/errorLines=([\d,]+)/);
+  var matched = location.hash.match(/errorLines=([\d,]+)/);
   if (matched) return;
 
   function adjust() {
@@ -10,7 +10,7 @@
     if (el) el.classList.remove('inner-link-active');
 
     // ``[ ] . ' " @`` are not valid in DOM id. so must escape these.
-    const id = location.hash.replace(/([\[\].'"@$])/g, '\\$1');
+    var id = location.hash.replace(/([\[\].'"@$])/g, '\\$1');
     var el = document.querySelector(id);
     if (el) el.classList.add('inner-link-active');
   }
@@ -23,9 +23,9 @@
 })();
 
 (function() {
-  const els = document.querySelectorAll('[href^="#"]');
-  for (let i = 0; i < els.length; i++) {
-    const el = els[i];
+  var els = document.querySelectorAll('[href^="#"]');
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
     el.href = location.href + el.getAttribute('href'); // because el.href is absolute path
   }
 })();

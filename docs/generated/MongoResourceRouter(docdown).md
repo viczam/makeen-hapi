@@ -21,7 +21,7 @@
 <!-- div -->
 
 <h3 id="applyContext"><a href="#applyContext">#</a>&nbsp;<code>applyContext(options, routes, options.generateContext)</code></h3>
-[&#x24C8;](https://github.com/makeen-project/makeen#L359 "View in source") [&#x24C9;][1]
+[&#x24C8;](https://github.com/makeen-project/makeen#L364 "View in source") [&#x24C9;][1]
 
 
 
@@ -37,13 +37,15 @@
 <!-- div -->
 
 <h3 id="constructor"><a href="#constructor">#</a>&nbsp;<code>constructor(Repository, config)</code></h3>
-[&#x24C8;](https://github.com/makeen-project/makeen#L45 "View in source") [&#x24C9;][1]
+[&#x24C8;](https://github.com/makeen-project/makeen#L49 "View in source") [&#x24C9;][1]
 
 Create a new MongoResourceRouter instance
 
 #### Arguments
-1. `Repository` *(object)*: repository service used to perform all data related operations
-2. `config` *(object)*: configuration options which can have the following fields:<br>
+1. `Repository` *(object)*: repository service used to perform
+all data related operations
+2. `config` *(object)*: configuration options which can have the
+following fields:<br>
 entitySchema - joi schema of the corespoding data entity
 
 ---

@@ -1,0 +1,158 @@
+{
+    "project": {},
+    "files": {
+        "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js": {
+            "name": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {},
+    "elements": {},
+    "classitems": [
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 8,
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 41,
+            "description": "Create a new MongoResourceRouter instance",
+            "params": [
+                {
+                    "name": "Repository",
+                    "description": "- repository service used to perform\n   all data related operations",
+                    "type": "Object"
+                },
+                {
+                    "name": "config",
+                    "description": "- configuration options which can have the\n   following fields:\nentitySchema - joi schema of the corespoding data entity",
+                    "type": "Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 87,
+            "description": "HTTP handler: counts entities",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 112,
+            "description": "HTTP Handler: creates one entity",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 133,
+            "description": "HTTP Handler: deletes one entity",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 158,
+            "description": "HTTP Hanlder: finds one entity by id",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 189,
+            "description": "HTTP Handler: finds entities",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 235,
+            "description": "HTTP Handler: finds single entity",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 266,
+            "description": "HTTP Request: performs full entity replace",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 305,
+            "description": "HTTP Handler: performs partial entity update",
+            "class": ""
+        },
+        {
+            "file": "/Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js",
+            "line": 357,
+            "params": [
+                {
+                    "name": "options",
+                    "description": "- options passed to method",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "generateContext",
+                            "description": "- function that will\n  generated the context to be applied",
+                            "type": "GenerateContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "routes",
+                    "description": "- array of routes for which to apply context",
+                    "type": "Array"
+                }
+            ],
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:8"
+        },
+        {
+            "message": "Missing item type\nCreate a new MongoResourceRouter instance",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:41"
+        },
+        {
+            "message": "Missing item type\nHTTP handler: counts entities",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:87"
+        },
+        {
+            "message": "Missing item type\nHTTP Handler: creates one entity",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:112"
+        },
+        {
+            "message": "Missing item type\nHTTP Handler: deletes one entity",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:133"
+        },
+        {
+            "message": "Missing item type\nHTTP Hanlder: finds one entity by id",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:158"
+        },
+        {
+            "message": "Missing item type\nHTTP Handler: finds entities",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:189"
+        },
+        {
+            "message": "Missing item type\nHTTP Handler: finds single entity",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:235"
+        },
+        {
+            "message": "Missing item type\nHTTP Request: performs full entity replace",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:266"
+        },
+        {
+            "message": "Missing item type\nHTTP Handler: performs partial entity update",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:305"
+        },
+        {
+            "message": "Missing item type",
+            "line": " /Users/danochiana/work/makeen/makeen/packages/makeen-router/src/routers/MongoResourceRouter.js:357"
+        }
+    ]
+}

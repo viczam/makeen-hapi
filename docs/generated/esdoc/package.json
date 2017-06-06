@@ -46,7 +46,8 @@
     "moment": "~2.18.1",
     "npm-run-all": "4.0.2",
     "pretty-format": "~19.0.0",
-    "react": "~15.4.2"
+    "react": "~15.4.2",
+    "yuidocjs": "0.10.2"
   },
   "devDependencies": {
     "babel-cli": "~6.23.0",

@@ -49,39 +49,43 @@ import { route } from &apos;../libs/decorators&apos;;
 
 /** makeen-router class which exposes a full-CRUD RESTfull API */
 class MongoResourceRouter extends Router {
-  static applyContextToRoute = (routeId, generateContext) =&gt;
-    (request, reply) =&gt; {
-      const context = generateContext(request);
+  static applyContextToRoute = (routeId, generateContext) =&gt; (
+    request,
+    reply,
+  ) =&gt; {
+    const context = generateContext(request);
 
-      switch (routeId) {
-        case &apos;count&apos;:
-        case &apos;deleteOne&apos;:
-        case &apos;deleteOneById&apos;:
-        case &apos;findById&apos;:
-        case &apos;findOne&apos;:
-          Object.assign(request.pre.query, context);
-          break;
-        case &apos;createOne&apos;:
-          Object.assign(request.pre.payload, context);
-          break;
-        case &apos;findMany&apos;:
-          Object.assign(request.pre.queryParams.query, context);
-          break;
-        case &apos;replaceOne&apos;:
-        case &apos;updateOne&apos;:
-          Object.assign(request.pre.query, context);
-          Object.assign(request.pre.payload, context);
-          break;
-        default:
-      }
+    switch (routeId) {
+      case &apos;count&apos;:
+      case &apos;deleteOne&apos;:
+      case &apos;deleteOneById&apos;:
+      case &apos;findById&apos;:
+      case &apos;findOne&apos;:
+        Object.assign(request.pre.query, context);
+        break;
+      case &apos;createOne&apos;:
+        Object.assign(request.pre.payload, context);
+        break;
+      case &apos;findMany&apos;:
+        Object.assign(request.pre.queryParams.query, context);
+        break;
+      case &apos;replaceOne&apos;:
+      case &apos;updateOne&apos;:
+        Object.assign(request.pre.query, context);
+        Object.assign(request.pre.payload, context);
+        break;
+      default:
+    }
 
-      reply();
-    };
+    reply();
+  };
 
   /**
    * Create a new MongoResourceRouter instance
-   *@param {object} Repository - repository service used to perform all data related operations
-   *@param {object} config - configuration options which can have the following fields:
+   *@param {object} Repository - repository service used to perform
+    all data related operations
+   *@param {object} config - configuration options which can have the
+    following fields:
    * entitySchema - joi schema of the corespoding data entity
    */
   constructor(Repository, config) {
@@ -122,6 +126,9 @@ class MongoResourceRouter extends Router {
     this.routes.replaceOne.config.validate.payload = this.config.entitySchema;
   }
 
+  /**
+   * HTTP handler: counts entities
+   */
   @route.get({
     path: &apos;/count&apos;,
     config: {
@@ -139,14 +146,14 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP handler: counts entities
-   */
   count(request) {
     const { query } = request.pre;
     return this.Repository.count({ query });
   }
 
+  /**
+   * HTTP Handler: creates one entity
+   */
   @route.post({
     path: &apos;/&apos;,
     config: {
@@ -160,14 +167,14 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Handler: creates one entity
-   */
   createOne(request) {
     const { payload } = request.pre;
     return this.Repository.createOne(payload);
   }
 
+  /**
+   * HTTP Handler: deletes one entity
+   */
   @route.delete({
     path: &apos;/deleteOne&apos;,
     config: {
@@ -185,14 +192,14 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Handler: deletes one entity
-   */
   deleteOne(request) {
     const { query } = request.pre;
     return this.Repository.deleteOne({ query });
   }
 
+  /**
+   * HTTP Hanlder: finds one entity by id
+   */
   @route.get({
     path: &apos;/{id}&apos;,
     config: {
@@ -210,9 +217,6 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Hanlder: finds one entity by id
-   */
   async findById(request) {
     const { query } = request.pre;
     const entity = await this.Repository.findOne({ query });
@@ -224,6 +228,9 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
+  /**
+   * HTTP Handler: finds entities
+   */
   @route.get({
     path: &apos;/&apos;,
     config: {
@@ -262,14 +269,14 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Handler: finds entities
-   */
   findMany(request) {
     const { queryParams } = request.pre;
     return this.Repository.findMany(queryParams).then(c =&gt; c.toArray());
   }
 
+  /**
+   * HTTP Handler: finds single entity
+   */
   @route.get({
     path: &apos;/findOne&apos;,
     config: {
@@ -287,9 +294,6 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Handler: finds single entity
-   */
   async findOne(request) {
     const { query } = request.pre;
     const entity = await this.Repository.findOne({ query });
@@ -301,6 +305,9 @@ class MongoResourceRouter extends Router {
     return entity;
   }
 
+  /**
+   * HTTP Request: performs full entity replace
+   */
   @route.put({
     path: &apos;/{id}&apos;,
     method: &apos;PUT&apos;,
@@ -323,9 +330,6 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Request: performs full entity replace
-   */
   async replaceOne(request) {
     const { query, payload } = request.pre;
     const entity = await this.Repository.findOne({ query });
@@ -340,6 +344,9 @@ class MongoResourceRouter extends Router {
     });
   }
 
+  /**
+   * HTTP Handler: performs partial entity update
+   */
   @route.patch({
     path: &apos;/{id}&apos;,
     config: {
@@ -361,9 +368,6 @@ class MongoResourceRouter extends Router {
       ],
     },
   })
-  /**
-   * HTTP Handler: performs partial entity update
-   */
   async updateOne(request) {
     const { query, payload } = request.pre;
     const entity = await this.Repository.findOne({ query });
@@ -396,7 +400,8 @@ class MongoResourceRouter extends Router {
    *
    * @param {object} options - options passed to method
    * @param {array} routes - array of routes for which to apply context
-   * @param {generateContext} options.generateContext - function that will generated the context to be applied
+   * @param {generateContext} options.generateContext - function that will
+   *  generated the context to be applied
    */
   applyContext({ routes, generateContext }) {
     (routes || Object.keys(this.routes)).forEach(routeId =&gt; {

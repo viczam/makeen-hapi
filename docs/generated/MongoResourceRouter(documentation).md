@@ -17,73 +17,11 @@ Create a new MongoResourceRouter instance
 
 **Parameters**
 
--   `Repository` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** repository service used to perform all data related operations
--   `config` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** configuration options which can have the following fields:
+-   `Repository` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** repository service used to perform
+    all data related operations
+-   `config` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** configuration options which can have the
+    following fields:
     entitySchema - joi schema of the corespoding data entity
-
-### count
-
-HTTP handler: counts entities
-
-**Parameters**
-
--   `request`  
-
-### createOne
-
-HTTP Handler: creates one entity
-
-**Parameters**
-
--   `request`  
-
-### deleteOne
-
-HTTP Handler: deletes one entity
-
-**Parameters**
-
--   `request`  
-
-### findById
-
-HTTP Hanlder: finds one entity by id
-
-**Parameters**
-
--   `request`  
-
-### findMany
-
-HTTP Handler: finds entities
-
-**Parameters**
-
--   `request`  
-
-### findOne
-
-HTTP Handler: finds single entity
-
-**Parameters**
-
--   `request`  
-
-### replaceOne
-
-HTTP Request: performs full entity replace
-
-**Parameters**
-
--   `request`  
-
-### updateOne
-
-HTTP Handler: performs partial entity update
-
-**Parameters**
-
--   `request`  
 
 ### applyContext
 
@@ -93,5 +31,38 @@ HTTP Handler: performs partial entity update
     -   `$0.routes`  
     -   `$0.generateContext`  
 -   `options` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** options passed to method
-    -   `options.generateContext` **generateContext** function that will generated the context to be applied
+    -   `options.generateContext` **generateContext** function that will
+         generated the context to be applied
 -   `routes` **[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** array of routes for which to apply context
+
+## get
+
+HTTP handler: counts entities
+
+## get
+
+HTTP Hanlder: finds one entity by id
+
+## get
+
+HTTP Handler: finds entities
+
+## get
+
+HTTP Handler: finds single entity
+
+## post
+
+HTTP Handler: creates one entity
+
+## delete
+
+HTTP Handler: deletes one entity
+
+## put
+
+HTTP Request: performs full entity replace
+
+## patch
+
+HTTP Handler: performs partial entity update

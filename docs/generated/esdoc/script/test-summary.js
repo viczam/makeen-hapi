@@ -1,20 +1,16 @@
 (function() {
   function toggle(ev) {
-    const button = ev.target;
-    let parent = ev.target.parentElement;
+    var button = ev.target;
+    var parent = ev.target.parentElement;
     while (parent) {
-      if (
-        parent.tagName === 'TR' &&
-        parent.classList.contains('test-describe')
-      ) {
+      if (parent.tagName === 'TR' && parent.classList.contains('test-describe'))
         break;
-      }
       parent = parent.parentElement;
     }
 
     if (!parent) return;
 
-    let direction;
+    var direction;
     if (button.classList.contains('opened')) {
       button.classList.remove('opened');
       button.classList.add('closed');
@@ -25,16 +21,16 @@
       direction = 'opened';
     }
 
-    const targetDepth = parseInt(parent.dataset.testDepth, 10) + 1;
-    let nextElement = parent.nextElementSibling;
+    var targetDepth = parseInt(parent.dataset.testDepth, 10) + 1;
+    var nextElement = parent.nextElementSibling;
     while (nextElement) {
-      const depth = parseInt(nextElement.dataset.testDepth, 10);
+      var depth = parseInt(nextElement.dataset.testDepth, 10);
       if (depth >= targetDepth) {
         if (direction === 'opened') {
           if (depth === targetDepth) nextElement.style.display = '';
         } else if (direction === 'closed') {
           nextElement.style.display = 'none';
-          const innerButton = nextElement.querySelector('.toggle');
+          var innerButton = nextElement.querySelector('.toggle');
           if (innerButton && innerButton.classList.contains('opened')) {
             innerButton.classList.remove('opened');
             innerButton.classList.add('closed');
@@ -47,14 +43,14 @@
     }
   }
 
-  const buttons = document.querySelectorAll(
+  var buttons = document.querySelectorAll(
     '.test-summary tr.test-describe .toggle'
   );
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', toggle);
   }
 
-  const topDescribes = document.querySelectorAll(
+  var topDescribes = document.querySelectorAll(
     '.test-summary tr[data-test-depth="0"]'
   );
   for (var i = 0; i < topDescribes.length; i++) {
