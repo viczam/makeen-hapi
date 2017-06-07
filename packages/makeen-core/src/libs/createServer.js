@@ -2,7 +2,7 @@ import Glue from 'glue';
 import path from 'path';
 import override from 'environment-override';
 
-export default store => {
+export default async store => {
   const manifest = store.get('/', {
     env: process.env.NODE_ENV,
     isDockerized: process.env.IS_DOCKERIZED,
@@ -16,27 +16,20 @@ export default store => {
 
   override(manifest, prefix);
 
-  Glue.compose(manifest, options, (err, server) => {
-    if (err) {
-      return console.log(err); // eslint-disable-line
-    }
+  const server = await Glue.compose(manifest, options);
 
-    return server.start(startErr => {
-      if (startErr) {
-        console.log(startErr); // eslint-disable-line
-        return;
-      }
+  await server.start();
 
-      if (Array.isArray(server.connections)) {
-        server.connections.forEach(connection => {
-          server.log(
-            ['server', 'info'],
-            `Server started at: ${connection.info.uri}`,
-          );
-        });
-      } else {
-        server.log(['server', 'info'], `Server started at: ${server.info.uri}`);
-      }
+  if (Array.isArray(server.connections)) {
+    server.connections.forEach(connection => {
+      server.log(
+        ['server', 'info'],
+        `Server started at: ${connection.info.uri}`,
+      );
     });
-  });
+  } else {
+    server.log(['server', 'info'], `Server started at: ${server.info.uri}`);
+  }
+
+  return server;
 };

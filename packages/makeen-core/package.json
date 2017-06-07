@@ -7,6 +7,9 @@
     "type": "git",
     "url": "https://github.com/makeen-project/makeen/tree/develop/packages/core"
   },
+  "scripts": {
+    "test": "jest --runInBand --silent"
+  },
   "keywords": [
     "makeen",
     "octobus"
@@ -19,6 +22,7 @@
   "homepage": "https://github.com/makeen-project/makeen/blob/develop/packages/core/readme.md",
   "dependencies": {
     "axios": "0.15.3",
+    "bluebird": "^3.5.0",
     "boom": "4.2.0",
     "environment-override": "1.0.2",
     "glue": "4.1.0",
@@ -34,5 +38,13 @@
     "octobus-mongodb-store": "0.4.1",
     "octobus.js": "0.31.0",
     "scooter": "4.0.0"
+  },
+  "devDependencies": {
+    "confidence": "^3.0.2",
+    "jest": "^19.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/e2e/.*|(\\.|/)(test|spec))\\.js?$"
   }
 }
