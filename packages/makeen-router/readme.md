@@ -64,3 +64,7 @@ usersRouter.mount(server);
 -----------------
 ## Roadmap:
 - nesting routers will be made easier; this way building nested restful resources like `/lists/{listId}/items` will be easier.
+
+
+
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install.

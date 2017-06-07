@@ -49,19 +49,6 @@ Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapi
 - `git clone git@github.com:makeen-project/boilerplate.git`
 - `npm install`
 
-Running `npm run start` will start the following servers:
-- development server - http://localhost:3001
-- client server - http://localhost:3004
-- web-app server - http://localhost:3000
-
-Running the API
-- API documentation will be available on- http://localhost:3001/documentation
-
-Environment variables that override default mongodb uri 127.0.0.1:
- - MAKEEN_ENV_SERVER_CACHE_URI=mongodb://{ MONGO_URI }
- - MAKEEN_ENV_REGISTRATIONS_1_PLUGIN_OPTIONS_MONGODB_HOST={ MONGO_HOST_NAME }
-
-
 From here on using a makeen plugin will require first installing it by way of npm:
 - `npm install makeen-core`
 - `npm install makeen-router`
@@ -86,6 +73,7 @@ Makeen as a whole is based on a few key **concepts and principles** which we'll 
  - modular message driven arhitecture by way of [Octobus.js](https://github.com/makeen-project/octobus)
  - CRUD database operations on the fly
  - CRUD REST API endpoints on the fly
+ - The Makeen `Plugin` - a full fledged hapi.js plugin generator
 
 #### Modular message driven architecture by way of [Octobus.js](https://github.com/makeen-project/octobus)
 
@@ -267,17 +255,62 @@ const BooksRouter = new BooksRouter(BooksRepository);
 BooksRouter.mount(server);
 ```
 
+### The Makeen `Plugin` - a full fledged hapi.js plugin generator
+
+The `Plugin` class is a central concept arround makeen plugins development.
+
+The plugin can create a full CRUD service container and REST routes for you and also allow you to create and add custom service containers and routes. All this is being done by overidding the the `boot` method:
+
+The bellow example will create a hapijs plugin containing BooksRepository service container and complete
+REST CRUD routes:
+
+```js
+import { Plugin } from 'makeen-core';
+import bookSchema from '../schemas/item';
+
+class BooksPlugin extends Plugin {
+  boot() {
+    this.createResources('Books', {
+      schema: bookSchema,
+    });
+  }
+}
+```
+It only took 6 lines of code and now you have a hapi plugin with CRUD REST endpoints and a CRUD db service container.
+
+What if you want some custom service container and custom REST routes that go along with it ? for this we can instantiate the custom service container and CRUD REST router directly and pass them to the `createResources` method:
+
+```js
+import { Plugin } from 'makeen-core';
+import BooksRouter from './routers/books';
+import BooksRepositoryService from './services/books';
+
+class BooksPlugin extends Plugin {
+  boot() {
+    const BooksRepository = new BooksRepositoryService({
+      store: server.methods.createStore({ collectionName: 'Books' }),
+    });
+
+    this.createResources('Books', {
+      repository: BooksRepository,
+      router: new BooksRouter(BooksRepository),
+    });
+  }
+}
+```
 
 ----------
 
 
 ## Demo
 
-Makeen is delivered as a feature-rich extensible backend hapi.js server.
+Makeen is delivered as a set of feature-rich extensible plugins.
 
-Architecture being modular you can write a hapi.js plugin and plug it into the server easily.
+The architecture is modular and you can write your own custom plugin and load into a [Hapi.js](https://hapijs.com) server, to speed this part makeen also delivers a [boilerplate]([makeen-boilerplate](https://github.com/makeen-project/boilerplate) ) project but you can also create a custom [Hapi.js](https://hapijs.com) server if needed.
 
-In order to see it in action we'll build a ToDo plugin which will provide backend todo task management logic.
+In order to see it in action we'll:
+- rampup the [makeen-boilerplate](https://github.com/makeen-project/boilerplate) by following the provided instructions
+- build a custom ToDo plugin by extending the `Plugin` class provided by [makeen-core](https://github.com/makeen-project/makeen/tree/develop/packages/makeen-core). This plugin will provide backend todo task management logic.
 
 #### Step 1. Create the plugin package structure:
 
@@ -298,7 +331,7 @@ In order to see it in action we'll build a ToDo plugin which will provide backen
 >     package.json
 ```
 
-#### Step 2. Define todo package main entities and their data schema
+#### Step 2. Define todo plugin main entities and their data schema
 
 We will be working with items and item lists thus we have Item and List entities.
 
@@ -394,7 +427,7 @@ based on it:
 Makeen-core provides Router and MongoResourceRouter classes;
 By extending the Router class you can define hapijs routes as class methods as following:
 
-```
+```js
 class TestRouter extends Router {
   constructor() {
     super({ basePath: 'test-router' });
@@ -488,26 +521,24 @@ a simple function into a hapi HTTP endpoint, in above case we've used it to crea
 And finally, once we have Octbus CRUD repositories and [makeen-router](packages/makeen-router) CRUD routers we need to assemble all this and
 bootstrap it in the plugin index.js file.
 
+#### Step 6. Create new ToDo Plugin class
 
-#### Step 5. Bootstrap the todo plugin
+Create `./packages/todo/src/index.js` file
 
- Create `./packages/todo/src/index.js` file
-
-Inside it we import the service and router files and add the hapijs register function
+Inside it we import the service and router files:
 
 ```js
+import { Plugin } from 'makeen-core';
 import ItemRepositoryService from './services/ItemRepository';
 import ListRepositoryService from './services/ListRepository';
 import ItemsRouter from './routers/Items';
 import ListsRouter from './routers/Lists';
 
-```
-```js
-export async function register(server, options, next) {
-  try {
-    // create octobus service bus
-    const serviceBus = server.methods.createServiceBus('todo');
-
+// Creating a Todo makeen plugin by extending the existing Plugin class
+class ToDoPlugin extends Plugin {
+  // boot function called on plugin register
+  // inside it we create our service containers and routers
+  async boot(server) {
     // register item service container
     const ItemRepository = serviceBus.register(
       new ItemRepositoryService({
@@ -516,6 +547,11 @@ export async function register(server, options, next) {
       }),
     );
 
+    this.createResource('Item', {
+      repository: ItemRepository,
+      router: new ItemsRouter(ItemRepository),
+    });
+
     // register list service container
     const ListRepository = serviceBus.register(
       new ListRepositoryService({
@@ -523,14 +559,32 @@ export async function register(server, options, next) {
       }),
     );
 
-    // instantiate makeen-router Router classes and mount them on the server
-    (new ItemsRouter(ItemRepository)).mount(server);
-    (new ListsRouter(ListRepository)).mount(server);
+    this.createResource('Item', {
+      repository: ListRepository,
+      router: new ListsRouter(ListRepository),
+    });
 
-    next();
-  } catch (err) {
-    next(err);
+    server.bind({
+      ItemRepository,
+      ListRepository,
+    });
   }
+}
+```
+
+#### Step 5. Bootstrap the todo plugin
+
+Add the hapijs register function in the `./packages/todo/src/index.js` file:
+
+Inside the register function we're instanciating the ToDoPlugin class and register it with the hapi server.
+
+```js
+export async function register(server, options, next) {
+  // create new instance of ToDoPlugin class
+  const toDoPlugin = new TodoPlugin({});
+
+  // register newly created plugin
+  server.register([toDoPlugin], next);
 }
 ```
 

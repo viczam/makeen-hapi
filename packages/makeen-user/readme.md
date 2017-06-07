@@ -35,3 +35,6 @@ Under the hood the pluing uses default 'jwt' authentication strategy by way of [
 
 #### Installation
 `npm install makeen-user`
+
+
+Because Makeen is a collection of plugins you will need a [Hapi.js](https://hapijs.com/) server to load and run them. To speed things up Makeen is providing the server component in the shape of a [boilerplate](https://github.com/makeen-project/boilerplate) which you can clone and install.
